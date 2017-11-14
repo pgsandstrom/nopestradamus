@@ -1,0 +1,15 @@
+.react-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .main-banner {
+    flex: 0 0 auto;
+    z-index: 2;
+  }
+
+  .main-body {
+    position: relative;
+    flex: 1 0 0%;
+  }
+}
