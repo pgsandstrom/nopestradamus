@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import './widgets.scss';
 import '../css/_util.scss';
@@ -7,8 +8,8 @@ const CheckBox = props => (
   <button onClick={props.checkCb} className="normalize-button"><i className={props.checked ? 'fa fa-check-square-o' : 'fa fa-square-o'} /></button>
 );
 CheckBox.propTypes = {
-  checkCb: React.PropTypes.func,
-  checked: React.PropTypes.bool.isRequired,
+  checkCb: PropTypes.func,
+  checked: PropTypes.bool.isRequired,
 };
 
 const PrimaryButton = props => (
@@ -20,11 +21,11 @@ const PrimaryButton = props => (
   </button>
 );
 PrimaryButton.propTypes = {
-  text: React.PropTypes.string,
-  isLoading: React.PropTypes.bool,
-  onClick: React.PropTypes.func,
-  disabled: React.PropTypes.bool,
-  className: React.PropTypes.string,
+  text: PropTypes.string,
+  isLoading: PropTypes.bool,
+  onClick: PropTypes.func,
+  disabled: PropTypes.bool,
+  className: PropTypes.string,
 };
 
 export { CheckBox, PrimaryButton };

@@ -1,9 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Router, Route, browserHistory } from 'react-router';
-import Cookies from 'js-cookie';
+import { Link, Route } from 'react-router-dom';
 
-import { initData } from './global/actions';
 import ErrorDialog from './global/errorDialog';
 
 import './main.scss';
@@ -14,12 +13,11 @@ const mapStateToProps = state =>
   });
 
 const mapDispatchToProps = {
-  initData,
 };
+const Test = () => <div>2</div>;
 
 class LoggedIn extends React.Component {
   componentWillMount() {
-    this.props.initData();
   }
 
   render() {
@@ -27,36 +25,35 @@ class LoggedIn extends React.Component {
       <div className="react-root">
         <div className="main-banner" />
         <div className="main-body">
-          hej
-          {this.props.children}
+          {JSON.stringify(this.props.match)}
+          <Link to={'/1/2'}>
+            Example topic
+          </Link>
         </div>
         <ErrorDialog error={this.props.error} />
+        <Route path={`${this.props.match.url}/2`} component={Test} />
+        <Route path={'/2'} component={Test} />
+        <Route path={'/1/2'} component={Test} />
+        <Route path={'2'} component={Test} />
       </div>
     );
   }
 }
 LoggedIn.propTypes = {
-  children: React.PropTypes.object,
-  error: React.PropTypes.object,
-  initData: React.PropTypes.func.isRequired,
+  children: PropTypes.object,
+  error: PropTypes.object,
 };
 const ConnectedLoggedIn = connect(mapStateToProps, mapDispatchToProps)(LoggedIn);
 
-const requireAuth = (nextState, replace) => {
-  // if (Cookies.get('login') === undefined) {
-  //   replace({
-  //     pathname: '/login',
-  //     state: { nextPathname: nextState.location.pathname },
-  //   });
-  // }
-};
 
-const Main = () => (
-  <Router history={browserHistory}>
-    <Route path="/" component={ConnectedLoggedIn} onEnter={requireAuth} />
-    {/* <Route path="/login" component={Login} />*/}
-    {/*<Route path="/settings" component={Settings} onEnter={requireAuth} />*/}
-  </Router>
-);
+const Main = () => {
+  // return[
+  // <Route path="/" component={ConnectedLoggedIn} />
+  // <Route path="/hej" component={ConnectedLoggedIn} />
+  //   ]};
+  console.log();
+  return [<Route path="/1" component={ConnectedLoggedIn} />, <Route path="/2" component={Test} />];
+  // return <div><Route path="/1" component={ConnectedLoggedIn} /><Route path="/2" component={Test} /></div>;
+};
 
 export default Main;

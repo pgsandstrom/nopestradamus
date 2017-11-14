@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
+import { BrowserRouter } from 'react-router-dom';
 import { AppContainer } from 'react-hot-loader';
 
 import Main from './main';
@@ -20,9 +21,11 @@ const content = document.getElementById('content');
 
 ReactDOM.render(
   <AppContainer>
-    <Provider store={store}>
-      <Main />
-    </Provider>
+    <BrowserRouter>
+      <Provider store={store}>
+        <Main />
+      </Provider>
+    </BrowserRouter>
   </AppContainer>,
   content,
 );
@@ -33,9 +36,11 @@ if (module.hot) {
     const UpdatedApp = require('./main').default; // eslint-disable-line global-require
     ReactDOM.render(
       <AppContainer>
-        <Provider store={store}>
-          <UpdatedApp />
-        </Provider>
+        <BrowserRouter>
+          <Provider store={store}>
+            <UpdatedApp />
+          </Provider>
+        </BrowserRouter>
       </AppContainer>,
       content,
     );

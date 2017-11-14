@@ -8,7 +8,7 @@ module.exports = {
     'webpack-dev-server/client?http://0.0.0.0:8080', // WebpackDevServer host and port
     'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors
     'react-hot-loader/patch',
-    './src/entry.jsx',
+    './src',
   ],
   output: { path: path.join(__dirname, '/assets/'), publicPath: '/assets/', filename: 'bundle_dev.js' },
   module: {

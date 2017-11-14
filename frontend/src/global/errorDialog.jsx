@@ -1,47 +1,40 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { dismissError } from './actions';
 
 import './errorDialog.scss';
 
-class ErrorDialog extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.handleOkClick = this.handleOkClick.bind(this);
+const ErrorDialog = (props) => {
+  if (!props || (!props.error)) {
+    return null;
   }
 
-  render() {
-    if (!this.props || (!this.props.error)) {
-      return null;
-    }
-
-    let technicalError;
-    if (this.props.error.technicalError != null && typeof this.props.error.technicalError === 'object') {
-      if (this.props.error.technicalError.message != null) {
-        technicalError = this.props.error.technicalError.message;
-      } else {
-        technicalError = JSON.stringify(this.props.error.technicalError);
-      }
+  let technicalError;
+  if (props.error.technicalError != null && typeof props.error.technicalError === 'object') {
+    if (props.error.technicalError.message != null) {
+      technicalError = props.error.technicalError.message;
     } else {
-      technicalError = this.props.error.technicalError;
+      technicalError = JSON.stringify(props.error.technicalError);
     }
-
-    return (
-      <div className="error-dialog-container">
-        <div className="error-dialog">
-          <div className="title">{this.props.error.title}</div>
-          <div className="body">{this.props.error.body}</div>
-          {technicalError && <TechnicalError message={technicalError} />}
-          <button className="primary-button" onClick={this.props.dismissError} autoFocus>OK</button>
-        </div>
-      </div>);
+  } else {
+    technicalError = props.error.technicalError;
   }
-}
+
+  return (
+    <div className="error-dialog-container">
+      <div className="error-dialog">
+        <div className="title">{props.error.title}</div>
+        <div className="body">{props.error.body}</div>
+        {technicalError && <TechnicalError message={technicalError} />}
+        <button className="primary-button" onClick={props.dismissError}>OK</button>
+      </div>
+    </div>);
+};
 ErrorDialog.propTypes = {
-  error: React.PropTypes.object,
-  dismissError: React.PropTypes.func.isRequired,
+  error: PropTypes.object,
+  dismissError: PropTypes.func.isRequired,
 };
 
 const TechnicalError = props => (
@@ -51,7 +44,7 @@ const TechnicalError = props => (
   </div>
 );
 TechnicalError.propTypes = {
-  message: React.PropTypes.string,
+  message: PropTypes.string,
 };
 
 
