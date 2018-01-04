@@ -1,0 +1,11 @@
+.idea/
+.settings/
+*.iml
+.DS_store
+.project
+
+node_modules/
+npm-debug.log
+
+config.dev.json
+release/

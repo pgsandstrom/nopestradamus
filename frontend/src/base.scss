@@ -1,0 +1,17 @@
+.base {
+  display: grid;
+  height: 100%;
+  grid-template-columns: 100vw;
+  grid-template-rows: 100px auto;
+
+  .first-stuff {
+    background: green;
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+  }
+  .second-stuff {
+    background: red;
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+  }
+}

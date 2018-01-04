@@ -1,14 +1,18 @@
 @import "./color";
-html {
-  height: 100%;
-  -ms-overflow-style: scrollbar;  // prevents IE11 from having transparent scrollbar that overlays the UI
-  overflow-y: scroll;
+@font-face {
+  font-family: 'Futura';
+  src: url('/assets/font/Futura-Book.woff');
 }
 
-body, #content, #content>* {
+html {
+  height: 100%;
+}
+
+body, #content {
   // An argument could be made to use min-height: 100% somewhere instead of height. However, IE11 can't handle flexboxes without specific height:
   // https://connect.microsoft.com/IE/feedback/details/802625/min-height-and-flexbox-flex-direction-column-dont-work-together-in-ie-10-11-preview
   height: 100%;
+  font-family: 'Futura', "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 input::-ms-clear {

@@ -9,6 +9,7 @@ import { AppContainer } from 'react-hot-loader';
 import Main from './main';
 import rootReducer from './rootReducer';
 
+import '../css/reset.scss';
 import '../css/global.scss';
 import '../css/_util_global.scss';
 import '../css/styles.scss';

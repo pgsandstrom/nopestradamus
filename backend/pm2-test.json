@@ -1,0 +1,18 @@
+{
+  "apps": [
+    {
+      "name": "nopestradamus-backend",
+      "script": "dist",
+      "args": [],
+      "watch": false,
+      "node_args": "--harmony",
+      "merge_logs": false,
+      "cwd": "/apps/nopestradamus/backend",
+      "log_date_format" : "YYYY-MM-DD HH:mm:ss",
+      "env": {
+        "NODE_ENV": "production",
+        "PROD_ENV": "false"
+      }
+    }
+  ]
+}

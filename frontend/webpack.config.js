@@ -53,7 +53,7 @@ module.exports = {
       '/api/v1/**/*': {
         changeOrigin: true,
         secure: false,
-        target: 'http://localhost:8088',
+        target: 'http://localhost:8090',
       },
     },
     historyApiFallback: true,

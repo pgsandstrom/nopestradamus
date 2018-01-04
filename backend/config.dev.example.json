@@ -1,0 +1,9 @@
+{
+  "//": "This is an example file. Create the real file without 'example' in the filename",
+  "database": {
+    "host": "localhost",
+    "user": "postgres",
+    "database": "nopestradamus",
+    "password": "insert password here"
+  }
+}

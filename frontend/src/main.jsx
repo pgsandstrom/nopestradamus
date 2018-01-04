@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link, Route } from 'react-router-dom';
+import { withRouter } from 'react-router';
+import { Route } from 'react-router-dom';
 
+import Base from './base';
+import Create from './prediction/create';
 import ErrorDialog from './global/errorDialog';
 
 import './main.scss';
@@ -14,46 +17,21 @@ const mapStateToProps = state =>
 
 const mapDispatchToProps = {
 };
-const Test = () => <div>2</div>;
 
-class LoggedIn extends React.Component {
-  componentWillMount() {
-  }
-
-  render() {
-    return (
-      <div className="react-root">
-        <div className="main-banner" />
-        <div className="main-body">
-          {JSON.stringify(this.props.match)}
-          <Link to={'/1/2'}>
-            Example topic
-          </Link>
-        </div>
-        <ErrorDialog error={this.props.error} />
-        <Route path={`${this.props.match.url}/2`} component={Test} />
-        <Route path={'/2'} component={Test} />
-        <Route path={'/1/2'} component={Test} />
-        <Route path={'2'} component={Test} />
-      </div>
-    );
-  }
-}
-LoggedIn.propTypes = {
-  children: PropTypes.object,
-  error: PropTypes.object,
-};
-const ConnectedLoggedIn = connect(mapStateToProps, mapDispatchToProps)(LoggedIn);
-
-
-const Main = () => {
-  // return[
-  // <Route path="/" component={ConnectedLoggedIn} />
-  // <Route path="/hej" component={ConnectedLoggedIn} />
-  //   ]};
-  console.log();
-  return [<Route path="/1" component={ConnectedLoggedIn} />, <Route path="/2" component={Test} />];
-  // return <div><Route path="/1" component={ConnectedLoggedIn} /><Route path="/2" component={Test} /></div>;
+const Main = props => (
+  <div className="react-root">
+    <div className="main-banner" >
+      Nopestradamus
+    </div>
+    <div className="main-body">
+      <Route path={'/create'} component={Create} />
+      <Route path={'/'} exact component={Base} />
+    </div>
+    <ErrorDialog error={props.error} />
+  </div>
+);
+Main.propTypes = {
+  error: PropTypes.string,
 };
 
-export default Main;
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Main));
