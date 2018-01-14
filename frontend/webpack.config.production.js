@@ -46,6 +46,6 @@ module.exports = {
   // This could in theory decrease size, but currently does not work:
   // devtool: 'source-map'
   resolve: {
-    extensions: ['', '.js', '.jsx'],
+    extensions: ['.js', '.jsx'],
   },
 };
