@@ -36,8 +36,7 @@ server.on('restifyError', (req, res, err, callback) => {
   return callback();
 });
 
-const port = config().port;
-server.listen(port, () => {
+server.listen(config().port, () => {
   console.log('%s listening at %s', server.name, server.url); // eslint-disable-line no-console
 });
 

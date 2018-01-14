@@ -12,8 +12,27 @@ module.exports = {
     'react/no-array-index-key': ['off'], // When a list does not have unique values and cannot be reordered, using index is ok
     'no-else-return': ['off'], // This prevents 'else {return x}'. I think it sometimes makes the code more logical, so we allow it
     'class-methods-use-this': ['off'], // Allow class methods that does not use this. Sometimes it is easier to read a method as a class method
-    'linebreak-style': ['off'], // linebreak style is automatically handled by git, we should not have to care about it
+    'linebreak-style': ['off'], // Linebreak style is automatically handled by git, we should not have to care about it
+    'import/prefer-default-export': ['off'], // Named exports are not an issue
 
-    'import/prefer-default-export': ['off'], // silly rule
+    'prefer-destructuring': ['error', { // Destructuring in expressions is not pretty
+      'VariableDeclarator': {
+        'array': true,
+        'object': true,
+      },
+      'AssignmentExpression': {
+        'array': false,
+        'object': false,
+      },
+    }, {
+      'enforceForRenamedProperties': false,
+    }],
+    'object-curly-newline': ['error', { // Consistency is enough, other rules becomes cumbersome
+      'ObjectExpression': { 'consistent': true },
+      'ObjectPattern': { 'consistent': true },
+    }],
+
+    'no-plusplus': ['off'], // While it shouldn't be used too often, it can be nice to use
+    'function-paren-newline': ['off'], // works like shit with prettier
   },
 };
