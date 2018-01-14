@@ -5,5 +5,5 @@ set -u
 git checkout .
 git fetch
 git rebase
-chmod -R 774 *
+chmod -R 755 *
 
