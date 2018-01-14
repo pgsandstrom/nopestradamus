@@ -1,6 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import TextAreaAutosize from 'react-autosize-textarea';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
+// import 'react-datepicker/dist/react-datepicker-cssmodules.css';
+import 'react-datepicker/dist/react-datepicker.css';
 
 import './create.scss';
 
@@ -11,7 +15,39 @@ export default class CreatePrediction extends React.Component {
       title: '',
       body: '',
       participantList: [''],
+      finishDate: moment().startOf('day'),
     };
+  }
+  onAddParticipant() {
+    console.log(this);
+    this.setState({ participantList: [...this.state.participantList, ''] });
+  }
+  onRemoveParticipant(index) {
+    const participantList = [...this.state.participantList];
+    participantList.splice(index, 1);
+    this.setState({ participantList });
+  }
+  onChangeParticipant(index, value) {
+    const participantList = [...this.state.participantList];
+    participantList[index] = value;
+    this.setState({ participantList });
+  }
+  onCreatePrediction() {
+    const data = {
+      title: this.state.title,
+      body: this.state.body,
+      finishDate: this.state.finishDate,
+      isPublic: true,
+      participantList: [],
+    };
+    const options = {
+      method: 'PUT',
+      body: JSON.stringify(data),
+      credentials: 'same-origin',
+    };
+    fetch('/api/v1/prediction', options)
+      .then(() => console.log('done'))
+      .catch(() => console.log('error'));
   }
   render() {
     return (
@@ -36,6 +72,12 @@ export default class CreatePrediction extends React.Component {
           />
         </div>
         <div>
+          <DatePicker
+            selected={this.state.finishDate}
+            onChange={e => this.setState({ finishDate: e })}
+          />
+        </div>
+        <div>
           Okay, so pls give the participants:
         </div>
         <div>
@@ -43,23 +85,14 @@ export default class CreatePrediction extends React.Component {
             (<Participant
               key={index}
               participant={this.state.participantList[index]}
-              onChange={(value) => {
-                const participantList = [...this.state.participantList];
-                participantList[index] = value;
-                this.setState({ participantList });
-              }}
-              onRemove={() => {
-                const participantList = [...this.state.participantList];
-                participantList.splice(index, 1);
-                this.setState({ participantList });
-              }}
+              onChange={value => this.onChangeParticipant(index, value)}
+              onRemove={() => this.onRemoveParticipant(index)}
             />))}
+          <button onClick={() => this.onAddParticipant()}>Add participant</button>
         </div>
-        <button onClick={() => {
-          this.setState({ participantList: [...this.state.participantList, ''] });
-        }}
-        >Add participant</button>
-
+        <div>
+          <button onClick={() => this.onCreatePrediction()}>CREATE PREDICTION</button>
+        </div>
       </div>
     );
   }

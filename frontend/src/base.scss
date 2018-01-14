@@ -1,16 +1,32 @@
+@import "../css/color";
 .base {
   display: grid;
   height: 100%;
-  grid-template-columns: 100vw;
-  grid-template-rows: 100px auto;
+  grid-template-columns: 100%;
+  grid-template-rows: 300px auto;
 
   .first-stuff {
-    background: green;
+    background: $gray4;
     grid-column: 1 / 2;
     grid-row: 1 / 2;
+    color: black;
+
+    .intro {
+      font-size: 1.5rem;
+      font-style: italic;
+    }
+    .outro {
+      font-size: 1.5rem;
+      font-style: italic;
+    }
+    .quotes {
+      > span {
+        display: block;
+      }
+    }
   }
   .second-stuff {
-    background: red;
+    background: $gray4;
     grid-column: 1 / 2;
     grid-row: 2 / 3;
   }

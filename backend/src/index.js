@@ -7,6 +7,9 @@ import encodeUtf8Plugin from './util/encodeUtf8Plugin';
 import routes from './routes';
 import noCachePlugin from './util/noCachePlugin';
 
+import { init as schedulerInit } from './controller/scheduler';
+import { sendMail } from './controller/mailer';
+
 const server = restify.createServer();
 
 const { plugins } = restify;
@@ -35,4 +38,7 @@ server.on('restifyError', (req, res, err, callback) => {
 server.listen(8090, () => {
   console.log('%s listening at %s', server.name, server.url); // eslint-disable-line no-console
 });
+
+schedulerInit();
+sendMail();
 
