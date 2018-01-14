@@ -6,6 +6,7 @@ import restify from 'restify';
 import encodeUtf8Plugin from './util/encodeUtf8Plugin';
 import routes from './routes';
 import noCachePlugin from './util/noCachePlugin';
+import config from './util/config';
 
 import { init as schedulerInit } from './controller/scheduler';
 import { sendMail } from './controller/mailer';
@@ -35,7 +36,8 @@ server.on('restifyError', (req, res, err, callback) => {
   return callback();
 });
 
-server.listen(8090, () => {
+const port = config().port;
+server.listen(port, () => {
   console.log('%s listening at %s', server.name, server.url); // eslint-disable-line no-console
 });
 
