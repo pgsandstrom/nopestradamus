@@ -9,7 +9,6 @@ import noCachePlugin from './util/noCachePlugin';
 import config from './util/config';
 
 import { init as schedulerInit } from './controller/scheduler';
-import { sendMail } from './controller/mailer';
 
 const server = restify.createServer();
 
@@ -41,5 +40,4 @@ server.listen(config().port, () => {
 });
 
 schedulerInit();
-sendMail();
 

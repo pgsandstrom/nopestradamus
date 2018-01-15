@@ -1,26 +1,44 @@
 import nodemailer from 'nodemailer';
+import moment from 'moment';
 
-// // create reusable transporter object using the default SMTP transport
-// const transporter = nodemailer.createTransport('smtps://user%40gmail.com:pass@smtp.gmail.com');
-//
-// // setup e-mail data with unicode symbols
-// const mailOptions = {
-//   from: '"Fred Foo ?" <foo@blurdybloop.com>', // sender address
-//   to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
-//   subject: 'Hello ✔', // Subject line
-//   text: 'Hello world ?', // plaintext body
-//   html: '<b>Hello world ?</b>', // html body
-// };
-//
-// // send mail with defined transport object
-// transporter.sendMail(mailOptions, (error, info) => {
-//   if (error) {
-//     return console.log(error);
-//   }
-//   console.log(`Message sent: ${info.response}`);
-// });
+export const sendAcceptMail = async (receiver, creatorMail, title, body, finishDate, betHash, acceptHash) => {
+  const mailTitle = `Your opinion has been requested by ${creatorMail}!`;
+  const mailBody = `
+<div>
+<div>
+${creatorMail} has asked you to accept a bet! The bet is described below
+</div>
+<div style="background:#a3a3a3">
+  <h3>${title}</h3>
+  <div>${body}</div>
+</div>
+<div>The bet ends at ${moment(finishDate).format('YYYY MM DD')}. At the given date, you will all receive a mail and be confronted with your predictions!</div>
+<div>To accept the bet, click the following link. If you dont want to accept, just ignore this mail and perhaps mail for silly friend</div>
+<a href="http://nopestradamus.com/accept/${acceptHash}">I accept this bet!</a>
+<div>To get an overview of the bet before you accept
+<a href="http://nopestradamus.com/view/${betHash}">click here</a>
+</div>
+</div>`;
+  return sendMail(receiver, mailTitle, mailBody);
+};
 
-export const sendMail = async () => {
+export const sendEndMail = async (receiver, creatorMail, title, body, acceptedDate, betHash) => {
+  const mailTitle = `Your bet from ${creatorMail} has finished!!!`;
+  const mailBody = `
+<div>
+<div>A bet was accepted by you on ${moment(acceptedDate).format('YYYY MM DD')} by ${creatorMail}. It has now finished! Here is the bet:</div>
+<div style="background:#a3a3a3">
+  <h3>${title}</h3>
+  <div>${body}</div>
+</div>
+<div>To get an overview of the bet 
+<a href="http://nopestradamus.com/view/${betHash}">click here</a>
+<div>Now you must discuss who won the bet!</div>
+</div>`;
+  return sendMail(receiver, mailTitle, mailBody);
+};
+
+const sendMail = async (receiver, title, body) => {
   const transporter = nodemailer.createTransport({
     host: 'localhost',
     port: 25,
@@ -29,15 +47,16 @@ export const sendMail = async () => {
 
   const mailOptions = {
     from: '"Nopestradamus" <no-reply@nopestradamus.com>',
-    to: ['pg.sandstrom@gmail.com'],
-    subject: 'test',
-    html: 'hello lol',
+    to: [receiver],
+    subject: title,
+    html: body,
   };
 
   try {
     await transporter.verify();
-    await transporter.sendMail(mailOptions);
+    return transporter.sendMail(mailOptions);
   } catch (e) {
     console.log('send mail fail');
+    throw e;
   }
 };

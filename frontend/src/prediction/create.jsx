@@ -14,6 +14,7 @@ export default class CreatePrediction extends React.Component {
     this.state = {
       title: '',
       body: '',
+      creator: '',
       participantList: [''],
       finishDate: moment().startOf('day'),
     };
@@ -36,9 +37,10 @@ export default class CreatePrediction extends React.Component {
     const data = {
       title: this.state.title,
       body: this.state.body,
+      creator: this.state.creator,
       finishDate: this.state.finishDate,
       isPublic: true,
-      participantList: [],
+      participantList: this.state.participantList,
     };
     const options = {
       method: 'PUT',
@@ -78,7 +80,13 @@ export default class CreatePrediction extends React.Component {
           />
         </div>
         <div>
-          Okay, so pls give the participants:
+          Here is YOUR mail. You will receive a verification mail.
+        </div>
+        <div>
+          <input className="standard-input" value={this.state.creator} onChange={e => this.setState({ creator: e.target.value })} />
+        </div>
+        <div>
+          Okay, so pls give the other participants (if there are any)
         </div>
         <div>
           {this.state.participantList.map((participant, index) =>
