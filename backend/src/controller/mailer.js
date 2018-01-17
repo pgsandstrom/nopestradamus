@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer';
 import moment from 'moment';
 
 export const sendAcceptMail = async (receiver, creatorMail, title, body, finishDate, betHash, acceptHash) => {
+  console.log(`sending accept mail to ${receiver}`);
   const mailTitle = `Your opinion has been requested by ${creatorMail}!`;
   const mailBody = `
 <div>
@@ -23,6 +24,7 @@ ${creatorMail} has asked you to accept a bet! The bet is described below
 };
 
 export const sendEndMail = async (receiver, creatorMail, title, body, acceptedDate, betHash) => {
+  console.log(`sending end mail to ${receiver}`);
   const mailTitle = `Your bet from ${creatorMail} has finished!!!`;
   const mailBody = `
 <div>

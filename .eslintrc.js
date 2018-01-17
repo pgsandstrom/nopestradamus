@@ -17,7 +17,7 @@ module.exports = {
 
     'prefer-destructuring': ['error', { // Destructuring in expressions is not pretty
       'VariableDeclarator': {
-        'array': true,
+        'array': false,
         'object': true,
       },
       'AssignmentExpression': {
