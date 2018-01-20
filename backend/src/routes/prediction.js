@@ -1,4 +1,5 @@
 import { getPredictions, getPrediction, createPrediction } from '../controller/prediction';
+import { getError } from '../util/genericError';
 
 export default (server) => {
   server.get('/api/v1/prediction', async (req, res, next) => {
@@ -16,8 +17,12 @@ export default (server) => {
 
   server.put('/api/v1/prediction', async (req, res, next) => {
     const body = JSON.parse(req.body);
-    await createPrediction(body.title, body.body, body.finishDate, body.isPublic, body.creator, body.participantList);
-    res.send('ok');
+    try {
+      await createPrediction(body.title, body.body, body.finishDate, body.isPublic, body.creater, body.participantList);
+      res.send('ok');
+    } catch (e) {
+      next(getError(e));
+    }
     next();
   });
 };

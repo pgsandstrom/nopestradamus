@@ -15,10 +15,10 @@ module.exports = {
     'linebreak-style': ['off'], // Linebreak style is automatically handled by git, we should not have to care about it
     'import/prefer-default-export': ['off'], // Named exports are not an issue
 
-    'prefer-destructuring': ['error', { // Destructuring in expressions is not pretty
+    'prefer-destructuring': ['error', { // Destructuring in is not always pretty. Especially not in expressions
       'VariableDeclarator': {
         'array': false,
-        'object': true,
+        'object': false,
       },
       'AssignmentExpression': {
         'array': false,

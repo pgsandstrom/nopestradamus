@@ -14,7 +14,7 @@ export default class CreatePrediction extends React.Component {
     this.state = {
       title: '',
       body: '',
-      creator: '',
+      creater: '',
       participantList: [''],
       finishDate: moment().startOf('day'),
     };
@@ -37,7 +37,7 @@ export default class CreatePrediction extends React.Component {
     const data = {
       title: this.state.title,
       body: this.state.body,
-      creator: this.state.creator,
+      creater: this.state.creater,
       finishDate: this.state.finishDate,
       isPublic: true,
       participantList: this.state.participantList,
@@ -83,7 +83,7 @@ export default class CreatePrediction extends React.Component {
           Here is YOUR mail. You will receive a verification mail.
         </div>
         <div>
-          <input className="standard-input" value={this.state.creator} onChange={e => this.setState({ creator: e.target.value })} />
+          <input className="standard-input" value={this.state.creater} onChange={e => this.setState({ creater: e.target.value })} />
         </div>
         <div>
           Okay, so pls give the other participants (if there are any)
