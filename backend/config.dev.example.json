@@ -3,7 +3,7 @@
   "database": {
     "host": "localhost",
     "user": "postgres",
-    "database": "nopestradamus",
+    "database": "nopestradamus_dev",
     "password": "insert password here"
   },
   "port": 8088
