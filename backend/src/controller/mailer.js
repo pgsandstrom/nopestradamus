@@ -14,7 +14,7 @@ export const sendCreaterAcceptMail = async (prediction) => {
   <div>${prediction.body}</div>
 </div>
 <div>To validate your mail press this link. Then all the participants will be contacted.</div>
-<a href="http://nopestradamus.com/createraccept/${prediction.hash}">I validate this bet!</a>
+<a href="http://nopestradamus.com/creater/accept/${prediction.hash}">I validate this bet!</a>
 <div>To get an overview of the bet before you accept
 <a href="http://nopestradamus.com/view/${prediction.hash}">click here</a>
 </div>

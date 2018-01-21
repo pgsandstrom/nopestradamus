@@ -67,3 +67,8 @@ export const createParticipant = (predictionHash, mail) => {
   const hash = uuid();
   return query(SQL`INSERT INTO participant (hash, prediction_hash, mail) VALUES (${hash}, ${predictionHash}, ${mail})`);
 };
+
+// TODO throw exceptions when stuff miss
+export const updateCreaterAcceptStatus = (predictionHash, hash, accepted) => query(SQL`UPDATE creater SET accepted = ${accepted}, accepted_date = now() where prediction_hash = ${predictionHash} AND hash = ${hash}`);
+
+export const updateParticipantAcceptStatus = (predictionHash, hash, accepted) => query(SQL`UPDATE participant SET accepted = ${accepted}, accepted_date = now() where prediction_hash = ${predictionHash} AND hash = ${hash}`);

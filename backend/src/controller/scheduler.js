@@ -23,7 +23,7 @@ export const init = async () => {
 
 let isWaiting = false;
 
-const ensureWaitingForBet = async () => {
+export const ensureWaitingForBet = async () => {
   if (isWaiting === false) {
     const predictionList = await getNextPrediction();
     if (predictionList.length > 0) {
