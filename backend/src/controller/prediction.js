@@ -3,12 +3,29 @@ import uuid from 'uuid/v4';
 import { query, SQL } from '../util/db';
 import { ensureWaitingForBet } from './scheduler';
 
+const ensureSingleGet = (cursor) => {
+  if (cursor.rows.length !== 1) {
+    throw new Error(`Cursor did not contain single row. Count: ${cursor.rows.length}`);
+  } else {
+    return cursor.rows[0];
+  }
+};
+
+export const getCensoredPrediction = prediction => ({
+  ...prediction,
+  creater: {
+    ...prediction.creater,
+    hash: undefined,
+  },
+  participants: prediction.participants.map(participant => ({ ...participant, hash: undefined })),
+});
+
 export const getPredictions = () =>
   query('SELECT title, body, hash from prediction where public is true', []).then(cursor => cursor.rows);
 
 export const getPrediction = async (hash) => {
-  const prediction = await query(SQL`SELECT title, body, hash, finish_date from prediction where hash = ${hash}`).then(cursor => cursor.rows);
-  const creater = await query(SQL`SELECT hash, mail, accepted, accepted_mail_sent, end_mail_sent from creater where prediction_hash = ${hash}`).then(cursor => cursor.rows[0]);
+  const prediction = await query(SQL`SELECT title, body, hash, finish_date from prediction where hash = ${hash}`).then(cursor => ensureSingleGet(cursor));
+  const creater = await query(SQL`SELECT hash, mail, accepted, accepted_mail_sent, end_mail_sent from creater where prediction_hash = ${hash}`).then(cursor => ensureSingleGet(cursor));
   const participants = await query(SQL`SELECT hash, mail, accepted, accepted_mail_sent, end_mail_sent from participant where prediction_hash = ${hash}`).then(cursor => cursor.rows);
 
   return {
@@ -47,9 +64,6 @@ JOIN creater on prediction.hash = creater.prediction_hash
 WHERE prediction.finish_date < now() and participant.end_mail_sent = false
   AND creater.accepted = true
 `).then(cursor => cursor.rows);
-
-export const getPredictionMails = hash => query(`SELECT hash, mail FROM prediction JOIN participant on prediction.hash = participant.prediction_hash WHERE hash = ${hash}`)
-  .then(cursor => cursor.rows);
 
 export const createPrediction = async (title, body, finishDate, isPublic, creater, participantList) => {
   const hash = uuid();
