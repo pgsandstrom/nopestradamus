@@ -14,7 +14,9 @@ export const sendCreaterAcceptMail = async (prediction) => {
   <div>${prediction.body}</div>
 </div>
 <div>To validate your mail press this link. Then all the participants will be contacted.</div>
-<a href="http://nopestradamus.com/creater/accept/${prediction.hash}">I validate this bet!</a>
+<a href="http://nopestradamus.com/prediction/${prediction.hash}/creater/${prediction.creater.hash}/accept">I validate this bet!</a>
+<div>Was all this a huge mistake?</div>
+<a href="http://nopestradamus.com/prediction/${prediction.hash}/creater/${prediction.creater.hash}/deny">I deny this bet!</a>
 <div>To get an overview of the bet before you accept
 <a href="http://nopestradamus.com/view/${prediction.hash}">click here</a>
 </div>
@@ -22,7 +24,7 @@ export const sendCreaterAcceptMail = async (prediction) => {
   return sendMail(prediction.creater.mail, mailTitle, mailBody);
 };
 
-export const sendAcceptMail = async (receiver, createrMail, title, body, finishDate, betHash, acceptHash) => {
+export const sendAcceptMail = async (receiver, createrMail, title, body, finishDate, predictionHash, acceptHash) => {
   console.log(`sending accept mail to ${receiver}`);
   const mailTitle = `Your opinion has been requested by ${createrMail}!`;
   const mailBody = `
@@ -36,17 +38,17 @@ ${createrMail} has asked you to accept a bet! The bet is described below
 </div>
 <div>The bet ends at ${moment(finishDate).format('YYYY MM DD')}. At the given date, you will all receive a mail and be confronted with your predictions!</div>
 <div>To accept the bet, click the following link.</div>
-<a href="http://nopestradamus.com/accept/${acceptHash}">I accept this bet!</a>
+<a href="http://nopestradamus.com/prediction/${predictionHash}/participant/${acceptHash}/accept">I accept this bet!</a>
 <div>To deny the bet, click the following link.</div>
-<a href="http://nopestradamus.com/deny/${acceptHash}">I deny this bet!</a>
+<a href="http://nopestradamus.com/prediction/${predictionHash}/participant/${acceptHash}/deny">I deny this bet!</a>
 <div>To get an overview of the bet before you accept
-<a href="http://nopestradamus.com/view/${betHash}">click here</a>
+<a href="http://nopestradamus.com/view/${predictionHash}">click here</a>
 </div>
 </div>`;
   return sendMail(receiver, mailTitle, mailBody);
 };
 
-export const sendEndMail = async (receiver, createrMail, title, body, acceptedDate, betHash) => {
+export const sendEndMail = async (receiver, createrMail, title, body, acceptedDate, predictionHash) => {
   console.log(`sending end mail to ${receiver}`);
   const mailTitle = `Your bet from ${createrMail} has finished!!!`;
   const mailBody = `
@@ -57,7 +59,7 @@ export const sendEndMail = async (receiver, createrMail, title, body, acceptedDa
   <div>${body}</div>
 </div>
 <div>To get an overview of the bet 
-<a href="http://nopestradamus.com/view/${betHash}">click here</a>
+<a href="http://nopestradamus.com/view/${predictionHash}">click here</a>
 <div>Now you must discuss who won the bet!</div>
 </div>`;
   return sendMail(receiver, mailTitle, mailBody);
