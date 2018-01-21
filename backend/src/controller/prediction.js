@@ -1,6 +1,7 @@
 import uuid from 'uuid/v4';
 
 import { query, SQL } from '../util/db';
+import { ensureWaitingForBet } from './scheduler';
 
 export const getPredictions = () =>
   query('SELECT title, body, hash from prediction where public is true', []).then(cursor => cursor.rows);
@@ -69,6 +70,9 @@ export const createParticipant = (predictionHash, mail) => {
 };
 
 // TODO throw exceptions when stuff miss
-export const updateCreaterAcceptStatus = (predictionHash, hash, accepted) => query(SQL`UPDATE creater SET accepted = ${accepted}, accepted_date = now() where prediction_hash = ${predictionHash} AND hash = ${hash}`);
+export const updateCreaterAcceptStatus = async (predictionHash, hash, accepted) => {
+  await query(SQL`UPDATE creater SET accepted = ${accepted}, accepted_date = now() where prediction_hash = ${predictionHash} AND hash = ${hash}`);
+  ensureWaitingForBet();
+};
 
 export const updateParticipantAcceptStatus = (predictionHash, hash, accepted) => query(SQL`UPDATE participant SET accepted = ${accepted}, accepted_date = now() where prediction_hash = ${predictionHash} AND hash = ${hash}`);
