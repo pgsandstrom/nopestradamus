@@ -26,12 +26,12 @@ const Main = props => (
     </div>
     <div className="main-body">
       <Switch>
-        <Route path={'/prediction/create'} component={Create} />
-        <Route path={'/prediction/:predictionHash/creater/:createrHash'} component={Create} />
-        <Route path={'/prediction/:predictionHash/participant/:createrHash'} component={Create} />
-        <Route path={'/prediction/:hash'} component={View} />
+        <Route path="/prediction/create" component={Create} />
+        <Route path="/prediction/:predictionHash/creater/:createrHash" component={Create} />
+        <Route path="/prediction/:predictionHash/participant/:createrHash" component={Create} />
+        <Route path="/prediction/:hash" component={View} />
       </Switch>
-      <Route path={'/'} exact component={Base} />
+      <Route path="/" exact component={Base} />
     </div>
     <ErrorDialog error={props.error} />
   </div>

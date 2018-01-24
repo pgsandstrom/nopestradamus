@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { getLatestPredictions } from './prediction/actions';
 
 import './base.scss';
+import PredictionList from './prediction/component/predictionList';
 
 class Base extends React.Component {
   componentDidMount() {
@@ -31,7 +32,9 @@ class Base extends React.Component {
           </div>
           <Link to={'/create'} className="primary-link">Create a prediction!</Link>
         </div>
-        <div className="second-stuff" />
+        <div className="second-stuff" >
+          <PredictionList predictionList={this.props.latestPredictions} />
+        </div>
       </div>);
   }
 }
