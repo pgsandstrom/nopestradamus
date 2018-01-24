@@ -1,4 +1,5 @@
-import { ERROR_RAISED, ERROR_DISMISSED } from './constants';
+export const ERROR_RAISED = 'ERROR_RAISED';
+export const ERROR_DISMISSED = 'ERROR_DISMISSED';
 
 const initialState = {
   dropdownVisible: true,

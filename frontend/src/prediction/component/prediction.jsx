@@ -10,7 +10,10 @@ const Prediction = (props) => {
   }
   return (
     <div>
-      hej
+      <h1>{props.prediction.title}</h1>
+      <div>
+        {props.prediction.body}
+      </div>
     </div>
   );
 };

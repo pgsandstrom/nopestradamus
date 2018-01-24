@@ -1,9 +1,11 @@
 import { combineReducers } from 'redux';
 
-import globalReducer from './global/reducer';
+import global from './global/reducer';
+import prediction from './prediction/reducer';
 
 const rootReducer = combineReducers({
-  globalReducer,
+  global,
+  prediction,
 });
 
 export default rootReducer;

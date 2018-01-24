@@ -1,14 +1,17 @@
 import {
-  getPredictions, getPrediction, createPrediction, updateCreaterAccepted, updateParticipantAccepted,
-  getCensoredPrediction
+  getLatestPredictions,
+  getPrediction,
+  createPrediction,
+  updateCreaterAccepted,
+  updateParticipantAccepted,
+  getCensoredPrediction,
 } from '../controller/prediction';
 import { getError } from '../util/genericError';
 
 export default (server) => {
   server.get('/api/v1/prediction', async (req, res, next) => {
-    const predictions = await getPredictions();
-    const censoredPredictions = predictions.map(prediction => getCensoredPrediction(prediction));
-    res.send(censoredPredictions);
+    const predictions = await getLatestPredictions();
+    res.send(predictions);
     next();
   });
 

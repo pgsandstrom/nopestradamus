@@ -20,8 +20,8 @@ export const getCensoredPrediction = prediction => ({
   participants: prediction.participants.map(participant => ({ ...participant, hash: undefined })),
 });
 
-export const getPredictions = () =>
-  query('SELECT title, body, hash from prediction where public is true', []).then(cursor => cursor.rows);
+export const getLatestPredictions = () =>
+  query('SELECT title, body, hash from prediction where public is true ORDER BY created LIMIT 20').then(cursor => cursor.rows);
 
 export const getPrediction = async (hash) => {
   const prediction = await query(SQL`SELECT title, body, hash, finish_date from prediction where hash = ${hash}`).then(cursor => ensureSingleGet(cursor));

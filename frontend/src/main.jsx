@@ -13,7 +13,7 @@ import './main.scss';
 
 const mapStateToProps = state =>
   ({
-    error: state.globalReducer.error,
+    error: state.global.error,
   });
 
 const mapDispatchToProps = {

@@ -1,4 +1,4 @@
-import { ERROR_RAISED, ERROR_DISMISSED } from './constants';
+import { ERROR_RAISED, ERROR_DISMISSED } from './reducer';
 
 export const raiseError = (title, body, technicalError) => ({
   type: ERROR_RAISED,
