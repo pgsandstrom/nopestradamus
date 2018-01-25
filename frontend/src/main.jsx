@@ -7,7 +7,9 @@ import { Route } from 'react-router-dom';
 import Base from './base';
 import Create from './prediction/create';
 import View from './prediction/view';
+import CreaterAccept from './prediction/createrAccept';
 import ErrorDialog from './global/errorDialog';
+import NotFound from './notFound';
 
 import './main.scss';
 
@@ -27,9 +29,12 @@ const Main = props => (
     <div className="main-body">
       <Switch>
         <Route path="/prediction/create" component={Create} />
+        <Route path="/prediction/:predictionHash/creater/:createrHash" component={CreaterAccept} />
         <Route path="/prediction/:predictionHash/creater/:createrHash" component={Create} />
-        <Route path="/prediction/:predictionHash/participant/:createrHash" component={Create} />
+        <Route path="/prediction/:predictionHash/participant/:participantHash" component={Create} />
+        <Route path="/prediction/:predictionHash/participant/:participantHash" component={Create} />
         <Route path="/prediction/:hash" component={View} />
+        <Route component={NotFound} />
       </Switch>
       <Route path="/" exact component={Base} />
     </div>

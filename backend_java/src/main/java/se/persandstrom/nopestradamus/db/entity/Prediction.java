@@ -37,8 +37,8 @@ public class Prediction {
 	public Prediction() {
 	}
 
-	public Prediction(PredictionVersion initialPrediciton) {
-		this.predictions = Arrays.asList(initialPrediciton);
+	public Prediction(PredictionVersion initialPrediction) {
+		this.predictions = Arrays.asList(initialPrediction);
 		this.created = new Date();
 	}
 

@@ -2,25 +2,33 @@ import {
   getLatestPredictions,
   getPrediction,
   createPrediction,
-  updateCreaterAccepted,
-  updateParticipantAccepted,
+  updateCreaterAcceptStatus,
+  updateParticipantAcceptStatus,
   getCensoredPrediction,
 } from '../controller/prediction';
 import { getError } from '../util/genericError';
 
 export default (server) => {
   server.get('/api/v1/prediction', async (req, res, next) => {
-    const predictions = await getLatestPredictions();
-    res.send(predictions);
-    next();
+    try {
+      const predictions = await getLatestPredictions();
+      res.send(predictions);
+      next();
+    } catch (e) {
+      next(getError(e));
+    }
   });
 
   server.get('/api/v1/prediction/:hash', async (req, res, next) => {
-    const hash = req.params.hash;
-    const prediction = await getPrediction(hash);
-    const censoredPrediction = getCensoredPrediction(prediction);
-    res.send(censoredPrediction);
-    next();
+    try {
+      const hash = req.params.hash;
+      const prediction = await getPrediction(hash);
+      const censoredPrediction = getCensoredPrediction(prediction);
+      res.send(censoredPrediction);
+      next();
+    } catch (e) {
+      next(getError(e));
+    }
   });
 
   server.put('/api/v1/prediction', async (req, res, next) => {
@@ -34,51 +42,51 @@ export default (server) => {
     next();
   });
 
-  server.post('/api/v1/prediction/:prediction/creater/:hash/accept/', async (req, res, next) => {
+  server.post('/api/v1/prediction/:prediction/creater/:hash/accept', async (req, res, next) => {
     const predictionHash = req.params.prediction;
     const hash = req.params.hash;
     try {
-      await updateCreaterAccepted(predictionHash, hash, true);
+      await updateCreaterAcceptStatus(predictionHash, hash, true);
       res.send('ok');
+      next();
     } catch (e) {
       next(getError(e));
     }
-    next();
   });
 
-  server.post('/api/v1/prediction/:prediction/creater/:hash/deny/', async (req, res, next) => {
+  server.post('/api/v1/prediction/:prediction/creater/:hash/deny', async (req, res, next) => {
     const predictionHash = req.params.prediction;
     const hash = req.params.hash;
     try {
-      await updateCreaterAccepted(predictionHash, hash, false);
+      await updateCreaterAcceptStatus(predictionHash, hash, false);
       res.send('ok');
+      next();
     } catch (e) {
       next(getError(e));
     }
-    next();
   });
 
   server.post('/api/v1/prediction/:prediction/participant/:hash/accept/', async (req, res, next) => {
     const predictionHash = req.params.prediction;
     const hash = req.params.hash;
     try {
-      await updateParticipantAccepted(predictionHash, hash, true);
+      await updateParticipantAcceptStatus(predictionHash, hash, true);
       res.send('ok');
+      next();
     } catch (e) {
       next(getError(e));
     }
-    next();
   });
 
   server.post('/api/v1/prediction/:prediction/participant/:hash/deny/', async (req, res, next) => {
     const predictionHash = req.params.prediction;
     const hash = req.params.hash;
     try {
-      await updateParticipantAccepted(predictionHash, hash, false);
+      await updateParticipantAcceptStatus(predictionHash, hash, false);
       res.send('ok');
+      next();
     } catch (e) {
       next(getError(e));
     }
-    next();
   });
 };

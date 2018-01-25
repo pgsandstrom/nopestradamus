@@ -8,7 +8,7 @@ export default class ViewPrediction extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      predicition: null,
+      prediction: null,
     };
   }
   componentDidMount() {
@@ -21,6 +21,9 @@ export default class ViewPrediction extends React.Component {
       .catch(() => console.log('error'));
   }
   render() {
+    if (this.state.prediction == null) {
+      return null;
+    }
     return (
       <div>
         <Prediction prediction={this.state.prediction} />

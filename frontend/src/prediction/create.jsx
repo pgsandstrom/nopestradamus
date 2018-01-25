@@ -20,7 +20,6 @@ export default class CreatePrediction extends React.Component {
     };
   }
   onAddParticipant() {
-    console.log(this);
     this.setState({ participantList: [...this.state.participantList, ''] });
   }
   onRemoveParticipant(index) {
