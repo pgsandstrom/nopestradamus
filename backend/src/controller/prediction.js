@@ -1,8 +1,7 @@
 import uuid from 'uuid/v4';
 
 import { query, SQL } from '../util/db';
-import { ensureWaitingForBet } from './scheduler';
-import { validateAccountExistance } from './account';
+import { confirmAccountExistance, validateAccount } from './account';
 
 const ensureSingleGet = (cursor) => {
   if (cursor.rows.length !== 1) {
@@ -76,20 +75,26 @@ export const createPrediction = async (title, body, finishDate, isPublic, create
 
 export const createCreater = async (predictionHash, mail) => {
   const hash = uuid();
-  await validateAccountExistance();
+  await confirmAccountExistance();
   return query(SQL`INSERT INTO creater (hash, prediction_hash, mail) VALUES (${hash}, ${predictionHash}, ${mail})`);
 };
 
 export const createParticipant = async (predictionHash, mail) => {
   const hash = uuid();
-  await validateAccountExistance();
+  await confirmAccountExistance();
   return query(SQL`INSERT INTO participant (hash, prediction_hash, mail) VALUES (${hash}, ${predictionHash}, ${mail})`);
 };
 
 // TODO throw exceptions when stuff miss
 export const updateCreaterAcceptStatus = async (predictionHash, hash, accepted) => {
   await query(SQL`UPDATE creater SET accepted = ${accepted}, accepted_date = now() where prediction_hash = ${predictionHash} AND hash = ${hash}`);
-  ensureWaitingForBet();
+  const prediction = await getPrediction(predictionHash);
+  return validateAccount(prediction.creater.mail);
 };
 
-export const updateParticipantAcceptStatus = (predictionHash, hash, accepted) => query(SQL`UPDATE participant SET accepted = ${accepted}, accepted_date = now() where prediction_hash = ${predictionHash} AND hash = ${hash}`);
+export const updateParticipantAcceptStatus = async (predictionHash, hash, accepted) => {
+  await query(SQL`UPDATE participant SET accepted = ${accepted}, accepted_date = now() where prediction_hash = ${predictionHash} AND hash = ${hash}`);
+  const prediction = await getPrediction(predictionHash);
+  const participant = prediction.participants.find(p => p.hash === hash);
+  return validateAccount(participant.mail);
+};

@@ -5,7 +5,8 @@ DROP TABLE IF EXISTS participant;
 
 CREATE TABLE mail (
 	mail TEXT PRIMARY KEY,
-	hash TEXT NOT NULL
+	hash TEXT NOT NULL,
+	validated BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE prediction (
