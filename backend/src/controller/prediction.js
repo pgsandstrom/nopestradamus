@@ -2,6 +2,7 @@ import uuid from 'uuid/v4';
 
 import { query, SQL } from '../util/db';
 import { confirmAccountExistance, validateAccount } from './account';
+import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './scheduler';
 
 const ensureSingleGet = (cursor) => {
   if (cursor.rows.length !== 1) {
@@ -24,9 +25,9 @@ export const getLatestPredictions = () =>
   query('SELECT title, body, hash from prediction where public is true ORDER BY created LIMIT 20').then(cursor => cursor.rows);
 
 export const getPrediction = async (hash) => {
-  const prediction = await query(SQL`SELECT title, body, hash, finish_date from prediction where hash = ${hash}`).then(cursor => ensureSingleGet(cursor));
-  const creater = await query(SQL`SELECT hash, mail, accepted, accepted_mail_sent, end_mail_sent from creater where prediction_hash = ${hash}`).then(cursor => ensureSingleGet(cursor));
-  const participants = await query(SQL`SELECT hash, mail, accepted, accepted_mail_sent, end_mail_sent from participant where prediction_hash = ${hash}`).then(cursor => cursor.rows);
+  const prediction = await query(SQL`SELECT title, body, hash, finish_date FROM prediction WHERE hash = ${hash}`).then(cursor => ensureSingleGet(cursor));
+  const creater = await query(SQL`SELECT hash, mail, accepted, accepted_mail_sent, end_mail_sent FROM creater WHERE prediction_hash = ${hash}`).then(cursor => ensureSingleGet(cursor));
+  const participants = await query(SQL`SELECT hash, mail, accepted, accepted_mail_sent, end_mail_sent FROM participant WHERE prediction_hash = ${hash}`).then(cursor => cursor.rows);
 
   return {
     ...prediction,
@@ -70,26 +71,28 @@ export const createPrediction = async (title, body, finishDate, isPublic, create
   await query(SQL`INSERT INTO prediction (title, body, hash, finish_date, public) VALUES(${title}, ${body}, ${hash}, ${finishDate}, ${isPublic})`);
   await createCreater(hash, creater);
   const promises = participantList.map(participant => createParticipant(hash, participant));
-  return Promise.all(promises);
+  await Promise.all(promises);
+  handleUnsentCreaterAcceptEmail(hash);
 };
 
 export const createCreater = async (predictionHash, mail) => {
   const hash = uuid();
-  await confirmAccountExistance();
+  await confirmAccountExistance(mail);
   return query(SQL`INSERT INTO creater (hash, prediction_hash, mail) VALUES (${hash}, ${predictionHash}, ${mail})`);
 };
 
 export const createParticipant = async (predictionHash, mail) => {
   const hash = uuid();
-  await confirmAccountExistance();
+  await confirmAccountExistance(mail);
   return query(SQL`INSERT INTO participant (hash, prediction_hash, mail) VALUES (${hash}, ${predictionHash}, ${mail})`);
 };
 
-// TODO throw exceptions when stuff miss
+// TODO throw exceptions when stuff miss?
 export const updateCreaterAcceptStatus = async (predictionHash, hash, accepted) => {
   await query(SQL`UPDATE creater SET accepted = ${accepted}, accepted_date = now() where prediction_hash = ${predictionHash} AND hash = ${hash}`);
   const prediction = await getPrediction(predictionHash);
-  return validateAccount(prediction.creater.mail);
+  await validateAccount(prediction.creater.mail);
+  handleUnsentAcceptEmail(predictionHash);
 };
 
 export const updateParticipantAcceptStatus = async (predictionHash, hash, accepted) => {

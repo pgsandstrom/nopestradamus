@@ -3,6 +3,8 @@ import moment from 'moment';
 
 export const sendCreaterAcceptMail = async (prediction) => {
   console.log(`sending creater accept mail to ${prediction.creater.mail}`);
+  // console.log(`accept: /prediction/${prediction.hash}/creater/${prediction.creater.hash}`);
+  // console.log(`view: /prediction/${prediction.hash}`);
   const mailTitle = 'Nopestradamus: Validate your mail for your bet!';
   const mailBody = `
 <div>
@@ -16,7 +18,7 @@ export const sendCreaterAcceptMail = async (prediction) => {
 <div>To validate or deny this prediction, visit the following link:</div>
 <a href="http://nopestradamus.com/prediction/${prediction.hash}/creater/${prediction.creater.hash}">Lets go!</a>
 <div>To get an overview of the bet before you accept
-<a href="http://nopestradamus.com/view/${prediction.hash}">click here</a>
+<a href="http://nopestradamus.com/prediction/${prediction.hash}">click here</a>
 </div>
 </div>`;
   return sendMail(prediction.creater.mail, mailTitle, mailBody);
@@ -24,6 +26,8 @@ export const sendCreaterAcceptMail = async (prediction) => {
 
 export const sendAcceptMail = async (receiver, createrMail, title, body, finishDate, predictionHash, acceptHash) => {
   console.log(`sending accept mail to ${receiver}`);
+  // console.log(`accept: /prediction/${predictionHash}/participant/${acceptHash}`);
+  // console.log(`view: /prediction/${predictionHash}`);
   const mailTitle = `Your opinion has been requested by ${createrMail}!`;
   const mailBody = `
 <div>

@@ -6,8 +6,8 @@ import { query, SQL } from '../util/db';
 
 export const confirmAccountExistance = async (mail, validated = false) => {
   const hash = uuid();
-  const value = await query(`SELECT count(*) FROM mail WHERE mail = ${mail}`).then(cursor => cursor.rows[0]);
-  if (value === 0) {
+  const result = await query(SQL`SELECT count(*) FROM mail WHERE mail = ${mail}`).then(cursor => cursor.rows[0]);
+  if (result.count === '0') {
     await query(SQL`INSERT INTO mail (mail, hash, validated) VALUES(${mail}, ${hash}, ${validated})`);
   }
 };

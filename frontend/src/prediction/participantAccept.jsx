@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Prediction from './component/prediction';
 
-class CreaterAccept extends React.Component {
+class ParticipantAccept extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,14 +38,19 @@ class CreaterAccept extends React.Component {
 
   sendResponse(response) {
     const predictionHash = this.props.match.params.predictionHash;
-    const createrHash = this.props.match.params.createrHash;
+    const participantHash = this.props.match.params.participantHash;
     const options = {
       method: 'POST',
       credentials: 'same-origin',
     };
-    fetch(`/api/v1/prediction/${predictionHash}/creater/${createrHash}/${response ? 'accept' : 'deny'}`, options)
+    fetch(`/api/v1/prediction/${predictionHash}/participant/${participantHash}/${response ? 'accept' : 'deny'}`, options)
       .then(() => { this.setState({ response }); })
       .catch(() => console.log('error'));
+  }
+
+  getParticipant() {
+    const participantHash = this.props.match.params.participantHash;
+    return this.state.prediction.participants.find(p => p.hash === participantHash);
   }
 
   render() {
@@ -62,15 +67,15 @@ class CreaterAccept extends React.Component {
     if (this.state.failedGet) {
       return <div>Well, something went wrong. Maybe this prediction doesnt exist?</div>;
     }
-    if (this.state.prediction.creater.accepted === true) {
+    if (this.getParticipant().accepted === true) {
       return <div>This bet has already been accepted</div>;
     }
-    if (this.state.prediction.creater.accepted === false) {
+      if (this.getParticipant().accepted === false) {
       return <div>This bet has already been denied</div>;
     }
     return (
       <div>
-        <div>Did you create this prediction below? Press the button to confirm!</div>
+        <div>Do you accept this prediction below? Press the button to confirm!</div>
         <button onClick={this.sendAccept}>I really did</button>
         <button onClick={this.sendDeny}>I honestly did not</button>
         <Prediction prediction={this.state.prediction} />
@@ -78,9 +83,9 @@ class CreaterAccept extends React.Component {
     );
   }
 }
-CreaterAccept.propTypes = {
+ParticipantAccept.propTypes = {
   match: PropTypes.object.isRequired,
 };
 
 
-export default CreaterAccept;
+export default ParticipantAccept;

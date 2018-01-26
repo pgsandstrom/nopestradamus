@@ -12,6 +12,7 @@ import ErrorDialog from './global/errorDialog';
 import NotFound from './notFound';
 
 import './main.scss';
+import ParticipantAccept from './prediction/participantAccept';
 
 const mapStateToProps = state =>
   ({
@@ -30,9 +31,7 @@ const Main = props => (
       <Switch>
         <Route path="/prediction/create" component={Create} />
         <Route path="/prediction/:predictionHash/creater/:createrHash" component={CreaterAccept} />
-        <Route path="/prediction/:predictionHash/creater/:createrHash" component={Create} />
-        <Route path="/prediction/:predictionHash/participant/:participantHash" component={Create} />
-        <Route path="/prediction/:predictionHash/participant/:participantHash" component={Create} />
+        <Route path="/prediction/:predictionHash/participant/:participantHash" component={ParticipantAccept} />
         <Route path="/prediction/:hash" component={View} />
         <Route component={NotFound} />
       </Switch>

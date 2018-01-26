@@ -36,10 +36,10 @@ export default (server) => {
     try {
       await createPrediction(body.title, body.body, body.finishDate, body.isPublic, body.creater, body.participantList);
       res.send('ok');
+      next();
     } catch (e) {
       next(getError(e));
     }
-    next();
   });
 
   server.post('/api/v1/prediction/:prediction/creater/:hash/accept', async (req, res, next) => {

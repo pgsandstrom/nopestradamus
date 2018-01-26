@@ -11,7 +11,6 @@ import PredictionList from './prediction/component/predictionList';
 class Base extends React.Component {
   componentDidMount() {
     if (this.props.latestPredictions == null) {
-      console.log('did mount');
       this.props.getLatestPredictions();
     }
   }
@@ -30,7 +29,7 @@ class Base extends React.Component {
           <div className="outro">
             <span>Now you can hold them to their shitty claims! Nopestradamus will track predictions, and send a mail to all participants at a specified date!</span>
           </div>
-          <Link to={'/create'} className="primary-link">Create a prediction!</Link>
+          <Link to="/prediction/create" className="primary-link">Create a prediction!</Link>
         </div>
         <div className="second-stuff" >
           <PredictionList predictionList={this.props.latestPredictions} />

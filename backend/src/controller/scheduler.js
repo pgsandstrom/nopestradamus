@@ -60,7 +60,7 @@ const handleAllUnsentEndEmails = async () => {
   unsentEndMails.forEach(item => handleUnsentEndEmail(item.hash));
 };
 
-const handleUnsentCreaterAcceptEmail = async (hash) => {
+export const handleUnsentCreaterAcceptEmail = async (hash) => {
   const prediction = await getPrediction(hash);
   const mail = prediction.creater.mail;
   try {
@@ -70,7 +70,7 @@ const handleUnsentCreaterAcceptEmail = async (hash) => {
   }
 };
 
-const handleUnsentAcceptEmail = async (hash) => {
+export const handleUnsentAcceptEmail = async (hash) => {
   const prediction = await getPrediction(hash);
   const createrMail = prediction.creater.mail;
   const mails = prediction.participants.filter(participant => participant.accepted_mail_sent === false).map(participant => participant.mail);

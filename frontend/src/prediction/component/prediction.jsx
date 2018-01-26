@@ -14,6 +14,17 @@ const Prediction = (props) => {
       <div>
         {props.prediction.body}
       </div>
+      <div>
+        creater: {props.prediction.creater.mail}
+      </div>
+      <div>
+        <div>participants</div>
+        {props.prediction.participants.map(participant => (
+          <div>
+            <span>{participant.mail}</span>
+          </div>
+          ))}
+      </div>
     </div>
   );
 };
