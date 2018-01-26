@@ -2,6 +2,7 @@ import uuid from 'uuid/v4';
 
 import { query, SQL } from '../util/db';
 import { ensureWaitingForBet } from './scheduler';
+import { validateAccountExistance } from './account';
 
 const ensureSingleGet = (cursor) => {
   if (cursor.rows.length !== 1) {
@@ -73,13 +74,15 @@ export const createPrediction = async (title, body, finishDate, isPublic, create
   return Promise.all(promises);
 };
 
-export const createCreater = (predictionHash, mail) => {
+export const createCreater = async (predictionHash, mail) => {
   const hash = uuid();
+  await validateAccountExistance();
   return query(SQL`INSERT INTO creater (hash, prediction_hash, mail) VALUES (${hash}, ${predictionHash}, ${mail})`);
 };
 
-export const createParticipant = (predictionHash, mail) => {
+export const createParticipant = async (predictionHash, mail) => {
   const hash = uuid();
+  await validateAccountExistance();
   return query(SQL`INSERT INTO participant (hash, prediction_hash, mail) VALUES (${hash}, ${predictionHash}, ${mail})`);
 };
 
