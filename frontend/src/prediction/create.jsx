@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import TextAreaAutosize from 'react-autosize-textarea';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-// import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import './create.scss';
+import CheckBox from '../component/checkbox';
 
 export default class CreatePrediction extends React.Component {
   constructor(props) {
@@ -17,7 +17,14 @@ export default class CreatePrediction extends React.Component {
       creater: '',
       participantList: [''],
       finishDate: moment().startOf('day'),
+      isPublic: true,
     };
+
+    this.onChangeIsPublic = this.onChangeIsPublic.bind(this);
+  }
+  onChangeIsPublic() {
+    console.log("onChangeIsPublic");
+    this.setState({ isPublic: !this.state.isPublic });
   }
   onAddParticipant() {
     this.setState({ participantList: [...this.state.participantList, ''] });
@@ -38,7 +45,7 @@ export default class CreatePrediction extends React.Component {
       body: this.state.body,
       creater: this.state.creater,
       finishDate: this.state.finishDate,
-      isPublic: true,
+      isPublic: this.state.isPublic,
       participantList: this.state.participantList,
     };
     const options = {
@@ -78,6 +85,7 @@ export default class CreatePrediction extends React.Component {
             onChange={e => this.setState({ finishDate: e })}
           />
         </div>
+        <CheckBox checked={this.state.isPublic} onChange={this.onChangeIsPublic} />
         <div>
           Here is YOUR mail. You will receive a verification mail.
         </div>
