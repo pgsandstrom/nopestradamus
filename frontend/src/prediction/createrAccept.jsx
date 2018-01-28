@@ -15,9 +15,7 @@ class CreaterAccept extends React.Component {
   }
 
   componentDidMount() {
-    // TODO pick correct hash and stuff
     const predictionHash = this.props.match.params.predictionHash;
-    console.log('starting stuff');
     fetch(`/api/v1/prediction/${predictionHash}`)
       .then(data => data.json())
       .then((prediction) => {

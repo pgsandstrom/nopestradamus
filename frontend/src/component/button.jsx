@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import './widgets.scss';
-import '../css/_util.scss';
+import './button.scss';
 
-const PrimaryButton = props => (
+const Button = props => (
   <button
     onClick={props.onClick}
     disabled={props.disabled}
@@ -12,7 +11,7 @@ const PrimaryButton = props => (
   >{props.text}{props.isLoading && <span className="primary-button-loading"><span className="fa fa-spinner fa-spin" /></span>}
   </button>
 );
-PrimaryButton.propTypes = {
+Button.propTypes = {
   text: PropTypes.string,
   isLoading: PropTypes.bool,
   onClick: PropTypes.func,
@@ -20,4 +19,4 @@ PrimaryButton.propTypes = {
   className: PropTypes.string,
 };
 
-export { PrimaryButton };
+export { Button };

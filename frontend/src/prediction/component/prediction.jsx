@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 
 import './prediction.scss';
+import Checkbox from '../../component/checkbox';
 
 const Prediction = (props) => {
   if (props.prediction == null) {
@@ -20,7 +21,8 @@ const Prediction = (props) => {
       <div>
         <div>participants</div>
         {props.prediction.participants.map(participant => (
-          <div>
+          <div key={participant.mail}>
+            <Checkbox checked={participant.accepted != null} acceptGraphics={participant.accepted !== false} />
             <span>{participant.mail}</span>
           </div>
           ))}

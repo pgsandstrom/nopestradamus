@@ -14,6 +14,7 @@ module.exports = {
     'class-methods-use-this': ['off'], // Allow class methods that does not use this. Sometimes it is easier to read a method as a class method
     'linebreak-style': ['off'], // Linebreak style is automatically handled by git, we should not have to care about it
     'import/prefer-default-export': ['off'], // Named exports are not an issue
+    'eqeqeq': ['error', 'always', { 'null': 'ignore' }], // eqeq with null is okay
 
     'prefer-destructuring': ['error', { // Destructuring in is not always pretty. Especially not in expressions
       'VariableDeclarator': {

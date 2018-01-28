@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { dismissError } from './actions';
+import { Button } from '../component/button';
 
 import './errorDialog.scss';
 
@@ -28,7 +29,7 @@ const ErrorDialog = (props) => {
         <div className="title">{props.error.title}</div>
         <div className="body">{props.error.body}</div>
         {technicalError && <TechnicalError message={technicalError} />}
-        <button className="primary-button" onClick={props.dismissError}>OK</button>
+        <Button onClick={props.dismissError} text="OK" />
       </div>
     </div>);
 };

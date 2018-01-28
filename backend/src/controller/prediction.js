@@ -12,13 +12,18 @@ const ensureSingleGet = (cursor) => {
   }
 };
 
-export const getCensoredPrediction = prediction => ({
+/**
+ * Removes all private hashes from the predicition
+ * @param prediction
+ * @param keepHashes These hashes will not be removed
+ */
+export const getCensoredPrediction = (prediction, keepHashes = []) => ({
   ...prediction,
   creater: {
     ...prediction.creater,
     hash: undefined,
   },
-  participants: prediction.participants.map(participant => ({ ...participant, hash: undefined })),
+  participants: prediction.participants.map(participant => ({ ...participant, hash: keepHashes.includes(participant.hash) ? participant.hash : null })),
 });
 
 export const getLatestPredictions = () =>

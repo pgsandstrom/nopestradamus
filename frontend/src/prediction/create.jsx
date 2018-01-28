@@ -23,7 +23,6 @@ export default class CreatePrediction extends React.Component {
     this.onChangeIsPublic = this.onChangeIsPublic.bind(this);
   }
   onChangeIsPublic() {
-    console.log("onChangeIsPublic");
     this.setState({ isPublic: !this.state.isPublic });
   }
   onAddParticipant() {
@@ -85,7 +84,7 @@ export default class CreatePrediction extends React.Component {
             onChange={e => this.setState({ finishDate: e })}
           />
         </div>
-        <CheckBox checked={this.state.isPublic} onChange={this.onChangeIsPublic} />
+        <CheckBox checked={this.state.isPublic} onChange={this.onChangeIsPublic} text="Should this prediciton be public?" />
         <div>
           Here is YOUR mail. You will receive a verification mail.
         </div>

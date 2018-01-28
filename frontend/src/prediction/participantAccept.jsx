@@ -17,8 +17,8 @@ class ParticipantAccept extends React.Component {
   componentDidMount() {
     // TODO pick correct hash and stuff
     const predictionHash = this.props.match.params.predictionHash;
-    console.log('starting stuff');
-    fetch(`/api/v1/prediction/${predictionHash}`)
+    const participantHash = this.props.match.params.participantHash;
+    fetch(`/api/v1/prediction/${predictionHash}/participant/${participantHash}`)
       .then(data => data.json())
       .then((prediction) => {
         this.setState({ prediction });
@@ -28,12 +28,9 @@ class ParticipantAccept extends React.Component {
       });
   }
 
-  sendAccept() {
-    this.sendResponse(true);
-  }
-
-  sendDeny() {
-    this.sendResponse(false);
+  getParticipant() {
+    const participantHash = this.props.match.params.participantHash;
+    return this.state.prediction.participants.find(p => p.hash === participantHash);
   }
 
   sendResponse(response) {
@@ -48,10 +45,14 @@ class ParticipantAccept extends React.Component {
       .catch(() => console.log('error'));
   }
 
-  getParticipant() {
-    const participantHash = this.props.match.params.participantHash;
-    return this.state.prediction.participants.find(p => p.hash === participantHash);
+  sendAccept() {
+    this.sendResponse(true);
   }
+
+  sendDeny() {
+    this.sendResponse(false);
+  }
+
 
   render() {
     // TODO check if it is already accepted
@@ -70,7 +71,7 @@ class ParticipantAccept extends React.Component {
     if (this.getParticipant().accepted === true) {
       return <div>This bet has already been accepted</div>;
     }
-      if (this.getParticipant().accepted === false) {
+    if (this.getParticipant().accepted === false) {
       return <div>This bet has already been denied</div>;
     }
     return (
