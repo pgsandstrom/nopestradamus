@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import moment from 'moment';
+import { getPrivateKey } from '../util/config';
 
 export const sendCreaterAcceptMail = async (prediction) => {
   console.log(`sending creater accept mail to ${prediction.creater.mail}`);
@@ -66,10 +67,17 @@ export const sendEndMail = async (receiver, createrMail, title, body, acceptedDa
 };
 
 const sendMail = async (receiver, title, body) => {
+  const privateKey = getPrivateKey();
+  console.log(`sending mail with key ${privateKey}`);
   const transporter = nodemailer.createTransport({
     host: 'localhost',
     port: 25,
-    secure: false,
+    secure: true,
+    dkim: {
+      domainName: 'nopestradamus.com',
+      // keySelector: '2018',
+      privateKey,
+    },
   });
 
   const mailOptions = {

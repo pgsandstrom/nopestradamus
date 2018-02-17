@@ -5,6 +5,10 @@ import { isProdServer, isTestServer } from './env';
 const dbconfigPath = '/apps/nopestradamus/config.json';
 const dbconfigDevPath = 'config.dev.json';
 
+const privateKeyPath = '/apps/nopestradamus/backend/privkey.pem';
+
+export const getPrivateKey = () => fs.readFileSync(privateKeyPath, 'utf8');
+
 let config;
 const loadConfig = () => {
   if (fs.existsSync(dbconfigPath)) {
