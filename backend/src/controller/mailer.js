@@ -92,6 +92,7 @@ const sendMail = async (receiver, title, body) => {
     return transporter.sendMail(mailOptions);
   } catch (e) {
     console.log('send mail fail');
+    console.log(e);
     throw e;
   }
 };
