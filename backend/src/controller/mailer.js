@@ -68,14 +68,13 @@ export const sendEndMail = async (receiver, createrMail, title, body, acceptedDa
 
 const sendMail = async (receiver, title, body) => {
   const privateKey = getPrivateKey();
-  console.log(`sending mail with key ${privateKey}`);
   const transporter = nodemailer.createTransport({
     host: 'localhost',
     port: 25,
     secure: true,
     dkim: {
       domainName: 'nopestradamus.com',
-      // keySelector: '2018',
+      keySelector: 'hej',
       privateKey,
     },
   });
@@ -91,8 +90,7 @@ const sendMail = async (receiver, title, body) => {
     await transporter.verify();
     return transporter.sendMail(mailOptions);
   } catch (e) {
-    console.log('send mail fail');
-    console.log(e);
+    console.log(`send mail fail: ${e}`);
     throw e;
   }
 };
