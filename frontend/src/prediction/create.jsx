@@ -18,26 +18,32 @@ export default class CreatePrediction extends React.Component {
       participantList: [''],
       finishDate: moment().startOf('day'),
       isPublic: true,
+      isCreated: false,
     };
 
     this.onChangeIsPublic = this.onChangeIsPublic.bind(this);
   }
+
   onChangeIsPublic() {
     this.setState({ isPublic: !this.state.isPublic });
   }
+
   onAddParticipant() {
     this.setState({ participantList: [...this.state.participantList, ''] });
   }
+
   onRemoveParticipant(index) {
     const participantList = [...this.state.participantList];
     participantList.splice(index, 1);
     this.setState({ participantList });
   }
+
   onChangeParticipant(index, value) {
     const participantList = [...this.state.participantList];
     participantList[index] = value;
     this.setState({ participantList });
   }
+
   onCreatePrediction() {
     const data = {
       title: this.state.title,
@@ -53,10 +59,14 @@ export default class CreatePrediction extends React.Component {
       credentials: 'same-origin',
     };
     fetch('/api/v1/prediction', options)
-      .then(() => console.log('done'))
+      .then(() => this.setState({ isCreated: true }))
       .catch(() => console.log('error'));
   }
+
   render() {
+    if (this.state.isCreated) {
+      return <div>Ok the prediction is created. Now check your spam folder and mark the mail as not spam pls.</div>;
+    }
     return (
       <div className="create-prediction">
         <div>CREATE A PREDICTION!!</div>
