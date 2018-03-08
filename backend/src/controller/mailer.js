@@ -7,21 +7,21 @@ export const sendCreaterAcceptMail = async (prediction) => {
   // console.log(`accept: /prediction/${prediction.hash}/creater/${prediction.creater.hash}`);
   // console.log(`view: /prediction/${prediction.hash}`);
   const mailTitle = 'Nopestradamus: Validate your mail for your bet!';
-  const mailBody = `
-<div>
-<div>
-    Below is the bet that was created by this mail:
-</div>
-<div style="background:#a3a3a3">
-  <h3>${prediction.title}</h3>
-  <div>${prediction.body}</div>
-</div>
-<div>To validate or deny this prediction, visit the following link:</div>
-<a href="http://nopestradamus.com/prediction/${prediction.hash}/creater/${prediction.creater.hash}">Lets go!</a>
-<div>To get an overview of the bet before you accept
-<a href="http://nopestradamus.com/prediction/${prediction.hash}">click here</a>
-</div>
-</div>`;
+  const mailBody = `Below is the bet that was created by this mail:
+
+---
+
+Title: ${prediction.title}
+
+${prediction.body}
+
+---
+
+To validate or deny this prediction, visit the following link:
+http://nopestradamus.com/prediction/${prediction.hash}/creater/${prediction.creater.hash}
+
+To get an overview of the bet before you accept visit this link:
+http://nopestradamus.com/prediction/${prediction.hash}`;
   return sendMail(prediction.creater.mail, mailTitle, mailBody);
 };
 
@@ -30,39 +30,43 @@ export const sendAcceptMail = async (receiver, createrMail, title, body, finishD
   // console.log(`accept: /prediction/${predictionHash}/participant/${acceptHash}`);
   // console.log(`view: /prediction/${predictionHash}`);
   const mailTitle = `Your opinion has been requested by ${createrMail}!`;
-  const mailBody = `
-<div>
-<div>
-${createrMail} has asked you to accept a bet! The bet is described below
-</div>
-<div style="background:#a3a3a3">
-  <h3>${title}</h3>
-  <div>${body}</div>
-</div>
-<div>The bet ends at ${moment(finishDate).format('YYYY MM DD')}. At the given date, you will all receive a mail and be confronted with your predictions!</div>
-<div>To accept or deny the bet, click the following link.</div>
-<a href="http://nopestradamus.com/prediction/${predictionHash}/participant/${acceptHash}">Lets go!</a>
-<div>To get an overview of the bet before you accept
-<a href="http://nopestradamus.com/prediction/${predictionHash}">click here</a>
-</div>
-</div>`;
+  const mailBody = `${createrMail} has asked you to accept a bet! The bet is described below
+
+---
+
+Title: ${title}
+
+${body}
+
+---
+
+The bet ends at ${moment(finishDate).format('YYYY MM DD')}. At the given date, you will all receive a mail and be confronted with your predictions!
+To accept or deny the bet, click the following link:
+http://nopestradamus.com/prediction/${predictionHash}/participant/${acceptHash}
+
+To get an overview of the bet before you accept
+http://nopestradamus.com/prediction/${predictionHash}
+`;
   return sendMail(receiver, mailTitle, mailBody);
 };
 
 export const sendEndMail = async (receiver, createrMail, title, body, acceptedDate, predictionHash) => {
   console.log(`sending end mail to ${receiver}`);
   const mailTitle = `Your bet from ${createrMail} has finished!!!`;
-  const mailBody = `
-<div>
-<div>A bet was accepted by you on ${moment(acceptedDate).format('YYYY MM DD')} by ${createrMail}. It has now finished! Here is the bet:</div>
-<div style="background:#a3a3a3">
-  <h3>${title}</h3>
-  <div>${body}</div>
-</div>
-<div>To get an overview of the bet 
-<a href="http://nopestradamus.com/prediction/${predictionHash}">click here</a>
-<div>Now you must discuss who won the bet!</div>
-</div>`;
+  const mailBody = `A bet was accepted by you on ${moment(acceptedDate).format('YYYY MM DD')} by ${createrMail}. It has now finished! Here is the bet:
+
+---
+
+Title: ${title}
+
+${body}
+
+---
+
+To get an overview of the bet visit this link:
+http://nopestradamus.com/prediction/${predictionHash}
+
+Now you must discuss who won the bet!`;
   return sendMail(receiver, mailTitle, mailBody);
 };
 
@@ -71,7 +75,7 @@ const sendMail = async (receiver, title, body) => {
   const transporter = nodemailer.createTransport({
     host: 'localhost',
     port: 25,
-    secure: true,
+    secure: false,
     dkim: {
       domainName: 'nopestradamus.com',
       keySelector: 'hej',
@@ -83,7 +87,8 @@ const sendMail = async (receiver, title, body) => {
     from: '"Nopestradamus" <no-reply@nopestradamus.com>',
     to: [receiver],
     subject: title,
-    html: body,
+    text: body,
+    // html: body,
   };
 
   try {
