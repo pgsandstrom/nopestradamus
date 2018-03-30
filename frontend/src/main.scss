@@ -3,16 +3,10 @@
   flex-direction: column;
   height: 100%;
 
-  .main-banner {
-    flex: 0 0 auto;
-    z-index: 2;
-    height: 50px;
-    border-bottom: 5px solid blue;
-    font-size: 2rem;
-  }
-
   .main-body {
     position: relative;
+    display: flex;
+    justify-content: center;
     flex: 1 0 0%;
   }
 }

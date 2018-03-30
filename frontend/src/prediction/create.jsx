@@ -69,7 +69,10 @@ export default class CreatePrediction extends React.Component {
     }
     return (
       <div className="create-prediction">
-        <div>CREATE A PREDICTION!!</div>
+        <div className="title-stuff">
+          <img src="/img/logo.jpg" height="180px" width="180px" />
+          <div>CREATE A PREDICTION!!</div>
+        </div>
         <div>
           <span>title: </span>
           <input

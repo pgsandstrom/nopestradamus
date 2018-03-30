@@ -24,15 +24,13 @@ const mapDispatchToProps = {
 
 const Main = props => (
   <div className="react-root">
-    <div className="main-banner" >
-      Nopestradamus
-    </div>
     <div className="main-body">
       <Switch>
         <Route path="/prediction/create" component={Create} />
         <Route path="/prediction/:predictionHash/creater/:createrHash" component={CreaterAccept} />
         <Route path="/prediction/:predictionHash/participant/:participantHash" component={ParticipantAccept} />
         <Route path="/prediction/:hash" component={View} />
+        <Route path="/" exact />
         <Route component={NotFound} />
       </Switch>
       <Route path="/" exact component={Base} />

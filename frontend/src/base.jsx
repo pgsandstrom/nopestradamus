@@ -17,7 +17,11 @@ class Base extends React.Component {
   render() {
     return (
       <div className="base">
-        <div className="first-stuff">
+        <div className="presentation">
+          <div className="header">
+            <img src="/img/logo.jpg" height="60px" width="60px" />
+            <span> Nopestradamus </span>
+          </div>
           <div className="intro">
             <span>Do your friends and relatives make bold predictions?</span>
           </div>
@@ -31,9 +35,7 @@ class Base extends React.Component {
           </div>
           <Link to="/prediction/create" className="primary-link">Create a prediction!</Link>
         </div>
-        <div className="second-stuff" >
           <PredictionList predictionList={this.props.latestPredictions} />
-        </div>
       </div>);
   }
 }

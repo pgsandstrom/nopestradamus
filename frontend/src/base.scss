@@ -2,14 +2,26 @@
 .base {
   display: grid;
   height: 100%;
-  grid-template-columns: 100%;
-  grid-template-rows: 300px auto;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 100%;
 
-  .first-stuff {
-    background: $gray4;
+
+  .presentation {
     grid-column: 1 / 2;
     grid-row: 1 / 2;
     color: black;
+
+    .header {
+      text-align: center;
+      font-size: 2rem;
+      padding-top: 50px;
+      color: #990090;
+
+      img {
+        vertical-align: middle;
+        margin-right: 10px;
+      }
+    }
 
     .intro {
       font-size: 1.5rem;
@@ -25,9 +37,9 @@
       }
     }
   }
-  .second-stuff {
+  .prediction-list {
     background: $gray4;
-    grid-column: 1 / 2;
-    grid-row: 2 / 3;
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
   }
 }
