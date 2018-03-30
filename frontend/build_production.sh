@@ -12,7 +12,7 @@ mkdir ./release
 npm run prod
 
 cp -r ./assets ./release/
-#cp -r ./img ./release/
+cp -r ./img ./release/
 cp ./index.html ./release/
 #cp ./favicon.png ./release/
 
