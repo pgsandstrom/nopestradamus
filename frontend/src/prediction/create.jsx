@@ -76,7 +76,13 @@ export default class CreatePrediction extends React.Component {
         </div>
 
         <div className="input-row">
-          <div className="title">Title</div>
+        </div>
+
+
+        <div className="input-row">
+        <div className="title">
+          Describe your shitty prediction!
+        </div>
           <input
             className="input standard-input"
             value={this.state.title}
@@ -86,12 +92,12 @@ export default class CreatePrediction extends React.Component {
         </div>
 
         <div className="input-row">
-          <div className="title">Description</div>
           <TextAreaAutosize
             className="input standard-textarea"
             value={this.state.body}
-            placeholder="describe the prediction"
+            placeholder="description"
             onChange={e => this.setState({ body: e.target.value })}
+            rows={1}
           />
         </div>
 
@@ -152,7 +158,7 @@ export default class CreatePrediction extends React.Component {
 const Participant = props => (
   <div>
     <input className="standard-input" value={props.participant} onChange={e => props.onChange(e.target.value)}/>
-    <button onClick={() => props.onRemove()}>remove</button>
+    <button onClick={() => props.onRemove()}>Remove participant</button>
   </div>
 );
 Participant.propTypes = {
