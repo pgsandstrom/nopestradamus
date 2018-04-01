@@ -1,13 +1,33 @@
 @import "../../css/color";
-
 .create-prediction {
   width: 600px;
   background: $gray4;
+
   .title-stuff {
     text-align: center;
     font-size: 2rem;
   }
 
+  .input-row {
+    margin-top: 10px;
+
+    .title {
+      display: inline-block;
+      width: 150px;
+    }
+
+    .input {
+      width: 300px;
+    }
+
+    .datepicker-wrapper {
+      display: inline-block;
+
+      div {
+        display: inline-block;
+      }
+    }
+  }
 
   input, textarea {
     width: 300px;

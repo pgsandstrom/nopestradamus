@@ -69,55 +69,79 @@ export default class CreatePrediction extends React.Component {
     }
     return (
       <div className="create-prediction">
+
         <div className="title-stuff">
-          <img src="/img/logo.jpg" height="180px" width="180px" />
+          <img src="/img/logo.jpg" height="180px" width="180px"/>
           <div>CREATE A PREDICTION!!</div>
         </div>
-        <div>
-          <span>title: </span>
+
+        <div className="input-row">
+          <div className="title">Title</div>
           <input
-            className="standard-input"
+            className="input standard-input"
             value={this.state.title}
             placeholder="title"
             onChange={e => this.setState({ title: e.target.value })}
           />
         </div>
-        <div>
-          <span>body: </span>
+
+        <div className="input-row">
+          <div className="title">Description</div>
           <TextAreaAutosize
-            className="standard-textarea"
+            className="input standard-textarea"
             value={this.state.body}
             placeholder="describe the prediction"
             onChange={e => this.setState({ body: e.target.value })}
           />
         </div>
-        <div>
-          <DatePicker
-            selected={this.state.finishDate}
-            onChange={e => this.setState({ finishDate: e })}
-          />
+
+        <div className="input-row">
+          <div className="title">Pick an end date:</div>
+          <div
+            className="datepicker-wrapper"
+          >
+            <DatePicker
+              selected={this.state.finishDate}
+              onChange={e => this.setState({ finishDate: e })}
+            />
+          </div>
         </div>
-        <CheckBox checked={this.state.isPublic} onChange={this.onChangeIsPublic} text="Should this prediciton be public?" />
-        <div>
-          Here is YOUR mail. You will receive a verification mail.
+
+        <div className="input-row">
+          <CheckBox checked={this.state.isPublic} onChange={this.onChangeIsPublic} text="Should this prediciton be public?"/>
         </div>
-        <div>
-          <input className="standard-input" value={this.state.creater} onChange={e => this.setState({ creater: e.target.value })} />
+
+        <div className="input-row">
+          <div>
+            Here is YOUR mail. You will receive a verification mail.
+          </div>
+          <div>
+            <input
+              placeholder="Your mail"
+              className="standard-input"
+              value={this.state.creater}
+              onChange={e => this.setState({ creater: e.target.value })}
+            />
+          </div>
         </div>
-        <div>
-          Okay, so pls give the other participants (if there are any)
+
+        <div className="input-row">
+          <div>
+            Okay, so pls give the other participants (if there are any)
+          </div>
+          <div>
+            {this.state.participantList.map((participant, index) =>
+              (<Participant
+                key={index}
+                participant={this.state.participantList[index]}
+                onChange={value => this.onChangeParticipant(index, value)}
+                onRemove={() => this.onRemoveParticipant(index)}
+              />))}
+            <button onClick={() => this.onAddParticipant()}>Add participant</button>
+          </div>
         </div>
-        <div>
-          {this.state.participantList.map((participant, index) =>
-            (<Participant
-              key={index}
-              participant={this.state.participantList[index]}
-              onChange={value => this.onChangeParticipant(index, value)}
-              onRemove={() => this.onRemoveParticipant(index)}
-            />))}
-          <button onClick={() => this.onAddParticipant()}>Add participant</button>
-        </div>
-        <div>
+
+        <div className="input-row">
           <button onClick={() => this.onCreatePrediction()}>CREATE PREDICTION</button>
         </div>
       </div>
@@ -127,7 +151,7 @@ export default class CreatePrediction extends React.Component {
 
 const Participant = props => (
   <div>
-    <input className="standard-input" value={props.participant} onChange={e => props.onChange(e.target.value)} />
+    <input className="standard-input" value={props.participant} onChange={e => props.onChange(e.target.value)}/>
     <button onClick={() => props.onRemove()}>remove</button>
   </div>
 );
