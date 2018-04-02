@@ -14,31 +14,26 @@ class Base extends React.Component {
       this.props.getLatestPredictions();
     }
   }
+
   render() {
     return (
       <div className="base">
         <div className="presentation">
           <div className="header">
-            <img src="/img/logo.jpg" height="60px" width="60px" />
+            <img src="/img/logo.jpg" height="60px" width="60px"/>
             <span> Nopestradamus </span>
           </div>
-          <div className="intro">
-            <span>Do your friends and relatives make bold predictions?</span>
-          </div>
-          <div className="quotes">
-            <span>{'"'}We will run out of oil before 2020{'"'}</span>
-            <span>{'"'}The whatevers will win the Superbowl{'"'}</span>
-            <span>{'"'}In two years, bitcoin will be the only currency{'"'}</span>
-          </div>
-          <div className="outro">
-            <span>Now you can hold them to their shitty claims! Nopestradamus will track predictions, and send a mail to all participants at a specified date!</span>
+          <div className="text">
+            Do you or your friends try to predict the future? Document your predictions on this site and get reminded in
+            the future! At nopestradamus we take our predictions seriously and will host them at a minimum until 2030!
           </div>
           <Link to="/prediction/create" className="primary-link">Create a prediction!</Link>
         </div>
-          <PredictionList predictionList={this.props.latestPredictions} />
+        <PredictionList predictionList={this.props.latestPredictions}/>
       </div>);
   }
 }
+
 Base.propTypes = {
   latestPredictions: PropTypes.array,
   getLatestPredictions: PropTypes.func.isRequired,

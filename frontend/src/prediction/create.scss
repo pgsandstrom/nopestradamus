@@ -2,6 +2,7 @@
 .create-prediction {
   width: 600px;
   background: $gray4;
+  padding: 0 20px;
 
   .title-stuff {
     text-align: center;
@@ -12,30 +13,31 @@
     margin-top: 10px;
 
     &.one-liner {
-      display: flex;
-      flex-direction: row;
-    }
-
-    .title {
-      //display: inline-block;
+      > * {
+        display: inline-block;
+        margin-right: 10px;
+      }
     }
 
     .input {
-      width: 300px;
+      width: 100%;
+    }
+  }
+
+  .participant {
+    display: flex;
+
+    input {
       flex: 1 0 auto;
       margin-right: 10px;
     }
 
-    .datepicker-wrapper {
-      display: inline-block;
-
-      div {
-        display: inline-block;
-      }
+    button {
+      flex: 0 0 auto;
     }
   }
 
-  input, textarea {
-    width: 300px;
+  .create-button {
+
   }
 }

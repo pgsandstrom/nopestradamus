@@ -80,14 +80,15 @@ export default class CreatePrediction extends React.Component {
 
 
         <div className="input-row">
-        <div className="title">
-          Describe your shitty prediction!
-        </div>
+          <div className="title">
+            Describe your shitty prediction!
+          </div>
           <input
             className="input standard-input"
             value={this.state.title}
             placeholder="title"
             onChange={e => this.setState({ title: e.target.value })}
+            style={{ maxWidth: '400px' }}
           />
         </div>
 
@@ -101,7 +102,7 @@ export default class CreatePrediction extends React.Component {
           />
         </div>
 
-        <div className="input-row">
+        <div className="input-row one-liner">
           <div className="title">Pick an end date:</div>
           <div
             className="datepicker-wrapper"
@@ -109,6 +110,7 @@ export default class CreatePrediction extends React.Component {
             <DatePicker
               selected={this.state.finishDate}
               onChange={e => this.setState({ finishDate: e })}
+              customInput={<button>{this.state.finishDate.format('YYYY-MM-DD')}</button>}
             />
           </div>
         </div>
@@ -143,21 +145,33 @@ export default class CreatePrediction extends React.Component {
                 onChange={value => this.onChangeParticipant(index, value)}
                 onRemove={() => this.onRemoveParticipant(index)}
               />))}
-            <button onClick={() => this.onAddParticipant()}>Add participant</button>
           </div>
         </div>
 
-        <div className="input-row">
-          <button onClick={() => this.onCreatePrediction()}>CREATE PREDICTION</button>
+        <button onClick={() => this.onAddParticipant()} style={{ marginTop: '10px' }}>Add participant</button>
+
+        <div style={{ marginTop: '20px' }}>
+          <button
+            className="create-button"
+            onClick={() => this.onCreatePrediction()}
+          >
+            CREATE PREDICTION
+          </button>
         </div>
+
       </div>
     );
   }
 }
 
 const Participant = props => (
-  <div>
-    <input className="standard-input" value={props.participant} onChange={e => props.onChange(e.target.value)}/>
+  <div className="participant">
+    <input
+      className="standard-input"
+      value={props.participant}
+      onChange={e => props.onChange(e.target.value)}
+      placeholder="participant mail"
+    />
     <button onClick={() => props.onRemove()}>Remove participant</button>
   </div>
 );

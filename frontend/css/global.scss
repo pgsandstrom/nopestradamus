@@ -1,8 +1,4 @@
 @import "./color";
-@font-face {
-  font-family: 'Futura';
-  src: url('/assets/font/Futura-Book.woff');
-}
 
 html {
   height: 100%;
@@ -15,7 +11,7 @@ body, #content {
   height: 100%;
   max-width: 900px;
   margin: 0 auto;
-  font-family: 'Futura', "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Roboto', "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1.25rem;
 }
 
