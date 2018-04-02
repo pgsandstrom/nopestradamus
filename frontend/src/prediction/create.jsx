@@ -65,7 +65,7 @@ export default class CreatePrediction extends React.Component {
 
   render() {
     if (this.state.isCreated) {
-      return <div>Ok the prediction is created. Now check your spam folder and mark the mail as not spam pls.</div>;
+      return <div>You should shortly receive a mail! Please check your spam folder. If it was marked as spam make sure to mark it as not spam so the final mail at {this.state.finishDate.format('YYYY-MM-DD')} comes through.</div>;
     }
     return (
       <div className="create-prediction">

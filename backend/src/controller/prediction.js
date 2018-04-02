@@ -77,7 +77,7 @@ export const createPrediction = async (title, body, finishDate, isPublic, create
   await createCreater(hash, creater);
   const promises = participantList.map(participant => createParticipant(hash, participant));
   await Promise.all(promises);
-  handleUnsentCreaterAcceptEmail(hash);
+  return handleUnsentCreaterAcceptEmail(hash);
 };
 
 export const createCreater = async (predictionHash, mail) => {
@@ -97,7 +97,7 @@ export const updateCreaterAcceptStatus = async (predictionHash, hash, accepted) 
   await query(SQL`UPDATE creater SET accepted = ${accepted}, accepted_date = now() where prediction_hash = ${predictionHash} AND hash = ${hash}`);
   const prediction = await getPrediction(predictionHash);
   await validateAccount(prediction.creater.mail);
-  handleUnsentAcceptEmail(predictionHash);
+  return handleUnsentAcceptEmail(predictionHash);
 };
 
 export const updateParticipantAcceptStatus = async (predictionHash, hash, accepted) => {
