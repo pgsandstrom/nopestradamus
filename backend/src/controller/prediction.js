@@ -13,7 +13,7 @@ const ensureSingleGet = (cursor) => {
 };
 
 /**
- * Removes all private hashes from the predicition
+ * Removes all private hashes from the predicition. Also censor the mails!
  * @param prediction
  * @param keepHashes These hashes will not be removed
  */
@@ -22,9 +22,34 @@ export const getCensoredPrediction = (prediction, keepHashes = []) => ({
   creater: {
     ...prediction.creater,
     hash: undefined,
+    mail: censorMail(prediction.creater.mail),
   },
-  participants: prediction.participants.map(participant => ({ ...participant, hash: keepHashes.includes(participant.hash) ? participant.hash : null })),
+  participants: prediction.participants.map(participant => (
+    {
+      ...participant,
+      hash: keepHashes.includes(participant.hash) ? participant.hash : null,
+      mail: censorMail(participant.mail),
+    }
+  )),
 });
+
+const censorMail = (mail) => {
+  const [firstPart, secondPart] = mail.split('@');
+  if (firstPart.length > 2) {
+    return `${censorString(firstPart)}@${secondPart}`;
+  } else if (secondPart.length > 2) {
+    return `${firstPart}@${censorString(secondPart)}`;
+  } else {
+    return mail;
+  }
+};
+
+const censorString = (string) => {
+  const censorLength = Math.ceil(string.length / 3);
+  const partLength = (string.length - censorLength) / 2;
+  const beforeCensorLength = Math.floor(partLength);
+  return string.substr(0, beforeCensorLength) + '*'.repeat(censorLength) + string.substr(Math.ceil(beforeCensorLength + censorLength), string.length);
+};
 
 export const getLatestPredictions = () =>
   query('SELECT title, body, hash from prediction where public is true ORDER BY created LIMIT 20').then(cursor => cursor.rows);
