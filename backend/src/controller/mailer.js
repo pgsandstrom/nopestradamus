@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 import moment from 'moment';
 import { getPrivateKey } from '../util/config';
+import { isDev } from '../util/env';
 
 export const sendCreaterAcceptMail = async (prediction) => {
   console.log(`sending creater accept mail to ${prediction.creater.mail}`);
@@ -71,6 +72,12 @@ Now you must discuss who won the bet!`;
 };
 
 const sendMail = async (receiver, title, body) => {
+
+  if (isDev()) {
+    console.log('faking sending mail');
+    return Promise.resolve();
+  }
+
   const privateKey = getPrivateKey();
   const transporter = nodemailer.createTransport({
     host: 'localhost',

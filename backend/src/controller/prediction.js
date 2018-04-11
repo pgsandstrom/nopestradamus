@@ -118,6 +118,10 @@ export const createParticipant = async (predictionHash, mail) => {
 };
 
 // TODO throw exceptions when stuff miss?
+export const setCreaterAcceptMailSent = hash => query(SQL`UPDATE creater SET accepted_mail_sent = true where hash = ${hash}`);
+
+export const setParticipantAcceptMailSent = hash => query(SQL`UPDATE participant SET accepted_mail_sent = true where hash = ${hash}`);
+
 export const updateCreaterAcceptStatus = async (predictionHash, hash, accepted) => {
   await query(SQL`UPDATE creater SET accepted = ${accepted}, accepted_date = now() where prediction_hash = ${predictionHash} AND hash = ${hash}`);
   const prediction = await getPrediction(predictionHash);

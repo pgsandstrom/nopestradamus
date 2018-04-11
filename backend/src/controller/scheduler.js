@@ -1,7 +1,7 @@
 import moment from 'moment';
 import {
   getOldBetWithUnsentAcceptMails, getOldBetWithUnsentEndMails, getNextPrediction, getPrediction,
-  getOldBetWithUnsentCreaterAcceptMails,
+  getOldBetWithUnsentCreaterAcceptMails, setCreaterAcceptMailSent, setParticipantAcceptMailSent,
 } from './prediction';
 import { sendAcceptMail, sendCreaterAcceptMail, sendEndMail } from './mailer';
 
@@ -65,6 +65,7 @@ export const handleUnsentCreaterAcceptEmail = async (hash) => {
   const mail = prediction.creater.mail;
   try {
     await sendCreaterAcceptMail(prediction);
+    await setCreaterAcceptMailSent(prediction.creater.hash);
   } catch (e) {
     console.error(`failed sending creater accept mail to ${mail}`);
   }
@@ -78,6 +79,7 @@ export const handleUnsentAcceptEmail = async (hash) => {
     const participant = prediction.participants.find(p => p.mail === mail);
     try {
       await sendAcceptMail(mail, createrMail, prediction.title, prediction.body, participant.finish_date, hash, participant.hash);
+      await setParticipantAcceptMailSent(participant.hash);
     } catch (e) {
       console.error(`failed sending accept mail to ${mail}`);
     }
