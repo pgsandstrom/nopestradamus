@@ -3,6 +3,7 @@ import uuid from 'uuid/v4';
 import { query, SQL } from '../util/db';
 import { confirmAccountExistance, validateAccount } from './account';
 import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './scheduler';
+import { censorMail } from '../util/mail-util';
 
 const ensureSingleGet = (cursor) => {
   if (cursor.rows.length !== 1) {
@@ -32,24 +33,6 @@ export const getCensoredPrediction = (prediction, keepHashes = []) => ({
     }
   )),
 });
-
-const censorMail = (mail) => {
-  const [firstPart, secondPart] = mail.split('@');
-  if (firstPart.length > 2) {
-    return `${censorString(firstPart)}@${secondPart}`;
-  } else if (secondPart.length > 2) {
-    return `${firstPart}@${censorString(secondPart)}`;
-  } else {
-    return mail;
-  }
-};
-
-const censorString = (string) => {
-  const censorLength = Math.ceil(string.length / 3);
-  const partLength = (string.length - censorLength) / 2;
-  const beforeCensorLength = Math.floor(partLength);
-  return string.substr(0, beforeCensorLength) + '*'.repeat(censorLength) + string.substr(Math.ceil(beforeCensorLength + censorLength), string.length);
-};
 
 export const getLatestPredictions = () =>
   query('SELECT title, body, hash from prediction where public is true ORDER BY created LIMIT 20').then(cursor => cursor.rows);

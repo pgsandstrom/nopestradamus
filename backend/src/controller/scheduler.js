@@ -4,6 +4,7 @@ import {
   getOldBetWithUnsentCreaterAcceptMails, setCreaterAcceptMailSent, setParticipantAcceptMailSent,
 } from './prediction';
 import { sendAcceptMail, sendCreaterAcceptMail, sendEndMail } from './mailer';
+import { isMailValid } from '../util/mail-util';
 
 export const init = async () => {
   try {
@@ -64,7 +65,11 @@ export const handleUnsentCreaterAcceptEmail = async (hash) => {
   const prediction = await getPrediction(hash);
   const mail = prediction.creater.mail;
   try {
-    await sendCreaterAcceptMail(prediction);
+    if (isMailValid(mail)) {
+      await sendCreaterAcceptMail(prediction);
+    } else {
+      console.log(`creater skipping invalid mail: ${mail}`);
+    }
     await setCreaterAcceptMailSent(prediction.creater.hash);
   } catch (e) {
     console.error(`failed sending creater accept mail to ${mail}`);
@@ -78,7 +83,11 @@ export const handleUnsentAcceptEmail = async (hash) => {
   mails.forEach(async (mail) => {
     const participant = prediction.participants.find(p => p.mail === mail);
     try {
-      await sendAcceptMail(mail, createrMail, prediction.title, prediction.body, participant.finish_date, hash, participant.hash);
+      if (isMailValid(mail)) {
+        await sendAcceptMail(mail, createrMail, prediction.title, prediction.body, participant.finish_date, hash, participant.hash);
+      } else {
+        console.log(`participant skipping invalid mail: ${mail}`);
+      }
       await setParticipantAcceptMailSent(participant.hash);
     } catch (e) {
       console.error(`failed sending accept mail to ${mail}`);
@@ -96,7 +105,11 @@ const handleUnsentEndEmail = async (hash) => {
   mails.forEach(async (mail) => {
     const participant = prediction.participants.find(p => p.mail === mail);
     try {
-      await sendEndMail(mail, createrMail, prediction.title, prediction.body, participant.accepted_date, hash);
+      if (isMailValid(mail)) {
+        await sendEndMail(mail, createrMail, prediction.title, prediction.body, participant.accepted_date, hash);
+      } else {
+        console.log(`endmail skipping invalid mail: ${mail}`);
+      }
     } catch (e) {
       console.error(`failed sending end mail to ${mail}`);
     }
