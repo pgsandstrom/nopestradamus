@@ -1,29 +1,25 @@
-import fs from 'fs';
-
+import * as fs from 'fs';
 import { isProdServer, isTestServer } from './env';
-
-const dbconfigPath = '/apps/nopestradamus/config.json';
-const dbconfigDevPath = 'config.dev.json';
-
-const privateKeyPath = '/apps/nopestradamus/backend/privkey.pem';
-
-export const getPrivateKey = () => fs.readFileSync(privateKeyPath, 'utf8');
-
-let config;
-const loadConfig = () => {
-  if (fs.existsSync(dbconfigPath)) {
-    config = JSON.parse(fs.readFileSync(dbconfigPath, 'utf8'));
-  } else {
-    if (isProdServer() || isTestServer()) {
-      throw new Error('config file not found');
+var dbconfigPath = '/apps/nopestradamus/config.json';
+var dbconfigDevPath = 'config.dev.json';
+var privateKeyPath = '/apps/nopestradamus/backend/privkey.pem';
+export var getPrivateKey = function () { return fs.readFileSync(privateKeyPath, 'utf8'); };
+var config;
+var loadConfig = function () {
+    if (fs.existsSync(dbconfigPath)) {
+        config = JSON.parse(fs.readFileSync(dbconfigPath, 'utf8'));
     }
-    config = JSON.parse(fs.readFileSync(dbconfigDevPath, 'utf8'));
-  }
+    else {
+        if (isProdServer() || isTestServer()) {
+            throw new Error('config file not found');
+        }
+        config = JSON.parse(fs.readFileSync(dbconfigDevPath, 'utf8'));
+    }
 };
-
-export default () => {
-  if (config == null) {
-    loadConfig();
-  }
-  return config;
-};
+export default (function () {
+    if (config == null) {
+        loadConfig();
+    }
+    return config;
+});
+//# sourceMappingURL=config.js.map
