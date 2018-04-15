@@ -1,38 +1,35 @@
-/* eslint-disable no-console */
+import { Pool } from 'pg';
 import config from './config';
-
-const Pool = require('pg').Pool;
-
-const databaseConfig = config().database;
-
-let dbPool;
-const getDbPool = () => {
-  if (dbPool == null) {
-    console.log('creating pool');
-    dbPool = new Pool(databaseConfig);
-  }
-  return dbPool;
+var databaseConfig = config().database;
+var dbPool;
+var getDbPool = function () {
+    if (dbPool == null) {
+        console.log('creating pool');
+        dbPool = new Pool(databaseConfig);
+    }
+    return dbPool;
 };
-
-// Use this for single query
-export const query = (...args) => getDbPool().query(...args);
-
-// Use this to gain a client for multiple operations, such as transactions
-export const getClient = () =>
-  new Promise((resolve, reject) => {
-    getDbPool().connect((err, client) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(client);
-      }
+export var query = function (stuff) { return getDbPool().query(stuff); };
+export var getClient = function () {
+    return new Promise(function (resolve, reject) {
+        getDbPool().connect(function (err, client) {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(client);
+            }
+        });
     });
-  });
-
-// inspired by https://github.com/felixfbecker/node-sql-template-strings
-export const SQL = (parts, ...values) =>
-  ({
-    text: parts.reduce((prev, curr, i) => prev + '$' + i + curr), // eslint-disable-line prefer-template
-    values,
-  });
-
+};
+export var SQL = function (parts) {
+    var values = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        values[_i - 1] = arguments[_i];
+    }
+    return ({
+        text: parts.reduce(function (prev, curr, i) { return prev + '$' + i + curr; }),
+        values: values
+    });
+};
+//# sourceMappingURL=db.js.map

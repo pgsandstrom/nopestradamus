@@ -13,8 +13,10 @@
   "license": "ISC",
   "dependencies": {
     "@types/node": "^9.6.5",
+    "@types/pg": "^7.4.5",
     "@types/restify": "^5.0.7",
     "@types/restify-errors": "^4.3.2",
+    "@types/uuid": "^3.4.3",
     "babel-polyfill": "^6.26.0",
     "btoa": "^1.1.2",
     "form-data": "^2.3.1",
