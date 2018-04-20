@@ -10,6 +10,7 @@ var getDbPool = function () {
     return dbPool;
 };
 export var query = function (stuff) { return getDbPool().query(stuff); };
+export var queryString = function (stuff) { return getDbPool().query(stuff); };
 export var getClient = function () {
     return new Promise(function (resolve, reject) {
         getDbPool().connect(function (err, client) {

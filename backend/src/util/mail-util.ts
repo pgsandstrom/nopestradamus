@@ -1,6 +1,6 @@
 // import '../types/index';
 
-export const censorMail = (mail:string) => {
+export const censorMail = (mail:string):string => {
   if (isMailValid(mail) === false) {
     return mail;
   }

@@ -17,6 +17,7 @@ const getDbPool = () => {
 
 // Use this for single query
 export const query = (stuff:QueryConfig) => getDbPool().query(stuff);
+export const queryString = (stuff:string) => getDbPool().query(stuff);
 
 // Use this to gain a client for multiple operations, such as transactions
 export const getClient = () =>
