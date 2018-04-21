@@ -52,7 +52,7 @@ export const getPrediction = async (hash:string):Promise<Prediction> => {
   return result
 }
 
-export const getNextPrediction = () => queryString(`
+export const getNextPrediction = ():Promise<Prediction[]> => queryString(`
 SELECT finish_date, prediction.hash FROM prediction
 JOIN creater on prediction.hash = creater.prediction_hash
 WHERE prediction.finish_date > now()

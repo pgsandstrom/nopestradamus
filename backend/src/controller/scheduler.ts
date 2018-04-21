@@ -7,6 +7,7 @@ import { sendAcceptMail, sendCreaterAcceptMail, sendEndMail } from './mailer';
 import { isMailValid } from '../util/mail-util';
 
 export const init = async () => {
+  console.log('Running init code');
   try {
     await handleAllUnsentCreaterAcceptEmails();
 
@@ -31,13 +32,18 @@ export const ensureWaitingForBet = async () => {
       const prediction = predictionList[0];
       const finishDateMoment = moment(prediction.finish_date);
       const msDiff = finishDateMoment.diff(moment());
-      console.log(`waiting ${msDiff}ms for bet ${prediction.hash}`);
+      // Some weird code since node has a max setTimeout time
+      const waitingTime = Math.min(msDiff, 2147483647)
+      console.log(`waiting ${waitingTime}ms for bet ${prediction.hash}. It actually times out in ${msDiff}`);
       isWaiting = true;
       setTimeout(() => {
-        handleUnsentEndEmail(prediction.hash);
+        if(finishDateMoment.diff(moment()) < 5000) {
+          console.log(`Timeout finished for prediction ${prediction.hash} that finished at ${prediction.finish_date}`);
+          handleUnsentEndEmail(prediction.hash);
+        }
         isWaiting = false;
         ensureWaitingForBet();
-      }, msDiff);
+      }, waitingTime);
     } else {
       console.log('No promise to wait for');
     }
