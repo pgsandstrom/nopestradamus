@@ -9,3 +9,7 @@ npm-debug.log
 
 config.dev.json
 release/
+
+# because typescript
+*.js
+*.js.map
