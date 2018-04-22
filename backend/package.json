@@ -12,7 +12,6 @@
   "author": "Per Sandström",
   "license": "ISC",
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
     "btoa": "^1.1.2",
     "form-data": "^2.3.1",
     "json-stable-stringify": "^1.0.1",

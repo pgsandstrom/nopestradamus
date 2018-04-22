@@ -1,6 +1,3 @@
-// polyfill in async-await. Needed for production.
-// import 'babel-polyfill';
-
 import {createServer, plugins, Server} from 'restify';
 
 import encodeUtf8Plugin from './util/encodeUtf8Plugin';
