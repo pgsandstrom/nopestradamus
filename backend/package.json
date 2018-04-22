@@ -4,7 +4,7 @@
   "description": "",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development ts-node src",
+    "dev": "cross-env NODE_ENV=development nodemon",
     "build": "tsc && babel src -s -D -d dist",
     "lint": "node ./node_modules/eslint/bin/eslint.js --ext .js --ext .jsx src",
     "test": "cross-env NODE_ENV=development mocha --require babel-polyfill --compilers js:babel-register test/**/*-test.js*"
