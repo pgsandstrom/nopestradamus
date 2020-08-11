@@ -1,46 +1,63 @@
-import {InternalServerError, makeConstructor} from 'restify-errors';
+import { InternalServerError, makeConstructor, UnauthorizedError } from 'restify-errors'
+
+// XXX this code feel fugly
 
 interface Info {
   message: string
   code: number
-  error: boolean,
-  statusCode?: number,
-  extraInfo?: any,
+  error: boolean
+  statusCode?: number
+  extraInfo?: any
 }
 
 makeConstructor('GenericError', {
   statusCode: 500,
-});
+})
 
-// eslint-disable-next-line import/prefer-default-export
-export const getError = (data:any) => {
+export const AUTH_ERROR = 'AUTH_ERROR'
+
+export const getError = (data: any) => {
+  if (data instanceof Error && (data as Error).message === AUTH_ERROR) {
+    return new UnauthorizedError('pls')
+  }
+
   if (data.stack) {
-    // TODO this is a poor mans logging, we should do better...
-    console.log(data.stack); // eslint-disable-line no-console
+    console.error(data.stack)
   }
 
-  let info;
-  if (typeof data === 'string' || data instanceof String) {
-    info = getBodyFromString(data as string);
+  let info: Info
+  if (data instanceof Error) {
+    info = getBodyFromError(data as Error)
+  } else if (typeof data === 'string' || data instanceof String) {
+    info = getBodyFromString(data as string)
   } else if (data != null && data instanceof Object) {
-    info = getBodyFromObject(data);
+    info = getBodyFromObject(data)
   }
 
-  const error = new InternalServerError({
-    message: info.message,
-    context: info,
-  });
-  error.statusCode = info.statusCode || 500;
-  return error;
-};
+  const error = new InternalServerError(
+    {
+      message: info!.message,
+      context: info!,
+    },
+    info!.message,
+  )
+  error.statusCode = info!.statusCode || 500
+  return error
+}
 
-const getBodyFromString = (string:string):Info => ({
-  message: string,
+const getBodyFromError = (e: Error): Info => ({
+  message: e.message,
   code: 0,
   error: true,
-});
+})
 
-const getBodyFromObject = (object:any) => ({
+const getBodyFromString = (message: string): Info => ({
+  message,
+  code: 0,
+  error: true,
+})
+
+const getBodyFromObject = (object: any) => ({
   message: object.message,
   code: object.code || 0,
   error: true,
@@ -52,4 +69,4 @@ const getBodyFromObject = (object:any) => ({
     statusCode: undefined,
     error: undefined,
   },
-});
+})

@@ -1,76 +1,41 @@
 {
   "name": "nopestradamus-frontend",
-  "version": "0.0.0",
-  "description": "",
-  "main": "src/entry.jsx",
-  "directories": {},
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "test": "mocha --compilers scss:./test/null-compiler test/.setup.js test/**/*-test.js*",
-    "lint": "./node_modules/eslint/bin/eslint.js --ext .js --ext .jsx src",
-    "dev": "webpack-dev-server",
-    "prod": "webpack --config webpack.config.production.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "TODO git path"
-  },
-  "keywords": [
-    "long bets"
-  ],
-  "author": "Per Sandström",
-  "license": "ISC",
-  "bugs": {
-    "url": "TODO"
+    "build": "next build",
+    "dev": "next dev",
+    "format": "prettier --write \"{,!(.next|node_modules)}/**/*.{json,md,ts,tsx,css,scss}\"",
+    "lint": "node ./node_modules/eslint/bin/eslint.js --ext .ts --ext .tsx --fix .",
+    "pre-commit": "lint-staged",
+    "pre-push": "npm run lint && npm run typecheck",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@fortawesome/fontawesome": "^1.1.3",
-    "@fortawesome/fontawesome-free-regular": "^5.0.6",
-    "@fortawesome/react-fontawesome": "0.0.17",
-    "babel-core": "~6.26.0",
-    "babel-loader": "~7.1.2",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-airbnb": "^2.4.0",
-    "classnames": "^2.2.5",
-    "css-loader": "~0.28.9",
-    "es6-promise": "~4.2.4",
-    "file-loader": "^1.1.6",
-    "immutability-helper": "^2.6.4",
-    "js-cookie": "^2.2.0",
-    "json-stable-stringify": "^1.0.1",
-    "moment": "^2.20.1",
-    "node-sass": "^4.7.2",
-    "prop-types": "15.6.0",
-    "react": "~16.2.0",
-    "react-autosize-textarea": "^3.0.2",
-    "react-datepicker": "^1.0.4",
-    "react-dom": "~16.2.0",
-    "react-hot-loader": "^3.1.3",
-    "react-redux": "^5.0.6",
-    "react-router": "^4.2.0",
-    "react-router-dom": "4.2.2",
-    "react-transition-group": "^2.2.1",
-    "redux": "^3.7.2",
-    "redux-promise-middleware": "^5.0.0",
-    "redux-thunk": "^2.2.0",
-    "reselect": "^3.0.1",
-    "sass-loader": "^6.0.6",
-    "style-loader": "~0.19.1",
-    "url-loader": "^0.6.2",
-    "whatwg-fetch": "^2.0.3"
+    "@types/node": "14.0.27",
+    "@types/react": "16.9.46",
+    "cross-env": "7.0.2",
+    "next": "9.5.2",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "typescript": "4.0.1-rc"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "enzyme": "^3.3.0",
-    "eslint": "^4.9.0",
-    "eslint-config-airbnb": "^16.1.0",
-    "eslint-plugin-import": "^2.7.0",
-    "eslint-plugin-jsx-a11y": "^6.0.2",
-    "eslint-plugin-react": "^7.4.0",
-    "mocha": "^5.0.0",
-    "react-addons-test-utils": "^15.6.2",
-    "redux-devtools": "^3.4.1",
-    "uglifyjs-webpack-plugin": "v1.1.6",
-    "webpack": "^3.10.0",
-    "webpack-dev-server": "^2.11.1"
+    "@typescript-eslint/eslint-plugin": "3.9.0",
+    "@typescript-eslint/parser": "3.9.0",
+    "eslint": "7.6.0",
+    "eslint-config-prettier": "6.11.0",
+    "lint-staged": "10.2.11",
+    "prettier": "2.0.5"
+  },
+  "lint-staged": {
+    "*.{json,md,css,scss}": [
+      "prettier --write"
+    ],
+    "*.{ts,tsx}": [
+      "node ./node_modules/eslint/bin/eslint.js --ext .ts --ext .tsx --fix",
+      "prettier --write"
+    ]
   }
 }

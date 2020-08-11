@@ -1,10 +1,10 @@
-import {Request} from "restify"
+import { Request } from 'restify'
 
 // eslint-disable-next-line import/prefer-default-export
-export const getCookie = (request: Request, name:string) => {
+export const getCookie = (request: Request, name: string) => {
   if (request.headers.cookie) {
-    let cookieArray;
-    if(typeof request.headers.cookie === "string" ) {
+    let cookieArray
+    if (typeof request.headers.cookie === 'string') {
       const cookieString = request.headers.cookie as string
       cookieArray = cookieString.split(';')
     } else {

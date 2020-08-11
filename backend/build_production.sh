@@ -4,7 +4,7 @@ set -u
 
 cd "$(dirname "$0")"
 
-npm install
+npm install --only=prod
 
 rm -rf ./release
 mkdir ./release

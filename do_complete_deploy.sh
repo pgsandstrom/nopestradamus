@@ -10,8 +10,8 @@ cd "$(dirname "$0")"
 mkdir -p /apps/nopestradamus/backend
 sudo rsync -a ./backend/release/* /apps/nopestradamus/backend
 
-./frontend//build_production.sh
+./frontend/build_production.sh
 mkdir -p /apps/nopestradamus/frontend
-sudo rsync -a ./frontend/release/* /apps/nopestradamus/frontend
+sudo rsync -a ./frontend/build/* /apps/nopestradamus/frontend
 
 pm2 restart nopestradamus-backend

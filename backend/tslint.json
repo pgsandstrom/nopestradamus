@@ -1,0 +1,17 @@
+{
+  "extends": ["tslint:latest", "tslint-config-prettier"],
+  "rulesDirectory": ["./src/styles/tslint/"],
+  "rules": {
+    "interface-name": [true, "never-prefix"],
+    "max-line-length": [false],
+    "member-access": false,
+    "no-console": [false],
+    "no-implicit-dependencies": false,
+    "no-implicit-enum-values": true,
+    "no-invalid-this": true,
+    "ordered-imports": true,
+    "object-literal-sort-keys": false,
+    "prefer-conditional-expression": false
+  },
+  "defaultSeverity": "error"
+}

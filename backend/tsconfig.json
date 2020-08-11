@@ -1,16 +1,23 @@
 {
   "compilerOptions": {
-    "lib": [ "es2016" ],
+    "esModuleInterop": true,
+    "lib": [
+      "es2016"
+    ],
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": true,
     "preserveConstEnums": true,
     "removeComments": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2017"
   },
   "exclude": [
+    "**/*.spec.ts",
+    "**/*.test.ts",
     "node_modules",
-    "**/*.spec.ts"
+    "src/styles"
   ],
   "include": [
     "src/**/*"

@@ -19,25 +19,21 @@ interface Prediction {
 // TODO PredictionCensored is ugly. Do it in a nice way?
 interface PredictionCensored {
   creater: {
-      mail: string
-      hash?: string // TODO remove this row
-    }
+    mail: string
+    hash?: string // TODO remove this row
+  }
   title: string
   body: string
   hash: string
   finish_date: string
-  participants:
-
-    {
-      mail: string
-      hash?: string // TODO remove this row
-      accepted?: boolean
-      accepted_date?: string
-      accepted_mail_sent: boolean
-      end_mail_sent: boolean
-    }[]
-
-
+  participants: {
+    mail: string
+    hash?: string // TODO remove this row
+    accepted?: boolean
+    accepted_date?: string
+    accepted_mail_sent: boolean
+    end_mail_sent: boolean
+  }[]
 }
 
 interface Creater {

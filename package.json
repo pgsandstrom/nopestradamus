@@ -1,0 +1,23 @@
+{
+  "name": "nopestradamus-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "frontend-pre-commit": "cd ./frontend && npm run pre-commit",
+    "frontend-pre-push": "cd ./frontend && npm run pre-push",
+    "backend-pre-commit": "cd ./backend && npm run pre-commit",
+    "backend-pre-push": "cd ./backend && npm run pre-push",
+    "pre-commit": "npm run frontend-pre-commit && npm run backend-pre-commit",
+    "pre-push": "npm run frontend-pre-push && npm run backend-pre-push"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run pre-commit",
+      "pre-push": "npm run pre-push"
+    }
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "husky": "v3.0.3"
+  }
+}
