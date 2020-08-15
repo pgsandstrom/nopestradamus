@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "next dev",
+    "dev": "node server.js",
     "format": "prettier --write \"{,!(.next|node_modules)}/**/*.{json,md,ts,tsx,css,scss}\"",
     "lint": "node ./node_modules/eslint/bin/eslint.js --ext .ts --ext .tsx --fix .",
     "pre-commit": "lint-staged",
@@ -32,6 +32,8 @@
     "eslint-config-prettier": "6.11.0",
     "eslint-plugin-react": "7.20.6",
     "eslint-plugin-react-hooks": "4.0.8",
+    "express": "4.17.1",
+    "http-proxy-middleware": "1.0.5",
     "lint-staged": "10.2.11",
     "prettier": "2.0.5"
   },
