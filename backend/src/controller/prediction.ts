@@ -99,13 +99,34 @@ WHERE prediction.finish_date < now() and participant.end_mail_sent = false
 `).then((cursor) => cursor.rows)
 
 export const createPrediction = async (
-  title: string,
-  body: string,
-  finishDate: string,
-  isPublic: boolean,
-  createrMail: string,
-  participantList: string[],
+  title?: string,
+  body?: string,
+  finishDate?: string,
+  isPublic?: boolean,
+  createrMail?: string,
+  participantList?: string[],
 ) => {
+  // TODO validate data better maybe?
+
+  if (title === undefined || title === '') {
+    throw new Error('title must not be empty')
+  }
+  if (body === undefined) {
+    throw new Error('title must be present')
+  }
+  if (finishDate === undefined) {
+    throw new Error('finishDate must be present')
+  }
+  if (isPublic === undefined) {
+    throw new Error('isPublic must be present')
+  }
+  if (createrMail === undefined) {
+    throw new Error('createrMail must be present')
+  }
+  if (participantList === undefined) {
+    throw new Error('participantList must be present')
+  }
+
   const hash = uuid()
   await query(
     SQL`INSERT INTO prediction (title, body, hash, finish_date, public) VALUES(${title}, ${body}, ${hash}, ${finishDate}, ${isPublic})`,

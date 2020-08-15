@@ -2,9 +2,10 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { GetServerSideProps } from 'next'
 import { PredictionShallow } from '../../shared'
+import getServerUrl from '../util/serverUrl'
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async (_context) => {
-  const response = await fetch('http://localhost:8088/api/v1/prediction', {
+  const response = await fetch(`${getServerUrl()}/api/v1/prediction`, {
     method: 'GET',
   })
 
