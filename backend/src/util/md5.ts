@@ -1,4 +1,4 @@
-const crypto = require('crypto')
+import crypto from 'crypto'
 
 export default (str: string) => {
   const hash = crypto.createHash('md5')

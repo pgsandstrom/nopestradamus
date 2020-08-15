@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
-    "lib": [
-      "es2016"
-    ],
+    "lib": ["es2016"],
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": true,
@@ -13,13 +11,6 @@
     "strict": true,
     "target": "es2017"
   },
-  "exclude": [
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "node_modules",
-    "src/styles"
-  ],
-  "include": [
-    "src/**/*"
-  ]
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "node_modules", "src/styles"],
+  "include": ["src/**/*", "../shared"]
 }

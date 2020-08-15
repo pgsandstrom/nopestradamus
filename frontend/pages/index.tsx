@@ -1,45 +1,48 @@
 import Head from 'next/head'
+import Link from 'next/link'
+import { GetServerSideProps } from 'next'
 
-export default function Home() {
+export const getServerSideProps: GetServerSideProps<HomeProps> = async (context) => {
+  const response = await fetch('http://localhost:8088/api/v1/prediction', {
+    method: 'GET',
+  })
+
+  const predictionShallowList = (await response.json()) as PredictionShallow[]
+  return { props: { predictionShallowList } }
+}
+
+interface HomeProps {
+  predictionShallowList: PredictionShallow[]
+}
+
+export default function Home({ predictionShallowList }: HomeProps) {
   return (
     <div className="container">
       <Head>
-        <title>Create Next App</title>
+        <title>Nopestradamus</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
-        <h1 className="title">
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+      <main style={{ display: 'flex', flexDirection: 'row' }}>
+        <div style={{ flex: '30 0 0' }}>
+          <img src="/logo.png" style={{ width: '400px' }} />
+        </div>
+        <div style={{ flex: '70 0 0' }}>
+          <h1 className="title">Trying to predict the future, are we?</h1>
 
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
-
-        <div className="grid">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a href="https://github.com/zeit/next.js/tree/master/examples" className="card">
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="card"
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>Instantly deploy your Next.js site to a public URL with Vercel.</p>
-          </a>
+          <div>
+            {predictionShallowList.map((predictionShallow) => {
+              return (
+                <Link
+                  key={predictionShallow.hash}
+                  href="/prediction/[hash]"
+                  as={`/prediction/${predictionShallow.hash}`}
+                >
+                  {predictionShallow.title}
+                </Link>
+              )
+            })}
+          </div>
         </div>
       </main>
 

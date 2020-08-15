@@ -15,31 +15,33 @@ const ensureSingleGet = (cursor: QueryResult) => {
 }
 
 /**
- * Removes all private hashes from the predicition. Also censor the mails!
+ * Removes all private hashes from the predicition. Also censors the mails!
  * @param prediction
  * @param keepHashes These hashes will not be removed
  */
 export const getCensoredPrediction = (
   prediction: Prediction,
-  keepHashes: string[] = [],
-): PredictionCensored => ({
-  ...prediction,
-  creater: {
-    ...prediction.creater,
-    hash: undefined,
-    mail: censorMail(prediction.creater.mail),
-  },
-  participants: prediction.participants.map(participant => ({
-    ...participant,
-    hash: keepHashes.includes(participant.hash) ? participant.hash : undefined,
-    mail: censorMail(participant.mail),
-  })),
-})
+  currentUserHash?: string,
+): PredictionCensored => {
+  return {
+    ...prediction,
+    creater: {
+      ...prediction.creater,
+      hash: undefined,
+      mail: censorMail(prediction.creater.mail),
+    },
+    participants: prediction.participants.map(participant => ({
+      ...participant,
+      isCurrentUser: currentUserHash === participant.hash,
+      mail: censorMail(participant.mail),
+    })),
+  }
+}
 
 export const getLatestPredictions = () =>
   queryString(
     'SELECT title, body, hash from prediction where public is true ORDER BY created LIMIT 20',
-  ).then(cursor => cursor.rows)
+  ).then(cursor => cursor.rows as PredictionShallow[])
 
 export const getPrediction = async (hash: string): Promise<Prediction> => {
   const prediction = await query(

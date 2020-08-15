@@ -17,17 +17,19 @@ makeConstructor('GenericError', {
 export const AUTH_ERROR = 'AUTH_ERROR'
 
 export const getError = (data: any) => {
-  if (data instanceof Error && (data as Error).message === AUTH_ERROR) {
+  if (data instanceof Error && data.message === AUTH_ERROR) {
     return new UnauthorizedError('pls')
   }
 
-  if (data.stack) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  if (data?.stack !== undefined) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     console.error(data.stack)
   }
 
   let info: Info
   if (data instanceof Error) {
-    info = getBodyFromError(data as Error)
+    info = getBodyFromError(data)
   } else if (typeof data === 'string' || data instanceof String) {
     info = getBodyFromString(data as string)
   } else if (data != null && data instanceof Object) {
@@ -41,7 +43,7 @@ export const getError = (data: any) => {
     },
     info!.message,
   )
-  error.statusCode = info!.statusCode || 500
+  error.statusCode = info!.statusCode ?? 500
   return error
 }
 
@@ -57,16 +59,22 @@ const getBodyFromString = (message: string): Info => ({
   error: true,
 })
 
-const getBodyFromObject = (object: any) => ({
-  message: object.message,
-  code: object.code || 0,
-  error: true,
-  statusCode: object.statusCode,
-  extraInfo: {
-    ...object,
-    message: undefined,
-    code: undefined,
-    statusCode: undefined,
-    error: undefined,
-  },
-})
+const getBodyFromObject = (object: any) => {
+  /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+  /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+  return {
+    message: object.message,
+    code: object.code ?? 0,
+    error: true,
+    statusCode: object.statusCode,
+    extraInfo: {
+      ...object,
+      message: undefined,
+      code: undefined,
+      statusCode: undefined,
+      error: undefined,
+    },
+  }
+  /* eslint-enable @typescript-eslint/no-unsafe-member-access */
+  /* eslint-enable @typescript-eslint/no-unsafe-assignment */
+}

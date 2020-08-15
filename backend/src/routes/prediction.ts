@@ -39,10 +39,10 @@ export default (server: Server) => {
     '/api/v1/prediction/:prediction/participant/:hash',
     async (req: Request, res: Response, next: Next) => {
       try {
-        const predictionHash = req.params.prediction
-        const participantHash = req.params.hash
+        const predictionHash = req.params.prediction as string
+        const participantHash = req.params.hash as string
         const prediction = await getPrediction(predictionHash)
-        const censoredPrediction = getCensoredPrediction(prediction, [participantHash])
+        const censoredPrediction = getCensoredPrediction(prediction, participantHash)
         res.send(censoredPrediction)
         next()
       } catch (e) {
