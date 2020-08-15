@@ -1,4 +1,5 @@
 import { GetServerSideProps } from 'next'
+import { PredictionCensored } from '../../../shared'
 
 export const getServerSideProps: GetServerSideProps<PredictionProps> = async (context) => {
   const hash = context.params!.hash as string

@@ -5,6 +5,7 @@ import { confirmAccountExistance, validateAccount } from './account'
 import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './scheduler'
 import { censorMail } from '../util/mail-util'
 import { QueryResult } from 'pg'
+import { PredictionCensored, PredictionShallow } from '../../../shared'
 
 const ensureSingleGet = (cursor: QueryResult) => {
   if (cursor.rows.length !== 1) {
@@ -30,7 +31,7 @@ export const getCensoredPrediction = (
       hash: undefined,
       mail: censorMail(prediction.creater.mail),
     },
-    participants: prediction.participants.map(participant => ({
+    participants: prediction.participants.map((participant) => ({
       ...participant,
       isCurrentUser: currentUserHash === participant.hash,
       mail: censorMail(participant.mail),
@@ -41,18 +42,18 @@ export const getCensoredPrediction = (
 export const getLatestPredictions = () =>
   queryString(
     'SELECT title, body, hash from prediction where public is true ORDER BY created LIMIT 20',
-  ).then(cursor => cursor.rows as PredictionShallow[])
+  ).then((cursor) => cursor.rows as PredictionShallow[])
 
 export const getPrediction = async (hash: string): Promise<Prediction> => {
   const prediction = await query(
     SQL`SELECT title, body, hash, finish_date FROM prediction WHERE hash = ${hash}`,
-  ).then(cursor => ensureSingleGet(cursor))
+  ).then((cursor) => ensureSingleGet(cursor))
   const creater: Creater = await query(
     SQL`SELECT hash, mail, accepted, accepted_mail_sent, end_mail_sent FROM creater WHERE prediction_hash = ${hash}`,
-  ).then(cursor => ensureSingleGet(cursor))
+  ).then((cursor) => ensureSingleGet(cursor))
   const participants: Participant[] = await query(
     SQL`SELECT hash, mail, accepted, accepted_mail_sent, end_mail_sent FROM participant WHERE prediction_hash = ${hash}`,
-  ).then(cursor => cursor.rows)
+  ).then((cursor) => cursor.rows)
 
   const result: Prediction = {
     ...prediction,
@@ -70,14 +71,14 @@ JOIN creater on prediction.hash = creater.prediction_hash
 WHERE prediction.finish_date > now()
   AND creater.accepted = true
 ORDER BY finish_date asc limit 1
-`).then(cursor => cursor.rows)
+`).then((cursor) => cursor.rows)
 
 export const getOldBetWithUnsentCreaterAcceptMails = () =>
   queryString(`
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN creater on prediction.hash = creater.prediction_hash
 WHERE creater.accepted_mail_sent = false 
-`).then(cursor => cursor.rows)
+`).then((cursor) => cursor.rows)
 
 export const getOldBetWithUnsentAcceptMails = () =>
   queryString(`
@@ -86,7 +87,7 @@ JOIN participant on prediction.hash = participant.prediction_hash
 JOIN creater on prediction.hash = creater.prediction_hash
 WHERE participant.accepted_mail_sent = false
   AND creater.accepted = true
-`).then(cursor => cursor.rows)
+`).then((cursor) => cursor.rows)
 
 export const getOldBetWithUnsentEndMails = () =>
   queryString(`
@@ -95,7 +96,7 @@ JOIN participant on prediction.hash = participant.prediction_hash
 JOIN creater on prediction.hash = creater.prediction_hash
 WHERE prediction.finish_date < now() and participant.end_mail_sent = false
   AND creater.accepted = true
-`).then(cursor => cursor.rows)
+`).then((cursor) => cursor.rows)
 
 export const createPrediction = async (
   title: string,
@@ -110,7 +111,7 @@ export const createPrediction = async (
     SQL`INSERT INTO prediction (title, body, hash, finish_date, public) VALUES(${title}, ${body}, ${hash}, ${finishDate}, ${isPublic})`,
   )
   await createCreater(hash, createrMail)
-  const promises = participantList.map(participant => createParticipant(hash, participant))
+  const promises = participantList.map((participant) => createParticipant(hash, participant))
   await Promise.all(promises)
   return handleUnsentCreaterAcceptEmail(hash)
 }
@@ -160,6 +161,6 @@ export const updateParticipantAcceptStatus = async (
     SQL`UPDATE participant SET accepted = ${accepted}, accepted_date = now() where prediction_hash = ${predictionHash} AND hash = ${hash}`,
   )
   const prediction = await getPrediction(predictionHash)
-  const participant = prediction.participants.find(p => p.hash === hash)!
+  const participant = prediction.participants.find((p) => p.hash === hash)!
   return validateAccount(participant.mail)
 }

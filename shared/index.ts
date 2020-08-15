@@ -1,10 +1,10 @@
-interface PredictionShallow {
+export interface PredictionShallow {
   title: string
   body: string
   hash: string
 }
 
-interface PredictionCensored {
+export interface PredictionCensored {
   creater: {
     mail: string
     hash: undefined // 'undefined' to make sure we dont accidentally leave the hash
