@@ -31,15 +31,22 @@ export default function Home({ predictionShallowList }: HomeProps) {
           <h1 className="title">Trying to predict the future, are we?</h1>
 
           <div>
+            Go here:
+            <Link href="/prediction/create">Create prediction</Link>
+          </div>
+
+          <div>
             {predictionShallowList.map((predictionShallow) => {
               return (
-                <Link
-                  key={predictionShallow.hash}
-                  href="/prediction/[hash]"
-                  as={`/prediction/${predictionShallow.hash}`}
-                >
-                  {predictionShallow.title}
-                </Link>
+                <div>
+                  <Link
+                    key={predictionShallow.hash}
+                    href="/prediction/[hash]"
+                    as={`/prediction/${predictionShallow.hash}`}
+                  >
+                    {predictionShallow.title}
+                  </Link>
+                </div>
               )
             })}
           </div>

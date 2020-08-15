@@ -122,7 +122,7 @@ const sendMail = async (receiver: string, title: string, body: string) => {
     await transporter.verify()
     return transporter.sendMail(mailOptions)
   } catch (e) {
-    console.log(`send mail fail: ${e}`)
+    console.error(`send mail fail: ${e}`)
     throw e
   }
 }
