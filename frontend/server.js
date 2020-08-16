@@ -6,7 +6,6 @@ const next = require('next')
 
 // this file will ONLY be used in development. In production, nginx or whatever you use should proxy all /api requests to the proper backend instead
 
-const port = parseInt(process.env.PORT, 10) || 3000
 const env = process.env.NODE_ENV
 const dev = env !== 'production'
 const app = next({
@@ -24,7 +23,7 @@ app
 
     const devProxy = {
       '/api': {
-        target: `http://localhost:${process.env.PORT}/api/`,
+        target: `http://localhost:${process.env.DEV_PORT_PROXY}/api/`,
         pathRewrite: { '^/api': '/' },
         changeOrigin: true,
       },
@@ -41,6 +40,7 @@ app
     // Default catch-all handler to allow Next.js to handle all other routes
     server.all('*', (req, res) => handle(req, res))
 
+    const port = parseInt(process.env.PORT, 10) || 3000
     server.listen(port, (err) => {
       if (err) {
         throw err
