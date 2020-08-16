@@ -11,7 +11,8 @@ mkdir -p /apps/nopestradamus/backend
 sudo rsync -a ./backend/release/* /apps/nopestradamus/backend
 
 ./frontend/build_production.sh
-mkdir -p /apps/nopestradamus/frontend
-sudo rsync -a ./frontend/build/* /apps/nopestradamus/frontend
+mkdir -p /apps/nopestradamus/nextjs
+sudo rsync -a ./frontend /apps/nopestradamus/nextjs
 
 pm2 restart nopestradamus-backend
+pm2 restart nopestradamus-nextjs

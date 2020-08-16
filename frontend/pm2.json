@@ -1,0 +1,18 @@
+{
+  "apps": [
+    {
+      "name": "nopestradamus-nextjs",
+      "script": "dist/server",
+      "args": [],
+      "watch": false,
+      "node_args": "--harmony",
+      "merge_logs": false,
+      "cwd": "/apps/nopestradamus/nextjs",
+      "log_date_format": "YYYY-MM-DD HH:mm:ss",
+      "env": {
+        "NODE_ENV": "production",
+        "PROD_ENV": "true"
+      }
+    }
+  ]
+}
