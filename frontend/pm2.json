@@ -2,7 +2,7 @@
   "apps": [
     {
       "name": "nopestradamus-nextjs",
-      "script": "dist/server",
+      "script": "npm run start",
       "args": [],
       "watch": false,
       "node_args": "--harmony",

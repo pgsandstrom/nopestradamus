@@ -2,13 +2,13 @@
   "apps": [
     {
       "name": "nopestradamus-backend",
-      "script": "dist",
+      "script": "dist/backend/src",
       "args": [],
       "watch": false,
       "node_args": "--harmony",
       "merge_logs": false,
       "cwd": "/apps/nopestradamus/backend",
-      "log_date_format" : "YYYY-MM-DD HH:mm:ss",
+      "log_date_format": "YYYY-MM-DD HH:mm:ss",
       "env": {
         "NODE_ENV": "production",
         "PROD_ENV": "true"
