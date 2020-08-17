@@ -1,10 +1,12 @@
 import DateFnsUtils from '@date-io/date-fns'
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers'
 import { useState } from 'react'
-import { Button } from '@material-ui/core'
+import { Button, TextField } from '@material-ui/core'
 import getServerUrl from '../../util/serverUrl'
 
 export default function CreatePrediction() {
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
   const [date, setDate] = useState<Date | null>(() => new Date())
   // const [date, setDate] = useState<Date | null>(null)
 
@@ -20,6 +22,13 @@ export default function CreatePrediction() {
   return (
     <div>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <TextField label="Title" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <TextField
+          label="Description"
+          value={description}
+          variant="outlined"
+          onChange={(e) => setDescription(e.target.value)}
+        />
         <KeyboardDatePicker
           disableToolbar
           variant="inline"

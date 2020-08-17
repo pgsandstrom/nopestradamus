@@ -1,8 +1,10 @@
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { GetServerSideProps } from 'next'
 import { PredictionShallow } from '../../shared'
 import getServerUrl from '../util/serverUrl'
+import { Button } from '@material-ui/core'
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async (_context) => {
   const response = await fetch(`${getServerUrl()}/api/v1/prediction`, {
@@ -18,181 +20,99 @@ interface HomeProps {
 }
 
 export default function Home({ predictionShallowList }: HomeProps) {
+  const router = useRouter()
+
+  const goToCreate = () => {
+    void router.push('/prediction/create')
+  }
+
   return (
-    <div className="container">
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100vw',
+        maxWidth: '100%',
+        height: '100%',
+      }}
+    >
       <Head>
         <title>Nopestradamus</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main style={{ display: 'flex', flexDirection: 'row' }}>
-        <div style={{ flex: '30 0 0' }}>
-          <img src="/logo.png" style={{ width: '400px' }} />
+      <main
+        style={{
+          display: 'flex',
+          flex: '1 0 0',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignSelf: 'center',
+            flex: '30 0 0',
+          }}
+        >
+          <div style={{ width: '400px' }}>
+            <img src="/logo.png" style={{ width: '100%' }} />
+          </div>
         </div>
-        <div style={{ flex: '70 0 0' }}>
-          <h1 className="title">Trying to predict the future, are we?</h1>
+        <div style={{ flex: '25 0 0', alignSelf: 'center' }}>
+          <h1 style={{ fontSize: '2em' }}>Trying to predict the future, are we?</h1>
 
-          <div>
-            Go here:
-            <Link href="/prediction/create">
-              <a>Create prediction</a>
-            </Link>
+          <div style={{ fontSize: '1.1em' }}>
+            <p>
+              So here is how this site works: You describe a prediction and an end date. If you
+              want, you can add other participants that have to accept what you have written.
+            </p>
+            <p>
+              When the end date is upon us, you all receive a mail. And that&apos;s it. No need to
+              create an accout or stuff like that.
+            </p>
+            <p>
+              So whats the point? Well, sometimes people are very confident when they predict the
+              future. I hope being reminded of these long term predictions will humble people.
+              Predicting the future is hard.
+            </p>
+            <p>You can also just use it as a bet tracker.</p>
+            <p>
+              So go ahead:{' '}
+              <Button variant="outlined" onClick={goToCreate}>
+                Create a prediction
+              </Button>
+            </p>
           </div>
-
-          <div>
-            {predictionShallowList.map((predictionShallow) => {
-              return (
-                <div key={predictionShallow.hash}>
-                  <Link href="/prediction/[hash]" as={`/prediction/${predictionShallow.hash}`}>
-                    <a>{predictionShallow.title}</a>
-                  </Link>
-                </div>
-              )
-            })}
-          </div>
+        </div>
+        <div style={{ flex: '45 0 0' }}>
+          {predictionShallowList.map((predictionShallow) => {
+            return (
+              <div key={predictionShallow.hash}>
+                <Link href="/prediction/[hash]" as={`/prediction/${predictionShallow.hash}`}>
+                  <a>{predictionShallow.title}</a>
+                </Link>
+              </div>
+            )
+          })}
         </div>
       </main>
 
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by <img src="/vercel.svg" alt="Vercel Logo" className="logo" />
-        </a>
+      <footer
+        style={{
+          display: 'flex',
+          padding: '20px 0',
+          borderTop: '1px solid #eaeaea',
+          justifyContent: 'center',
+        }}
+      >
+        <span>
+          Bugs or suggestions? Project is on{' '}
+          <a href="https://github.com/pgsandstrom/nopestradamus">Github</a>.
+        </span>
       </footer>
 
-      <style jsx>{`
-        .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer img {
-          margin-left: 0.5rem;
-        }
-
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
-
-        .title a {
-          color: #0070f3;
-          text-decoration: none;
-        }
-
-        .title a:hover,
-        .title a:focus,
-        .title a:active {
-          text-decoration: underline;
-        }
-
-        .title {
-          margin: 0;
-          line-height: 1.15;
-          font-size: 4rem;
-        }
-
-        .title,
-        .description {
-          text-align: center;
-        }
-
-        .description {
-          line-height: 1.5;
-          font-size: 1.5rem;
-        }
-
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-            Bitstream Vera Sans Mono, Courier New, monospace;
-        }
-
-        .grid {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-
-          max-width: 800px;
-          margin-top: 3rem;
-        }
-
-        .card {
-          margin: 1rem;
-          flex-basis: 45%;
-          padding: 1.5rem;
-          text-align: left;
-          color: inherit;
-          text-decoration: none;
-          border: 1px solid #eaeaea;
-          border-radius: 10px;
-          transition: color 0.15s ease, border-color 0.15s ease;
-        }
-
-        .card:hover,
-        .card:focus,
-        .card:active {
-          color: #0070f3;
-          border-color: #0070f3;
-        }
-
-        .card h3 {
-          margin: 0 0 1rem 0;
-          font-size: 1.5rem;
-        }
-
-        .card p {
-          margin: 0;
-          font-size: 1.25rem;
-          line-height: 1.5;
-        }
-
-        .logo {
-          height: 1em;
-        }
-
-        @media (max-width: 600px) {
-          .grid {
-            width: 100%;
-            flex-direction: column;
-          }
-        }
-      `}</style>
+      <style jsx>{``}</style>
 
       <style jsx global>{`
         html,
