@@ -5,7 +5,9 @@ import routes from './routes/index'
 import noCachePlugin from './util/noCachePlugin'
 import config from './util/config'
 
-import { init as schedulerInit } from './controller/scheduler'
+import { handleAllUnsentMails } from './controller/scheduler'
+import { startCronStuff } from './controller/cronController'
+import { isDev } from './util/env'
 
 const server: Server = createServer()
 
@@ -34,4 +36,8 @@ server.listen(config().port, () => {
   console.log('%s listening at %s', server.name, server.url) // eslint-disable-line no-console
 })
 
-schedulerInit()
+if (!isDev()) {
+  handleAllUnsentMails()
+} else {
+  startCronStuff()
+}

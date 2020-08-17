@@ -80,7 +80,7 @@ JOIN creater on prediction.hash = creater.prediction_hash
 WHERE creater.accepted_mail_sent = false 
 `).then((cursor) => cursor.rows)
 
-export const getOldBetWithUnsentAcceptMails = () =>
+export const getOldBetWithUnsentParticipantsAcceptMails = () =>
   queryString(`
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN participant on prediction.hash = participant.prediction_hash
@@ -89,7 +89,7 @@ WHERE participant.accepted_mail_sent = false
   AND creater.accepted = true
 `).then((cursor) => cursor.rows)
 
-export const getOldBetWithUnsentEndMails = () =>
+export const getOldBetWithUnsentParticipantsEndMails = () =>
   queryString(`
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN participant on prediction.hash = participant.prediction_hash
@@ -137,7 +137,7 @@ export const createPrediction = async (
   return handleUnsentCreaterAcceptEmail(hash)
 }
 
-export const createCreater = async (predictionHash: string, mail: string) => {
+const createCreater = async (predictionHash: string, mail: string) => {
   const hash = uuid()
   await confirmAccountExistance(mail)
   return query(
@@ -145,7 +145,7 @@ export const createCreater = async (predictionHash: string, mail: string) => {
   )
 }
 
-export const createParticipant = async (predictionHash: string, mail: string) => {
+const createParticipant = async (predictionHash: string, mail: string) => {
   const hash = uuid()
   await confirmAccountExistance(mail)
   return query(
@@ -159,6 +159,9 @@ export const setCreaterAcceptMailSent = (hash: string) =>
 
 export const setParticipantAcceptMailSent = (hash: string) =>
   query(SQL`UPDATE participant SET accepted_mail_sent = true where hash = ${hash}`)
+
+export const setParticipantEndMailSent = (participantHash: string) =>
+  query(SQL`UPDATE participant SET end_mail_sent = true where hash = ${participantHash}`)
 
 export const updateCreaterAcceptStatus = async (
   predictionHash: string,

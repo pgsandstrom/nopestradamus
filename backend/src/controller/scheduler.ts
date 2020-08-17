@@ -1,81 +1,43 @@
 import {
-  getOldBetWithUnsentAcceptMails,
-  getOldBetWithUnsentEndMails,
-  getNextPrediction,
+  getOldBetWithUnsentParticipantsAcceptMails,
+  getOldBetWithUnsentParticipantsEndMails,
   getPrediction,
   getOldBetWithUnsentCreaterAcceptMails,
   setCreaterAcceptMailSent,
   setParticipantAcceptMailSent,
+  setParticipantEndMailSent,
 } from './prediction'
 import { sendAcceptMail, sendCreaterAcceptMail, sendEndMail } from './mailer'
 import { isMailValid } from '../util/mail-util'
-import { parseISO, differenceInMilliseconds } from 'date-fns'
 
-export const init = async () => {
-  console.log('Running init code')
-  try {
-    await handleAllUnsentCreaterAcceptEmails()
+export const handleAllUnsentMails = async () => {
+  console.log('handle all unsent mails')
+  await handleAllUnsentCreaterAcceptEmails()
 
-    await handleAllUnsentAcceptEmails()
+  await handleAllUnsentParticipantsAcceptEmails()
 
-    await handleAllUnsentEndEmails()
+  await handleAllUnsentCreaterEndEmails()
 
-    await ensureWaitingForBet()
-  } catch (e) {
-    console.error('INIT FAILED')
-    console.log(e)
-    throw e
-  }
-}
-
-let isWaiting = false
-
-export const ensureWaitingForBet = async () => {
-  if (isWaiting === false) {
-    const predictionList = await getNextPrediction()
-    if (predictionList.length > 0) {
-      const prediction = predictionList[0]
-      const finishDate = parseISO(prediction.finish_date)
-      const msDiff = differenceInMilliseconds(finishDate, new Date())
-      // Some weird code since node has a max setTimeout time
-      const waitingTime = Math.min(msDiff, 2147483647)
-      console.log(
-        `waiting ${waitingTime}ms for bet ${prediction.hash}. It actually times out in ${msDiff}`,
-      )
-      isWaiting = true
-      setTimeout(() => {
-        if (differenceInMilliseconds(finishDate, new Date()) < 5000) {
-          console.log(
-            `Timeout finished for prediction ${prediction.hash} that finished at ${
-              prediction.finish_date
-            }`,
-          )
-          handleUnsentEndEmail(prediction.hash)
-        }
-        isWaiting = false
-        ensureWaitingForBet()
-      }, waitingTime)
-    } else {
-      console.log('No promise to wait for')
-    }
-  } else {
-    console.log('Already waiting for bet, not waiting again')
-  }
+  await handleAllUnsentParticipantsEndEmails()
 }
 
 const handleAllUnsentCreaterAcceptEmails = async () => {
   const unsentCreaterAcceptMails = await getOldBetWithUnsentCreaterAcceptMails()
-  unsentCreaterAcceptMails.forEach(item => handleUnsentCreaterAcceptEmail(item.hash))
+  unsentCreaterAcceptMails.forEach((item) => handleUnsentCreaterAcceptEmail(item.hash))
 }
 
-const handleAllUnsentAcceptEmails = async () => {
-  const unsentAcceptMails = await getOldBetWithUnsentAcceptMails()
-  unsentAcceptMails.forEach(item => handleUnsentAcceptEmail(item.hash))
+const handleAllUnsentParticipantsAcceptEmails = async () => {
+  const unsentAcceptMails = await getOldBetWithUnsentParticipantsAcceptMails()
+  unsentAcceptMails.forEach((item) => handleUnsentAcceptEmail(item.hash))
 }
 
-const handleAllUnsentEndEmails = async () => {
-  const unsentEndMails = await getOldBetWithUnsentEndMails()
-  unsentEndMails.forEach(item => handleUnsentEndEmail(item.hash))
+const handleAllUnsentCreaterEndEmails = async () => {
+  // TODO
+}
+
+const handleAllUnsentParticipantsEndEmails = async () => {
+  const unsentEndMails = await getOldBetWithUnsentParticipantsEndMails()
+  unsentEndMails.forEach((item) => handleUnsentEndEmail(item.hash))
 }
 
 export const handleUnsentCreaterAcceptEmail = async (hash: string) => {
@@ -97,11 +59,11 @@ export const handleUnsentAcceptEmail = async (hash: string) => {
   const prediction = await getPrediction(hash)
   const createrMail = prediction.creater.mail
   const mails = prediction.participants
-    .filter(participant => participant.accepted_mail_sent === false)
-    .map(participant => participant.mail)
-  mails.forEach(async mail => {
+    .filter((participant) => participant.accepted_mail_sent === false)
+    .map((participant) => participant.mail)
+  mails.forEach(async (mail) => {
     // TODO i think this can be written in a nicer way...
-    const participant = prediction.participants.find(p => p.mail === mail)!
+    const participant = prediction.participants.find((p) => p.mail === mail)!
     try {
       if (isMailValid(mail)) {
         await sendAcceptMail(
@@ -123,16 +85,14 @@ export const handleUnsentAcceptEmail = async (hash: string) => {
   })
 }
 
-const handleUnsentEndEmail = async (hash: string) => {
-  const prediction = await getPrediction(hash)
+const handleUnsentEndEmail = async (predictionHash: string) => {
+  const prediction = await getPrediction(predictionHash)
   const createrMail = prediction.creater.mail
-  const mails = prediction.participants
-    .filter(participant => participant.accepted)
-    .filter(participant => participant.end_mail_sent === false)
-    .map(participant => participant.mail)
-  mails.forEach(async mail => {
-    // TODO i think this can be written in a nicer way...
-    const participant = prediction.participants.find(p => p.mail === mail)!
+  const participantNeedingMailList = prediction.participants
+    .filter((participant) => participant.accepted)
+    .filter((participant) => participant.end_mail_sent === false)
+  participantNeedingMailList.forEach(async (participant) => {
+    const mail = participant.mail
     try {
       if (isMailValid(mail)) {
         await sendEndMail(
@@ -141,11 +101,12 @@ const handleUnsentEndEmail = async (hash: string) => {
           prediction.title,
           prediction.body,
           participant.accepted_date!,
-          hash,
+          predictionHash,
         )
       } else {
         console.log(`endmail skipping invalid mail: ${mail}`)
       }
+      setParticipantEndMailSent(participant.hash)
     } catch (e) {
       console.error(`failed sending end mail to ${mail}`)
     }
