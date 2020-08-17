@@ -23,7 +23,7 @@ app
 
     const devProxy = {
       '/api': {
-        target: `http://localhost:${process.env.DEV_PORT_PROXY}/api/`,
+        target: `http://localhost:${process.env.BACKEND_PORT}/api/`,
         pathRewrite: { '^/api': '/' },
         changeOrigin: true,
       },
