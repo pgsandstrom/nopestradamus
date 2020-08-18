@@ -1,19 +1,10 @@
 import uuid from 'uuid/v4'
 
-import { query, queryString, SQL } from '../util/db'
+import { query, queryString, SQL, querySingle } from '../util/db'
 import { confirmAccountExistance, validateAccount } from './account'
 import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './scheduler'
 import { censorMail } from '../util/mail-util'
-import { QueryResult } from 'pg'
 import { PredictionCensored, PredictionShallow } from '../../../shared'
-
-const ensureSingleGet = (cursor: QueryResult) => {
-  if (cursor.rows.length !== 1) {
-    throw new Error(`Cursor did not contain single row. Count: ${cursor.rows.length}`)
-  } else {
-    return cursor.rows[0]
-  }
-}
 
 /**
  * Removes all private hashes from the predicition. Also censors the mails!
@@ -45,21 +36,26 @@ export const getLatestPredictions = () =>
   ).then((cursor) => cursor.rows as PredictionShallow[])
 
 export const getPrediction = async (hash: string): Promise<Prediction> => {
-  const prediction = await query(
+  // TODO serialize this
+  /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+  const prediction = await querySingle(
     SQL`SELECT created, title, body, hash, finish_date FROM prediction WHERE hash = ${hash}`,
-  ).then((cursor) => ensureSingleGet(cursor))
-  const creater: Creater = await query(
+  )
+  const creater = await querySingle(
     SQL`SELECT hash, mail, accepted, accepted_mail_sent, end_mail_sent FROM creater WHERE prediction_hash = ${hash}`,
-  ).then((cursor) => ensureSingleGet(cursor))
-  const participants: Participant[] = await query(
-    SQL`SELECT hash, mail, accepted, accepted_mail_sent, end_mail_sent FROM participant WHERE prediction_hash = ${hash}`,
-  ).then((cursor) => cursor.rows)
+  )
+  const participants: Participant[] = (
+    await query(
+      SQL`SELECT hash, mail, accepted, accepted_mail_sent, end_mail_sent FROM participant WHERE prediction_hash = ${hash}`,
+    )
+  ).rows
 
   const result: Prediction = {
     ...prediction,
     creater,
     participants,
   }
+  /* eslint-enable @typescript-eslint/no-unsafe-assignment */
 
   return result
 }

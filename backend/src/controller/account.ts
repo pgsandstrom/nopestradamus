@@ -8,7 +8,7 @@ import { QueryResult } from 'pg'
 export const confirmAccountExistance = async (mail: string, validated = false) => {
   const hash = uuid()
   const result = await query(SQL`SELECT count(*) FROM mail WHERE mail = ${mail}`).then(
-    (cursor: QueryResult) => cursor.rows[0],
+    (cursor: QueryResult) => cursor.rows[0] as { count: string },
   )
   if (result.count === '0') {
     await query(

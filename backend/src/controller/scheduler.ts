@@ -120,7 +120,7 @@ const handleUnsentEndEmail = async (predictionHash: string) => {
       } else {
         console.log(`endmail skipping invalid mail: ${participant.mail}`)
       }
-      setParticipantEndMailSent(participant.hash)
+      void setParticipantEndMailSent(participant.hash)
     } catch (e) {
       console.error(`failed sending end mail to ${participant.mail}`)
     }
