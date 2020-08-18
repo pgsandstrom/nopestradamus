@@ -3,7 +3,7 @@ import uuid from 'uuid/v4'
 import { query, queryString, SQL, querySingle } from '../util/db'
 import { confirmAccountExistance, validateAccount } from './account'
 import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './scheduler'
-import { censorMail } from '../util/mail-util'
+import { censorMail, isMailValid } from '../util/mail-util'
 import { PredictionCensored, PredictionShallow } from '../../../shared'
 
 /**
@@ -137,12 +137,15 @@ export const createPrediction = async (
     SQL`INSERT INTO prediction (title, body, hash, finish_date, public) VALUES(${title}, ${body}, ${hash}, ${finishDate}, ${isPublic})`,
   )
   await createCreater(hash, createrMail)
-  const promises = participantList.map((participant) => createParticipant(hash, participant))
-  await Promise.all(promises)
+  const promiseList = participantList.map((participant) => createParticipant(hash, participant))
+  await Promise.all(promiseList)
   return handleUnsentCreaterAcceptEmail(hash)
 }
 
 const createCreater = async (predictionHash: string, mail: string) => {
+  if (!isMailValid(mail)) {
+    throw new Error(`creater mail is invalid:${mail}`)
+  }
   const hash = uuid()
   await confirmAccountExistance(mail)
   return query(
@@ -151,6 +154,9 @@ const createCreater = async (predictionHash: string, mail: string) => {
 }
 
 const createParticipant = async (predictionHash: string, mail: string) => {
+  if (!isMailValid(mail)) {
+    throw new Error(`participant mail is invalid:${mail}`)
+  }
   const hash = uuid()
   await confirmAccountExistance(mail)
   return query(
