@@ -6,8 +6,14 @@ import {
   setCreaterAcceptMailSent,
   setParticipantAcceptMailSent,
   setParticipantEndMailSent,
+  getOldBetWithUnsentCreaterEndMails,
 } from './prediction'
-import { sendAcceptMail, sendCreaterAcceptMail, sendEndMail } from './mailer'
+import {
+  sendParticipantAcceptMail,
+  sendCreaterAcceptMail,
+  sendParticipantEndMail,
+  sendCreaterEndMail,
+} from './mailer'
 import { isMailValid } from '../util/mail-util'
 
 export const handleAllUnsentMails = async () => {
@@ -32,7 +38,8 @@ const handleAllUnsentParticipantsAcceptEmails = async () => {
 }
 
 const handleAllUnsentCreaterEndEmails = async () => {
-  // TODO
+  const unsentCreaterAcceptMails = await getOldBetWithUnsentCreaterEndMails()
+  unsentCreaterAcceptMails.forEach((item) => handleUnsentCreaterEndEmail(item.hash))
 }
 
 const handleAllUnsentParticipantsEndEmails = async () => {
@@ -43,6 +50,10 @@ const handleAllUnsentParticipantsEndEmails = async () => {
 export const handleUnsentCreaterAcceptEmail = async (hash: string) => {
   const prediction = await getPrediction(hash)
   const mail = prediction.creater.mail
+
+  if (prediction.creater.accepted_mail_sent) {
+    throw new Error(`created accept mail already sent for ${hash}`)
+  }
   try {
     if (isMailValid(mail)) {
       await sendCreaterAcceptMail(prediction)
@@ -55,60 +66,63 @@ export const handleUnsentCreaterAcceptEmail = async (hash: string) => {
   }
 }
 
+export const handleUnsentCreaterEndEmail = async (hash: string) => {
+  const prediction = await getPrediction(hash)
+  const mail = prediction.creater.mail
+
+  if (prediction.creater.end_mail_sent) {
+    throw new Error(`created end mail already sent for ${hash}`)
+  }
+  try {
+    if (isMailValid(mail)) {
+      await sendCreaterEndMail(prediction)
+    } else {
+      console.log(`creater skipping invalid mail: ${mail}`)
+    }
+    await setCreaterAcceptMailSent(prediction.creater.hash)
+  } catch (e) {
+    console.error(`failed sending creater end mail to ${mail}`)
+  }
+}
+
 export const handleUnsentAcceptEmail = async (hash: string) => {
   const prediction = await getPrediction(hash)
-  const createrMail = prediction.creater.mail
-  const mails = prediction.participants
-    .filter((participant) => participant.accepted_mail_sent === false)
-    .map((participant) => participant.mail)
-  mails.forEach(async (mail) => {
-    // TODO i think this can be written in a nicer way...
-    const participant = prediction.participants.find((p) => p.mail === mail)!
+
+  const participantNeedingMailList = prediction.participants.filter(
+    (participant) => participant.accepted_mail_sent === false,
+  )
+
+  participantNeedingMailList.forEach(async (participant) => {
     try {
-      if (isMailValid(mail)) {
-        await sendAcceptMail(
-          mail,
-          createrMail,
-          prediction.title,
-          prediction.body,
-          prediction.finish_date,
-          hash,
-          participant.hash,
-        )
+      if (isMailValid(participant.mail)) {
+        await sendParticipantAcceptMail(prediction, participant)
       } else {
-        console.log(`participant skipping invalid mail: ${mail}`)
+        console.log(`participant skipping invalid mail: ${participant.mail}`)
       }
       await setParticipantAcceptMailSent(participant.hash)
     } catch (e) {
-      console.error(`failed sending accept mail to ${mail}`)
+      console.error(`failed sending accept mail to ${participant.mail}`)
     }
   })
 }
 
 const handleUnsentEndEmail = async (predictionHash: string) => {
   const prediction = await getPrediction(predictionHash)
-  const createrMail = prediction.creater.mail
+
   const participantNeedingMailList = prediction.participants
     .filter((participant) => participant.accepted)
     .filter((participant) => participant.end_mail_sent === false)
+
   participantNeedingMailList.forEach(async (participant) => {
-    const mail = participant.mail
     try {
-      if (isMailValid(mail)) {
-        await sendEndMail(
-          mail,
-          createrMail,
-          prediction.title,
-          prediction.body,
-          participant.accepted_date!,
-          predictionHash,
-        )
+      if (isMailValid(participant.mail)) {
+        await sendParticipantEndMail(prediction, participant)
       } else {
-        console.log(`endmail skipping invalid mail: ${mail}`)
+        console.log(`endmail skipping invalid mail: ${participant.mail}`)
       }
       setParticipantEndMailSent(participant.hash)
     } catch (e) {
-      console.error(`failed sending end mail to ${mail}`)
+      console.error(`failed sending end mail to ${participant.mail}`)
     }
   })
 }

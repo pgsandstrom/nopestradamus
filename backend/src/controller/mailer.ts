@@ -26,70 +26,83 @@ http://nopestradamus.com/prediction/${prediction.hash}`
   return sendMail(prediction.creater.mail, mailTitle, mailBody)
 }
 
-export const sendAcceptMail = async (
-  receiver: string,
-  createrMail: string,
-  title: string,
-  body: string,
-  finishDate: string,
-  predictionHash: string,
-  acceptHash: string,
+export const sendParticipantAcceptMail = async (
+  prediction: Prediction,
+  participant: Participant,
 ) => {
-  console.log(`sending accept mail to ${receiver}`)
+  console.log(`sending accept mail to ${participant.mail}`)
   // console.log(`accept: /prediction/${predictionHash}/participant/${acceptHash}`);
   // console.log(`view: /prediction/${predictionHash}`);
-  const mailTitle = `Your opinion has been requested by ${createrMail}!`
-  const mailBody = `${createrMail} has asked you to accept a bet! The bet is described below
+  const mailTitle = `Your opinion has been requested by ${prediction.creater.mail}!`
+  const mailBody = `${
+    prediction.creater.mail
+  } has asked you to accept a bet! The bet is described below
 
 ---
 
-Title: ${title}
+Title: ${prediction.title}
 
-${body}
+${prediction.body}
 
 ---
 
 The bet ends at ${format(
-    parseISO(finishDate),
+    new Date(prediction.finish_date),
     'YYYY-MM-DD',
   )}. At the given date, you will all receive a mail and be confronted with your predictions!
 To accept or deny the bet, click the following link:
-http://nopestradamus.com/prediction/${predictionHash}/participant/${acceptHash}
+http://nopestradamus.com/prediction/${prediction.hash}/participant/${participant.hash}
 
 To get an overview of the bet before you accept
-http://nopestradamus.com/prediction/${predictionHash}
+http://nopestradamus.com/prediction/${prediction.hash}
 `
-  return sendMail(receiver, mailTitle, mailBody)
+  return sendMail(participant.mail, mailTitle, mailBody)
 }
 
-export const sendEndMail = async (
-  receiver: string,
-  createrMail: string,
-  title: string,
-  body: string,
-  acceptedDate: string,
-  predictionHash: string,
-) => {
-  console.log(`sending end mail to ${receiver}`)
-  const mailTitle = `Your bet from ${createrMail} has finished!!!`
-  const mailBody = `A bet was accepted by you on ${format(
-    parseISO(acceptedDate),
+export const sendCreaterEndMail = async (prediction: Prediction) => {
+  const mailTitle = `Your bet has finished: ${prediction.title}`
+  const mailBody = `A bet was created by you on ${format(
+    new Date(prediction.created),
     'YYYY-MM-DD',
-  )} by ${createrMail}. It has now finished! Here is the bet:
+  )}. It has now finished! Here is the bet:
 
 ---
 
-Title: ${title}
+Title: ${prediction.title}
 
-${body}
+${prediction.body}
 
 ---
 
 To get an overview of the bet visit this link:
-http://nopestradamus.com/prediction/${predictionHash}
+http://nopestradamus.com/prediction/${prediction.hash}
+
+Hope you had fun!`
+  // TODO reminders about who was involved and stuff like that
+  return sendMail(prediction.creater.mail, mailTitle, mailBody)
+}
+
+export const sendParticipantEndMail = async (prediction: Prediction, participant: Participant) => {
+  console.log(`sending end mail to ${participant.mail}`)
+  const mailTitle = `Your bet from ${prediction.creater.mail} has finished!!!`
+  const mailBody = `A bet was accepted by you on ${format(
+    new Date(participant.accepted_date!),
+    'YYYY-MM-DD',
+  )} by ${prediction.creater.mail}. It has now finished! Here is the bet:
+
+---
+
+Title: ${prediction.title}
+
+${prediction.body}
+
+---
+
+To get an overview of the bet visit this link:
+http://nopestradamus.com/prediction/${prediction.hash}
 
 Now you must discuss who won the bet!`
-  return sendMail(receiver, mailTitle, mailBody)
+  return sendMail(participant.mail, mailTitle, mailBody)
 }
 
 const sendMail = async (receiver: string, title: string, body: string) => {

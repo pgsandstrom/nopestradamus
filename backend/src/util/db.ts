@@ -13,6 +13,7 @@ const getDbPool = () => {
 }
 
 // Use this for single query
+// TODO introduce generics here? Or take cooler db stuff from other project
 export const query = (stuff: QueryConfig) => getDbPool().query(stuff)
 export const queryString = (stuff: string) => getDbPool().query(stuff)
 

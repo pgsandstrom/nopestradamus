@@ -46,7 +46,7 @@ export const getLatestPredictions = () =>
 
 export const getPrediction = async (hash: string): Promise<Prediction> => {
   const prediction = await query(
-    SQL`SELECT title, body, hash, finish_date FROM prediction WHERE hash = ${hash}`,
+    SQL`SELECT created, title, body, hash, finish_date FROM prediction WHERE hash = ${hash}`,
   ).then((cursor) => ensureSingleGet(cursor))
   const creater: Creater = await query(
     SQL`SELECT hash, mail, accepted, accepted_mail_sent, end_mail_sent FROM creater WHERE prediction_hash = ${hash}`,
@@ -64,20 +64,20 @@ export const getPrediction = async (hash: string): Promise<Prediction> => {
   return result
 }
 
-export const getNextPrediction = (): Promise<Prediction[]> =>
-  queryString(`
-SELECT finish_date, prediction.hash FROM prediction
-JOIN creater on prediction.hash = creater.prediction_hash
-WHERE prediction.finish_date > now()
-  AND creater.accepted = true
-ORDER BY finish_date asc limit 1
-`).then((cursor) => cursor.rows)
-
-export const getOldBetWithUnsentCreaterAcceptMails = () =>
+// TODO use better types here.
+export const getOldBetWithUnsentCreaterAcceptMails = (): Promise<[{ hash: string }]> =>
   queryString(`
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN creater on prediction.hash = creater.prediction_hash
 WHERE creater.accepted_mail_sent = false 
+`).then((cursor) => cursor.rows as [{ hash: string }])
+
+export const getOldBetWithUnsentCreaterEndMails = () =>
+  queryString(`
+SELECT DISTINCT prediction.hash FROM prediction
+JOIN creater on prediction.hash = creater.prediction_hash
+WHERE prediction.finish_date < now()
+  AND creater.end_mail_sent = false 
 `).then((cursor) => cursor.rows)
 
 export const getOldBetWithUnsentParticipantsAcceptMails = () =>
@@ -94,7 +94,9 @@ export const getOldBetWithUnsentParticipantsEndMails = () =>
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN participant on prediction.hash = participant.prediction_hash
 JOIN creater on prediction.hash = creater.prediction_hash
-WHERE prediction.finish_date < now() and participant.end_mail_sent = false
+WHERE prediction.finish_date < now()
+  AND participant.accepted = true
+  AND participant.end_mail_sent = false
   AND creater.accepted = true
 `).then((cursor) => cursor.rows)
 

@@ -1,4 +1,5 @@
 interface Prediction {
+  created: string
   creater: Creater
   title: string
   body: string
@@ -10,6 +11,9 @@ interface Prediction {
 interface Creater {
   mail: string
   hash: string
+  accepted: boolean
+  accepted_mail_sent: boolean
+  end_mail_sent: boolean
 }
 
 interface Participant {
