@@ -29,22 +29,26 @@ export const handleAllUnsentMails = async () => {
 
 const handleAllUnsentCreaterAcceptEmails = async () => {
   const unsentCreaterAcceptMails = await getOldBetWithUnsentCreaterAcceptMails()
-  unsentCreaterAcceptMails.forEach(handleUnsentCreaterAcceptEmail)
+  const promiseList = unsentCreaterAcceptMails.map(handleUnsentCreaterAcceptEmail)
+  return Promise.all(promiseList)
 }
 
 const handleAllUnsentParticipantsAcceptEmails = async () => {
   const unsentAcceptMails = await getOldBetWithUnsentParticipantsAcceptMails()
-  unsentAcceptMails.forEach(handleUnsentAcceptEmail)
+  const promiseList = unsentAcceptMails.map(handleUnsentAcceptEmail)
+  return Promise.all(promiseList)
 }
 
 const handleAllUnsentCreaterEndEmails = async () => {
   const unsentCreaterAcceptMails = await getOldBetWithUnsentCreaterEndMails()
-  unsentCreaterAcceptMails.forEach(handleUnsentCreaterEndEmail)
+  const promiseList = unsentCreaterAcceptMails.map(handleUnsentCreaterEndEmail)
+  return Promise.all(promiseList)
 }
 
 const handleAllUnsentParticipantsEndEmails = async () => {
   const unsentEndMails = await getOldBetWithUnsentParticipantsEndMails()
-  unsentEndMails.forEach(handleUnsentEndEmail)
+  const promiseList = unsentEndMails.map(handleUnsentEndEmail)
+  return Promise.all(promiseList)
 }
 
 export const handleUnsentCreaterAcceptEmail = async (hash: string) => {
@@ -113,7 +117,7 @@ const handleUnsentEndEmail = async (predictionHash: string) => {
     .filter((participant) => participant.accepted)
     .filter((participant) => participant.end_mail_sent === false)
 
-  participantNeedingMailList.forEach(async (participant) => {
+  const promiseList = participantNeedingMailList.map(async (participant) => {
     try {
       if (isMailValid(participant.mail)) {
         await sendParticipantEndMail(prediction, participant)
@@ -125,4 +129,5 @@ const handleUnsentEndEmail = async (predictionHash: string) => {
       console.error(`failed sending end mail to ${participant.mail}`)
     }
   })
+  return Promise.all(promiseList)
 }
