@@ -42,17 +42,13 @@
     "prettier": "2.0.5",
     "sinon": "7.2.7",
     "ts-jest": "24.0.0",
-    "ts-node": "8.0.3",
-    "tslint": "5.14.0",
-    "tslint-config-prettier": "1.18.0"
+    "ts-node": "8.0.3"
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon --max-old-space-size=4096",
     "build": "tsc --outDir tsOutput && babel tsOutput -s -D -d dist && rm -rf tsOutput",
     "format": "prettier --write \"src/**/*.{json,md,ts,tsx,css,scss}\"",
-    "lint": "npm run lint:js && npm run lint:ts",
-    "lint:js": "node ./node_modules/eslint/bin/eslint.js --ext .ts --ext .tsx src",
-    "lint:ts": "tslint -p tsconfig.json",
+    "lint": "node ./node_modules/eslint/bin/eslint.js --ext .ts --ext .tsx src",
     "pre-commit": "lint-staged",
     "pre-push": "cross-env CI=true npm run test && npm run typecheck",
     "test": "jest",
@@ -66,7 +62,6 @@
     ],
     "*.{ts,tsx}": [
       "node ./node_modules/eslint/bin/eslint.js --fix",
-      "tslint --fix",
       "prettier --write"
     ]
   }

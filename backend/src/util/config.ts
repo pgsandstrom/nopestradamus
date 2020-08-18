@@ -34,7 +34,7 @@ const loadConfig = () => {
 
 export default () => {
   // TODO would it be possible to use loadConfig as a type guard to make 'config' variable into defined.
-  // tslint:disable-next-line: strict-type-predicates
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (config === undefined) {
     loadConfig()
   }

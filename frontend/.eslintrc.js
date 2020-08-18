@@ -33,6 +33,14 @@ module.exports = {
     // it does produce 'false' in the class-string, but I'm okay with that. So I modify the rule like this:
     '@typescript-eslint/restrict-template-expressions': ['error', { allowBoolean: true }],
 
+    // I think returning promises in void functions is very, very seldom a problem, and often simplifies code
+    '@typescript-eslint/no-misused-promises': [
+      'error',
+      {
+        checksVoidReturn: false,
+      },
+    ],
+
     // turn off unwanted rules:
 
     '@typescript-eslint/no-explicit-any': 'off',

@@ -7,9 +7,10 @@ export const startCronStuff = () => {
       await handleAllUnsentMails()
       console.log('Cron job completed')
     } catch (e) {
-      console.error(`Cron job threw error: ${e}`)
+      console.error(`Cron job threw error: ${JSON.stringify(e)}`)
       throw e
     }
   })
   cronJob.start()
+  console.log('Cron jobs initiated')
 }
