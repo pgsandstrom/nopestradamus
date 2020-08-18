@@ -64,33 +64,38 @@ export const getPrediction = async (hash: string): Promise<Prediction> => {
   return result
 }
 
-// TODO use better types here.
-export const getOldBetWithUnsentCreaterAcceptMails = (): Promise<[{ hash: string }]> =>
-  queryString(`
+export const getOldBetWithUnsentCreaterAcceptMails = async () => {
+  const cursor = await queryString<{ hash: string }>(`
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN creater on prediction.hash = creater.prediction_hash
 WHERE creater.accepted_mail_sent = false 
-`).then((cursor) => cursor.rows as [{ hash: string }])
+`)
+  return cursor.rows.map((row) => row.hash)
+}
 
-export const getOldBetWithUnsentCreaterEndMails = () =>
-  queryString(`
+export const getOldBetWithUnsentCreaterEndMails = async () => {
+  const cursor = await queryString<{ hash: string }>(`
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN creater on prediction.hash = creater.prediction_hash
 WHERE prediction.finish_date < now()
   AND creater.end_mail_sent = false 
-`).then((cursor) => cursor.rows)
+`)
+  return cursor.rows.map((row) => row.hash)
+}
 
-export const getOldBetWithUnsentParticipantsAcceptMails = () =>
-  queryString(`
+export const getOldBetWithUnsentParticipantsAcceptMails = async () => {
+  const cursor = await queryString<{ hash: string }>(`
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN participant on prediction.hash = participant.prediction_hash
 JOIN creater on prediction.hash = creater.prediction_hash
 WHERE participant.accepted_mail_sent = false
   AND creater.accepted = true
-`).then((cursor) => cursor.rows)
+`)
+  return cursor.rows.map((row) => row.hash)
+}
 
-export const getOldBetWithUnsentParticipantsEndMails = () =>
-  queryString(`
+export const getOldBetWithUnsentParticipantsEndMails = async () => {
+  const cursor = await queryString<{ hash: string }>(`
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN participant on prediction.hash = participant.prediction_hash
 JOIN creater on prediction.hash = creater.prediction_hash
@@ -98,7 +103,9 @@ WHERE prediction.finish_date < now()
   AND participant.accepted = true
   AND participant.end_mail_sent = false
   AND creater.accepted = true
-`).then((cursor) => cursor.rows)
+`)
+  return cursor.rows.map((row) => row.hash)
+}
 
 export const createPrediction = async (
   title?: string,

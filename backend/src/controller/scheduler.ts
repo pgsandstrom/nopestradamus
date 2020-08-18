@@ -29,22 +29,22 @@ export const handleAllUnsentMails = async () => {
 
 const handleAllUnsentCreaterAcceptEmails = async () => {
   const unsentCreaterAcceptMails = await getOldBetWithUnsentCreaterAcceptMails()
-  unsentCreaterAcceptMails.forEach((item) => handleUnsentCreaterAcceptEmail(item.hash))
+  unsentCreaterAcceptMails.forEach(handleUnsentCreaterAcceptEmail)
 }
 
 const handleAllUnsentParticipantsAcceptEmails = async () => {
   const unsentAcceptMails = await getOldBetWithUnsentParticipantsAcceptMails()
-  unsentAcceptMails.forEach((item) => handleUnsentAcceptEmail(item.hash))
+  unsentAcceptMails.forEach(handleUnsentAcceptEmail)
 }
 
 const handleAllUnsentCreaterEndEmails = async () => {
   const unsentCreaterAcceptMails = await getOldBetWithUnsentCreaterEndMails()
-  unsentCreaterAcceptMails.forEach((item) => handleUnsentCreaterEndEmail(item.hash))
+  unsentCreaterAcceptMails.forEach(handleUnsentCreaterEndEmail)
 }
 
 const handleAllUnsentParticipantsEndEmails = async () => {
   const unsentEndMails = await getOldBetWithUnsentParticipantsEndMails()
-  unsentEndMails.forEach((item) => handleUnsentEndEmail(item.hash))
+  unsentEndMails.forEach(handleUnsentEndEmail)
 }
 
 export const handleUnsentCreaterAcceptEmail = async (hash: string) => {

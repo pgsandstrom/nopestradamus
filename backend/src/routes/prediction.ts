@@ -10,6 +10,9 @@ import {
 } from '../controller/prediction'
 import { getError } from '../util/genericError'
 
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
 export default (server: Server) => {
   // get the latest predictions
   server.get('/api/v1/prediction', async (req: Request, res: Response, next: Next) => {

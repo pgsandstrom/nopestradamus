@@ -1,4 +1,4 @@
-import { Pool, PoolClient, QueryConfig, QueryResult, types } from 'pg'
+import { Pool, PoolClient, QueryConfig, QueryResult, types, QueryResultRow } from 'pg'
 import config from './config'
 
 const databaseConfig = config().database
@@ -22,7 +22,9 @@ const getDbPool = () => {
 
 // Use this for single query
 export const query = (stuff: QueryConfig) => getDbPool().query(stuff)
-export const queryString = (stuff: string, values?: any[]) => getDbPool().query(stuff, values)
+export function queryString<R extends QueryResultRow = any>(stuff: string, values?: any[]) {
+  return getDbPool().query<R>(stuff, values)
+}
 
 export const querySingle = async <T = any>(stuff: QueryConfig) => {
   const result: QueryResult = await getDbPool().query(stuff)
