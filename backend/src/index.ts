@@ -5,7 +5,6 @@ import routes from './routes/index'
 import noCachePlugin from './util/noCachePlugin'
 import config from './util/config'
 
-import { handleAllUnsentMails } from './controller/scheduler'
 import { startCronStuff } from './controller/cronController'
 import { isDev } from './util/env'
 
@@ -18,6 +17,8 @@ server.use(encodeUtf8Plugin())
 server.use(noCachePlugin())
 
 routes(server)
+
+// TODO clean up database... remove shit without valid mails
 
 // We customize restifys error messages to display more information
 /* eslint-disable */
@@ -39,8 +40,10 @@ server.listen(config().port, () => {
 })
 
 if (isDev()) {
-  // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  handleAllUnsentMails()
+  // handleAllUnsentMails().catch((e) => {
+  //   console.error('dev failure to sent mails')
+  //   throw e
+  // })
 } else {
   startCronStuff()
 }

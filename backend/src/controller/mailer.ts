@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer'
 import { getPrivateKey } from '../util/config'
-import { format, parseISO } from 'date-fns'
 import { isDev } from '../util/env'
+import { formatDateString } from '../util/date-util'
 
 export const sendCreaterAcceptMail = async (prediction: Prediction) => {
   console.log(`sending creater accept mail to ${prediction.creater.mail}`)
@@ -46,9 +46,8 @@ ${prediction.body}
 
 ---
 
-The bet ends at ${format(
-    new Date(prediction.finish_date),
-    'YYYY-MM-DD',
+The bet ends at ${formatDateString(
+    prediction.finish_date,
   )}. At the given date, you will all receive a mail and be confronted with your predictions!
 To accept or deny the bet, click the following link:
 http://nopestradamus.com/prediction/${prediction.hash}/participant/${participant.hash}
@@ -61,9 +60,8 @@ http://nopestradamus.com/prediction/${prediction.hash}
 
 export const sendCreaterEndMail = async (prediction: Prediction) => {
   const mailTitle = `Your bet has finished: ${prediction.title}`
-  const mailBody = `A bet was created by you on ${format(
-    new Date(prediction.created),
-    'YYYY-MM-DD',
+  const mailBody = `A bet was created by you on ${formatDateString(
+    prediction.created,
   )}. It has now finished! Here is the bet:
 
 ---
@@ -85,9 +83,8 @@ Hope you had fun!`
 export const sendParticipantEndMail = async (prediction: Prediction, participant: Participant) => {
   console.log(`sending end mail to ${participant.mail}`)
   const mailTitle = `Your bet from ${prediction.creater.mail} has finished!!!`
-  const mailBody = `A bet was accepted by you on ${format(
-    new Date(participant.accepted_date!),
-    'YYYY-MM-DD',
+  const mailBody = `A bet was accepted by you on ${formatDateString(
+    participant.accepted_date!,
   )} by ${prediction.creater.mail}. It has now finished! Here is the bet:
 
 ---

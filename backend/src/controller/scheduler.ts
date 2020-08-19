@@ -67,6 +67,7 @@ export const handleUnsentCreaterAcceptEmail = async (hash: string) => {
     await setCreaterAcceptMailSent(prediction.creater.hash)
   } catch (e) {
     console.error(`failed sending creater accept mail to ${mail}`)
+    throw e
   }
 }
 
@@ -86,6 +87,7 @@ export const handleUnsentCreaterEndEmail = async (hash: string) => {
     await setCreaterAcceptMailSent(prediction.creater.hash)
   } catch (e) {
     console.error(`failed sending creater end mail to ${mail}`)
+    throw e
   }
 }
 
@@ -106,6 +108,7 @@ export const handleUnsentAcceptEmail = async (hash: string) => {
       await setParticipantAcceptMailSent(participant.hash)
     } catch (e) {
       console.error(`failed sending accept mail to ${participant.mail}`)
+      throw e
     }
   })
 }
@@ -127,6 +130,7 @@ const handleUnsentEndEmail = async (predictionHash: string) => {
       void setParticipantEndMailSent(participant.hash)
     } catch (e) {
       console.error(`failed sending end mail to ${participant.mail}`)
+      throw e
     }
   })
   return Promise.all(promiseList)
