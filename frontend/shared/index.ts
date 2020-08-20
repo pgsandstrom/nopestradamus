@@ -1,3 +1,6 @@
+// TODO as soon as nextjs actually supports shared folders in a nice way, move this to outside frontend folder
+// follow discussion at https://github.com/vercel/next.js/discussions/15327
+
 export interface PredictionShallow {
   title: string
   body: string

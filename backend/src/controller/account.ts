@@ -2,7 +2,7 @@ import uuid from 'uuid/v4'
 
 import { query, SQL } from '../util/db'
 import { QueryResult } from 'pg'
-import { isMailValid } from '../util/mail-util'
+import { isMailValid } from '../../../frontend/shared/mail-util'
 
 // TODO add database constraints and indexes and stuff
 

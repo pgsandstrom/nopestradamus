@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { GetServerSideProps } from 'next'
-import { PredictionShallow } from '../../shared'
+import { PredictionShallow } from '../shared'
 import getServerUrl from '../util/serverUrl'
 import { Button } from '@material-ui/core'
 
@@ -69,7 +69,7 @@ export default function Home({ predictionShallowList }: HomeProps) {
             </p>
             <p>
               When the end date is upon us, you all receive a mail. And that&apos;s it. No need to
-              create an accout or stuff like that.
+              create an account or stuff like that.
             </p>
             <p>
               So whats the point? Well, sometimes people are very confident when they predict the
@@ -111,22 +111,6 @@ export default function Home({ predictionShallowList }: HomeProps) {
           <a href="https://github.com/pgsandstrom/nopestradamus">Github</a>.
         </span>
       </footer>
-
-      <style jsx>{``}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
-            Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-        }
-
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { GetServerSideProps } from 'next'
-import { PredictionCensored } from '../../../shared'
+import { PredictionCensored } from '../../shared'
 import getServerUrl from '../../util/serverUrl'
 
 export const getServerSideProps: GetServerSideProps<PredictionProps> = async (context) => {

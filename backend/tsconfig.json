@@ -12,5 +12,5 @@
     "target": "es2017"
   },
   "exclude": ["**/*.spec.ts", "**/*.test.ts", "node_modules", "src/styles"],
-  "include": ["src/**/*", "../shared"]
+  "include": ["src/**/*", "../frontend/shared"]
 }

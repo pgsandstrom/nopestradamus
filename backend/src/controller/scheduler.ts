@@ -14,7 +14,7 @@ import {
   sendParticipantEndMail,
   sendCreaterEndMail,
 } from './mailer'
-import { isMailValid } from '../util/mail-util'
+import { isMailValid } from '../../../frontend/shared/mail-util'
 
 export const handleAllUnsentMails = async () => {
   console.log('handle all unsent mails')

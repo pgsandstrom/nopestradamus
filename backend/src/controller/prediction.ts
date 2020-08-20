@@ -3,8 +3,8 @@ import uuid from 'uuid/v4'
 import { query, queryString, SQL, querySingle } from '../util/db'
 import { confirmAccountExistance, validateAccount } from './account'
 import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './scheduler'
-import { censorMail, isMailValid } from '../util/mail-util'
-import { PredictionCensored, PredictionShallow } from '../../../shared'
+import { PredictionCensored, PredictionShallow } from '../../../frontend/shared'
+import { censorMail, isMailValid } from '../../../frontend/shared/mail-util'
 
 /**
  * Removes all private hashes from the predicition. Also censors the mails!
