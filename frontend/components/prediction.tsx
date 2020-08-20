@@ -11,9 +11,6 @@ interface PredictionProps {
 export default function Prediction({ prediction, style }: PredictionProps) {
   return (
     <div style={style}>
-      <Link href="/">
-        <Button variant="outlined">Go Back</Button>
-      </Link>
       <Typography variant="h5" style={{ marginTop: '20px' }}>
         {prediction.title}
       </Typography>

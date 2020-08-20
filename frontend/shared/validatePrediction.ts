@@ -21,6 +21,9 @@ export const validateCreaterMail = (mail?: string) => {
   return mail !== undefined && isMailValid(mail)
 }
 
-export const validateParticipantList = (participantList: string[]) => {
-  return participantList.every(isMailValid)
+export const validateParticipant = (participant: string, participantList: string[]) => {
+  if (participantList.filter((p) => p === participant).length > 1) {
+    return false
+  }
+  return isMailValid(participant)
 }

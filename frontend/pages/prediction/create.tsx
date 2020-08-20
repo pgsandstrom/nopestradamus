@@ -1,16 +1,17 @@
 import DateFnsUtils from '@date-io/date-fns'
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers'
 import { useState } from 'react'
-import { Button, TextField, Checkbox } from '@material-ui/core'
+import { Button, TextField, Checkbox, FormControlLabel } from '@material-ui/core'
 import getServerUrl from '../../util/serverUrl'
 import {
   validateCreaterMail,
   validateTitle,
   validateDescription,
   validateDate,
-  validateParticipantList,
+  validateParticipant,
 } from '../../shared/validatePrediction'
 import { deserialize } from 'v8'
+import Link from 'next/link'
 
 export default function CreatePrediction() {
   const [title, setTitle] = useState('')
@@ -35,7 +36,7 @@ export default function CreatePrediction() {
       !validateDescription(body) ||
       !validateDate(date) ||
       !validateCreaterMail(createrMail) ||
-      !validateParticipantList(participantList)
+      !participantList.every((p) => validateParticipant(p, participantList))
     ) {
       setShowError(true)
       return
@@ -76,8 +77,14 @@ export default function CreatePrediction() {
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'column', width: '400px' }}>
+          <Link href="/">
+            <Button variant="outlined" style={{ alignSelf: 'start', marginTop: '20px' }}>
+              Go Back
+            </Button>
+          </Link>
           <TextField
             label="Title"
+            multiline
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             error={showError && !validateTitle(title)}
@@ -86,20 +93,19 @@ export default function CreatePrediction() {
           />
           <TextField
             label="Description"
+            multiline
             value={body}
-            variant="outlined"
             onChange={(e) => setBody(e.target.value)}
             error={showError && !validateDescription(body)}
             helperText={showError && !validateDescription(body) ? 'Invalid description' : ''}
             style={{ marginTop: '10px' }}
           />
           <KeyboardDatePicker
-            disableToolbar
             variant="inline"
-            format="MM/dd/yyyy"
+            format="yyyy-MM-dd"
             margin="normal"
             id="date-picker-inline"
-            label="Date picker inline"
+            label="End date"
             value={date}
             onChange={(date) => setDate(date)}
             KeyboardButtonProps={{
@@ -129,6 +135,12 @@ export default function CreatePrediction() {
                         participantList.map((p, i) => (index === i ? e.target.value : p)),
                       )
                     }}
+                    error={showError && !validateParticipant(participant, participantList)}
+                    helperText={
+                      showError && !validateParticipant(participant, participantList)
+                        ? 'Invalid participant'
+                        : ''
+                    }
                   />
                   <Button
                     onClick={() =>
@@ -143,18 +155,29 @@ export default function CreatePrediction() {
               )
             })}
             <div>
-              <Button onClick={() => setParticipantList([...participantList, ''])}>
+              <Button
+                onClick={() => setParticipantList([...participantList, ''])}
+                variant="outlined"
+              >
                 Add participant
               </Button>
             </div>
           </div>
-          <Checkbox
-            checked={isPublic}
-            onChange={(e) => {
-              setIsPublic(e.target.checked)
-            }}
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isPublic}
+                onChange={(e) => {
+                  setIsPublic(e.target.checked)
+                }}
+              />
+            }
+            label="Should this prediction be public?"
           />
-          <Button onClick={onCreate}>Create</Button>
+          <Button onClick={onCreate} variant="outlined">
+            Create prediction
+          </Button>
         </div>
       </div>
     </MuiPickersUtilsProvider>
