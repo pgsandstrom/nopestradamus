@@ -74,6 +74,7 @@ export const getOldBetWithUnsentCreaterEndMails = async () => {
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN creater on prediction.hash = creater.prediction_hash
 WHERE prediction.finish_date < now()
+  AND creater.accepted = true
   AND creater.end_mail_sent = false 
 `)
   return cursor.rows.map((row) => row.hash)
