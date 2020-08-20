@@ -32,7 +32,7 @@ export const getCensoredPrediction = (
 
 export const getLatestPredictions = () =>
   queryString(
-    'SELECT title, body, hash from prediction where public is true ORDER BY created LIMIT 20',
+    'SELECT title, body, hash FROM prediction WHERE public is true ORDER BY created LIMIT 20',
   ).then((cursor) => cursor.rows as PredictionShallow[])
 
 export const getPrediction = async (hash: string): Promise<Prediction> => {
@@ -165,14 +165,28 @@ const createParticipant = async (predictionHash: string, mail: string) => {
 }
 
 // TODO throw exceptions when stuff miss?
-export const setCreaterAcceptMailSent = (hash: string) =>
-  query(SQL`UPDATE creater SET accepted_mail_sent = true where hash = ${hash}`)
+export const setCreaterAcceptMailSent = async (hash: string) => {
+  console.log(`setCreaterAcceptMailSent: ${hash}`)
+  const result = await query(SQL`UPDATE creater SET accepted_mail_sent = true WHERE hash = ${hash}`)
+  if (result.rowCount !== 1) {
+    throw new Error('failed to set creater accepted_mail_sent')
+  }
+  return result
+}
+
+export const setCreaterEndMailSent = async (hash: string) => {
+  const result = await query(SQL`UPDATE creater SET end_mail_sent = true WHERE hash = ${hash}`)
+  if (result.rowCount !== 1) {
+    throw new Error('failed to set creater end_mail_sent')
+  }
+  return result
+}
 
 export const setParticipantAcceptMailSent = (hash: string) =>
-  query(SQL`UPDATE participant SET accepted_mail_sent = true where hash = ${hash}`)
+  query(SQL`UPDATE participant SET accepted_mail_sent = true WHERE hash = ${hash}`)
 
 export const setParticipantEndMailSent = (participantHash: string) =>
-  query(SQL`UPDATE participant SET end_mail_sent = true where hash = ${participantHash}`)
+  query(SQL`UPDATE participant SET end_mail_sent = true WHERE hash = ${participantHash}`)
 
 export const updateCreaterAcceptStatus = async (
   predictionHash: string,
@@ -180,7 +194,7 @@ export const updateCreaterAcceptStatus = async (
   accepted: boolean,
 ) => {
   await query(
-    SQL`UPDATE creater SET accepted = ${accepted}, accepted_date = now() where prediction_hash = ${predictionHash} AND hash = ${hash}`,
+    SQL`UPDATE creater SET accepted = ${accepted}, accepted_date = now() WHERE prediction_hash = ${predictionHash} AND hash = ${hash}`,
   )
   const prediction = await getPrediction(predictionHash)
   await validateAccount(prediction.creater.mail)
@@ -193,7 +207,7 @@ export const updateParticipantAcceptStatus = async (
   accepted: boolean,
 ) => {
   await query(
-    SQL`UPDATE participant SET accepted = ${accepted}, accepted_date = now() where prediction_hash = ${predictionHash} AND hash = ${hash}`,
+    SQL`UPDATE participant SET accepted = ${accepted}, accepted_date = now() WHERE prediction_hash = ${predictionHash} AND hash = ${hash}`,
   )
   const prediction = await getPrediction(predictionHash)
   const participant = prediction.participants.find((p) => p.hash === hash)!

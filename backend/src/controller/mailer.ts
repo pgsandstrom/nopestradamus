@@ -102,7 +102,7 @@ Now you must discuss who won the bet!`
   return sendMail(participant.mail, mailTitle, mailBody)
 }
 
-const sendMail = async (receiver: string, title: string, body: string) => {
+export const sendMail = async (receiver: string, title: string, body: string) => {
   if (isDev()) {
     console.log('faking sending mail')
     return Promise.resolve()

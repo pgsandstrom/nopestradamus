@@ -7,6 +7,7 @@ import {
   setParticipantAcceptMailSent,
   setParticipantEndMailSent,
   getOldBetWithUnsentCreaterEndMails,
+  setCreaterEndMailSent,
 } from './prediction'
 import {
   sendParticipantAcceptMail,
@@ -25,6 +26,7 @@ export const handleAllUnsentMails = async () => {
   await handleAllUnsentCreaterEndEmails()
 
   await handleAllUnsentParticipantsEndEmails()
+  console.log('completed handle all unsent mails')
 }
 
 const handleAllUnsentCreaterAcceptEmails = async () => {
@@ -84,7 +86,7 @@ export const handleUnsentCreaterEndEmail = async (hash: string) => {
     } else {
       console.log(`creater skipping invalid mail: ${mail}`)
     }
-    await setCreaterAcceptMailSent(prediction.creater.hash)
+    await setCreaterEndMailSent(prediction.creater.hash)
   } catch (e) {
     console.error(`failed sending creater end mail to ${mail}`)
     throw e
@@ -127,7 +129,7 @@ const handleUnsentEndEmail = async (predictionHash: string) => {
       } else {
         console.log(`endmail skipping invalid mail: ${participant.mail}`)
       }
-      void setParticipantEndMailSent(participant.hash)
+      await setParticipantEndMailSent(participant.hash)
     } catch (e) {
       console.error(`failed sending end mail to ${participant.mail}`)
       throw e
