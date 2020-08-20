@@ -1,5 +1,6 @@
 import { isMailValid } from './mail-util'
 
+// TODO use this in backend as well
 export const validateTitle = (title?: string) => {
   return title !== undefined && title.length > 0
 }

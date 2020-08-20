@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer'
 import { getPrivateKey } from '../util/config'
 import { isDev } from '../util/env'
-import { formatDateString } from '../util/date-util'
+import { formatDateString } from '../../../frontend/shared/date-util'
 
 export const sendCreaterAcceptMail = async (prediction: Prediction) => {
   console.log(`sending creater accept mail to ${prediction.creater.mail}`)

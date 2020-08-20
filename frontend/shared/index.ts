@@ -8,6 +8,7 @@ export interface PredictionShallow {
 }
 
 export interface PredictionCensored {
+  created: string
   creater: {
     mail: string
     hash: undefined // 'undefined' to make sure we dont accidentally leave the hash

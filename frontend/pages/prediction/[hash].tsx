@@ -1,6 +1,7 @@
 import { GetServerSideProps } from 'next'
 import { PredictionCensored } from '../../shared'
 import getServerUrl from '../../util/serverUrl'
+import Prediction from '../../components/prediction'
 
 export const getServerSideProps: GetServerSideProps<PredictionProps> = async (context) => {
   const hash = context.params!.hash as string
@@ -15,6 +16,17 @@ interface PredictionProps {
   predictionCensored: PredictionCensored
 }
 
-export default function Prediction({ predictionCensored }: PredictionProps) {
-  return <div>{predictionCensored.body}</div>
+export default function PredictionHash({ predictionCensored }: PredictionProps) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        width: '100%',
+        justifyContent: 'center',
+        paddingTop: '20px',
+      }}
+    >
+      <Prediction prediction={predictionCensored} style={{ maxWidth: '600px' }} />
+    </div>
+  )
 }
