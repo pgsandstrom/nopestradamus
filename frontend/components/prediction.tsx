@@ -1,7 +1,9 @@
 import { PredictionCensored } from '../shared'
-import { Typography, Button } from '@material-ui/core'
+import { Typography } from '@material-ui/core'
 import { formatDateString } from '../shared/date-util'
-import Link from 'next/link'
+import CropSquareIcon from '@material-ui/icons/CropSquare'
+import CheckIcon from '@material-ui/icons/Check'
+import ClearIcon from '@material-ui/icons/Clear'
 
 interface PredictionProps {
   prediction: PredictionCensored
@@ -34,7 +36,42 @@ export default function Prediction({ prediction, style }: PredictionProps) {
             Other participants
           </Typography>
           {prediction.participants.map((participant) => {
-            return <div key={participant.mail}>{participant.mail}</div>
+            return (
+              <div key={participant.mail} style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ position: 'relative' }}>
+                  {participant.accepted === true && (
+                    <CheckIcon
+                      style={{
+                        position: 'absolute',
+                        top: '7px',
+                        left: '6px',
+                        fontSize: '1.2em',
+                        color: 'green',
+                      }}
+                    />
+                  )}
+                  {participant.accepted === false && (
+                    <ClearIcon
+                      style={{
+                        position: 'absolute',
+                        top: '7px',
+                        left: '6px',
+                        fontSize: '1.2em',
+                        color: 'red',
+                      }}
+                    />
+                  )}
+                  <CropSquareIcon style={{ fontSize: '2em' }} />
+                </div>
+
+                <span>{participant.mail}</span>
+                {participant.accepted === undefined && (
+                  <Typography variant="caption" style={{ marginLeft: '10px' }}>
+                    (waiting for confirmation)
+                  </Typography>
+                )}
+              </div>
+            )
           })}
         </div>
       )}
