@@ -6,6 +6,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
+        <title>Nopestradamus</title>
+
         {/* make it work on mobile */}
         <meta name="viewport" content="width=device-width, user-scalable=no"></meta>
 

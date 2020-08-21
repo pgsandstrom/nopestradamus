@@ -1,4 +1,5 @@
 import { isMailValid } from './mail-util'
+import { isValid } from 'date-fns'
 
 // TODO use this in backend as well
 export const validateTitle = (title?: string) => {
@@ -14,7 +15,7 @@ export const validateDate = (date?: Date | null) => {
     return false
   }
 
-  return true
+  return isValid(date)
 }
 
 export const validateCreaterMail = (mail?: string) => {

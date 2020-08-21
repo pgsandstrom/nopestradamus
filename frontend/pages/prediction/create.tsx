@@ -10,7 +10,6 @@ import {
   validateDate,
   validateParticipant,
 } from '../../shared/validatePrediction'
-import { deserialize } from 'v8'
 import Link from 'next/link'
 
 export default function CreatePrediction() {
@@ -63,11 +62,25 @@ export default function CreatePrediction() {
     setIsPosting(false)
   }
 
-  if (posted) {
+  if (!posted) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'column', width: '400px' }}>
-          ok check ur mail. CHECK SPAM FOLDER!!!
+          <Link href="/">
+            <Button variant="outlined" style={{ alignSelf: 'start', marginTop: '20px' }}>
+              Go Back
+            </Button>
+          </Link>
+          <div style={{ marginTop: '10px' }}>A mail has been sent to {createrMail}</div>
+          <div style={{ marginTop: '10px' }}>
+            Please check your spam folder. It is VERY LIKELY that the mail is stuck there.
+          </div>
+          {participantList.length > 0 && (
+            <div style={{ marginTop: '10px' }}>
+              As soon as you confirm the prediction through the mail we have sent you, the other
+              participants will be mailed.
+            </div>
+          )}
         </div>
       </div>
     )
@@ -104,7 +117,6 @@ export default function CreatePrediction() {
             variant="inline"
             format="yyyy-MM-dd"
             margin="normal"
-            id="date-picker-inline"
             label="End date"
             value={date}
             onChange={(date) => setDate(date)}
@@ -114,19 +126,38 @@ export default function CreatePrediction() {
             error={showError && !validateDate(date)}
             helperText={showError && !validateDate(date) ? 'Invalid date' : ''}
           />
-          <div style={{ height: '100px' }}>
-            <TextField
-              label="Your mail"
-              value={createrMail}
-              onChange={(e) => setCreaterMail(e.target.value)}
-              error={showError && !validateCreaterMail(createrMail)}
-              helperText={showError && !validateCreaterMail(createrMail) ? 'Invalid mail' : ''}
-            />
-          </div>
-          <div>
+          <TextField
+            label="Your mail"
+            value={createrMail}
+            onChange={(e) => setCreaterMail(e.target.value)}
+            error={showError && !validateCreaterMail(createrMail)}
+            helperText={showError && !validateCreaterMail(createrMail) ? 'Invalid mail' : ''}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isPublic}
+                onChange={(e) => {
+                  setIsPublic(e.target.checked)
+                }}
+              />
+            }
+            label="Should this prediction be public?"
+            style={{ marginTop: '10px' }}
+          />
+          <div
+            style={{
+              // borderTop: '1px solid gray',
+              // borderBottom: '1px solid gray',
+              margin: '20px 10px',
+            }}
+          >
             {participantList.map((participant, index) => {
               return (
-                <div key={index}>
+                <div
+                  key={index}
+                  style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}
+                >
                   <TextField
                     label="Participant"
                     value={participant}
@@ -141,6 +172,7 @@ export default function CreatePrediction() {
                         ? 'Invalid participant'
                         : ''
                     }
+                    style={{ flex: '1 0 0' }}
                   />
                   <Button
                     onClick={() =>
@@ -148,6 +180,8 @@ export default function CreatePrediction() {
                         return participantList.filter((_p, i) => index !== i)
                       })
                     }
+                    variant="outlined"
+                    style={{ marginLeft: '10px' }}
                   >
                     Delete
                   </Button>
@@ -158,24 +192,14 @@ export default function CreatePrediction() {
               <Button
                 onClick={() => setParticipantList([...participantList, ''])}
                 variant="outlined"
+                style={{ margin: '10px 0' }}
               >
                 Add participant
               </Button>
             </div>
           </div>
 
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={isPublic}
-                onChange={(e) => {
-                  setIsPublic(e.target.checked)
-                }}
-              />
-            }
-            label="Should this prediction be public?"
-          />
-          <Button onClick={onCreate} variant="outlined">
+          <Button onClick={onCreate} variant="outlined" style={{ marginTop: '20px' }}>
             Create prediction
           </Button>
         </div>

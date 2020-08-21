@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { GetServerSideProps } from 'next'
@@ -36,11 +35,6 @@ export default function Home({ predictionShallowList }: HomeProps) {
         height: '100%',
       }}
     >
-      <Head>
-        <title>Nopestradamus</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <main
         style={{
           display: 'flex',
