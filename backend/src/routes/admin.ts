@@ -4,6 +4,7 @@ import config from '../util/config'
 import { getError } from '../util/genericError'
 import { handleAllUnsentMails } from '../controller/scheduler'
 import { sendMail } from '../controller/mailer'
+import { deletePrediction } from '../controller/prediction'
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -38,6 +39,22 @@ export default (server: Server) => {
 
       await sendMail(body.mail, body.title, body.body)
       res.send('ok')
+      next()
+    } catch (e) {
+      next(getError(e))
+    }
+  })
+
+  server.post('/api/v1/admin/deleteprediction', async (req: Request, res: Response, next: Next) => {
+    try {
+      const body = JSON.parse(req.body)
+
+      if (adminPassword !== body.password) {
+        throw new Error('Wrong admin password')
+      }
+
+      const result = await deletePrediction(body.hash)
+      res.send(result)
       next()
     } catch (e) {
       next(getError(e))

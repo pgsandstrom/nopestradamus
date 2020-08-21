@@ -165,6 +165,20 @@ const createParticipant = async (predictionHash: string, mail: string) => {
   )
 }
 
+export const deletePrediction = async (hash: string) => {
+  const predictionPromise = await query(SQL`DELETE FROM prediction WHERE hash = ${hash}`)
+  const createrPromise = await query(SQL`DELETE FROM creater WHERE prediction_hash = ${hash}`)
+  const participantPromise = await query(
+    SQL`DELETE FROM participant WHERE prediction_hash = ${hash}`,
+  )
+
+  return {
+    predictionDeleted: predictionPromise.rowCount,
+    createrDeleted: createrPromise.rowCount,
+    participantDeleted: participantPromise.rowCount,
+  }
+}
+
 // TODO throw exceptions when stuff miss?
 export const setCreaterAcceptMailSent = async (hash: string) => {
   console.log(`setCreaterAcceptMailSent: ${hash}`)
