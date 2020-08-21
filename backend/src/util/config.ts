@@ -16,6 +16,7 @@ interface MyConfig {
     database: string
     password: string
   }
+  adminPassword: string
   port: string
 }
 

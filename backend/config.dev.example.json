@@ -6,5 +6,7 @@
     "database": "nopestradamus_dev",
     "password": "insert password here"
   },
+  "adminPassword": "something",
+  "// 2": "please sync port with .env.local",
   "port": 8088
 }
