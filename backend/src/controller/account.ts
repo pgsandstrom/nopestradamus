@@ -1,4 +1,4 @@
-import uuid from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 
 import { query, SQL } from '../util/db'
 import { QueryResult } from 'pg'
@@ -10,7 +10,7 @@ export const confirmAccountExistance = async (mail: string, validated = false) =
   if (!isMailValid(mail)) {
     throw new Error(`creater mail is invalid:${mail}`)
   }
-  const hash = uuid()
+  const hash = uuidv4()
   const result = await query(SQL`SELECT count(*) FROM mail WHERE mail = ${mail}`).then(
     (cursor: QueryResult) => cursor.rows[0] as { count: string },
   )

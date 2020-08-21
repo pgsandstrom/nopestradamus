@@ -1,4 +1,4 @@
-import uuid from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid'
 
 import { query, queryString, SQL, querySingle } from '../util/db'
 import { confirmAccountExistance, validateAccount } from './account'
@@ -133,7 +133,7 @@ export const createPrediction = async (
     throw new Error('participantList must be present')
   }
 
-  const hash = uuid()
+  const hash = uuidv4()
   await query(
     SQL`INSERT INTO prediction (title, body, hash, finish_date, public) VALUES(${title}, ${body}, ${hash}, ${finishDate}, ${isPublic})`,
   )
@@ -147,7 +147,7 @@ const createCreater = async (predictionHash: string, mail: string) => {
   if (!isMailValid(mail)) {
     throw new Error(`creater mail is invalid:${mail}`)
   }
-  const hash = uuid()
+  const hash = uuidv4()
   await confirmAccountExistance(mail)
   return query(
     SQL`INSERT INTO creater (hash, prediction_hash, mail) VALUES (${hash}, ${predictionHash}, ${mail})`,
@@ -158,7 +158,7 @@ const createParticipant = async (predictionHash: string, mail: string) => {
   if (!isMailValid(mail)) {
     throw new Error(`participant mail is invalid:${mail}`)
   }
-  const hash = uuid()
+  const hash = uuidv4()
   await confirmAccountExistance(mail)
   return query(
     SQL`INSERT INTO participant (hash, prediction_hash, mail) VALUES (${hash}, ${predictionHash}, ${mail})`,
