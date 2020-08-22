@@ -1,20 +1,23 @@
-import Head from 'next/head'
-import type { AppProps } from 'next/app'
-import '../styles/globals.css'
 import React from 'react'
+import Head from 'next/head'
+import { AppProps } from 'next/app'
+import { ThemeProvider } from '@material-ui/core/styles'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import theme from '../styles/theme'
 
-function MyApp({ Component, pageProps }: AppProps) {
-  // from https://github.com/mui-org/material-ui/blob/master/examples/nextjs/pages/_app.js
+import '../styles/globals.css'
+
+export default function MyApp({ Component, pageProps }: AppProps) {
   React.useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side')
-    if (jssStyles?.parentElement) {
-      jssStyles.parentElement.removeChild(jssStyles)
+    if (jssStyles) {
+      jssStyles.parentElement!.removeChild(jssStyles)
     }
   }, [])
 
   return (
-    <>
+    <React.Fragment>
       <Head>
         <title>Nopestradamus</title>
 
@@ -31,22 +34,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="msapplication-TileColor" content="#ffc40d" />
         <meta name="theme-color" content="#ffffff" />
       </Head>
-      <Component {...pageProps} />
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
-            Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-        }
-
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
-    </>
+      <ThemeProvider theme={theme}>
+        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+        <CssBaseline />
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </React.Fragment>
   )
 }
-
-export default MyApp
