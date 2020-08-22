@@ -23,6 +23,7 @@
     "@types/react": "16.9.46",
     "cross-env": "7.0.2",
     "date-fns": "2.15.0",
+    "lodash": "4.17.20",
     "next": "9.5.2",
     "react": "16.13.1",
     "react-dom": "16.13.1",
