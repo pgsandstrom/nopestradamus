@@ -33,7 +33,12 @@ export const getCensoredPrediction = (
 
 export const getLatestPredictions = () =>
   queryString(
-    'SELECT title, body, hash FROM prediction WHERE public is true ORDER BY created LIMIT 20',
+    `SELECT title, body, prediction.hash FROM prediction
+JOIN creater on prediction.hash = creater.prediction_hash
+WHERE public is true
+AND creater.accepted is true
+ORDER BY created DESC
+LIMIT 20`,
   ).then((cursor) => cursor.rows as PredictionShallow[])
 
 export const getPrediction = async (hash: string): Promise<Prediction> => {
