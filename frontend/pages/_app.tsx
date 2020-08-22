@@ -24,7 +24,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         {/* make it work on mobile */}
         <meta name="viewport" content="width=device-width, user-scalable=no"></meta>
 
-        {/* TODO actually fix favicon */}
         {/* fix favicon */}
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
