@@ -3,10 +3,20 @@ import { getPrivateKey } from '../util/config'
 import { isDev } from '../util/env'
 import { formatDateString } from '../../../frontend/shared/date-util'
 
+const getPredictionList = (prediction: Prediction): string => {
+  if (prediction.participants.length === 0) {
+    return ''
+  }
+  return `---
+
+Here are the participants:
+
+${prediction.participants.map((p) => p.mail).join('\n')}`
+}
+
 export const sendCreaterAcceptMail = async (prediction: Prediction) => {
   console.log(`sending creater accept mail to ${prediction.creater.mail}`)
-  // console.log(`accept: /prediction/${prediction.hash}/creater/${prediction.creater.hash}`);
-  // console.log(`view: /prediction/${prediction.hash}`);
+
   const mailTitle = 'Nopestradamus: Validate your mail for your bet!'
   const mailBody = `Below is the bet that was created by this mail:
 
@@ -69,7 +79,7 @@ export const sendCreaterEndMail = async (prediction: Prediction) => {
 Title: ${prediction.title}
 
 ${prediction.body}
-
+${getPredictionList(prediction)}
 ---
 
 To get an overview of the bet visit this link:
@@ -82,6 +92,7 @@ Hope you had fun!`
 
 export const sendParticipantEndMail = async (prediction: Prediction, participant: Participant) => {
   console.log(`sending end mail to ${participant.mail}`)
+
   const mailTitle = `Your bet from ${prediction.creater.mail} has finished!!!`
   const mailBody = `A bet was accepted by you on ${formatDateString(
     participant.accepted_date!,
@@ -92,7 +103,7 @@ export const sendParticipantEndMail = async (prediction: Prediction, participant
 Title: ${prediction.title}
 
 ${prediction.body}
-
+${getPredictionList(prediction)}
 ---
 
 To get an overview of the bet visit this link:
