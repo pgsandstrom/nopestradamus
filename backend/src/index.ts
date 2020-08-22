@@ -20,21 +20,6 @@ routes(server)
 
 // TODO clean up database... remove shit without valid mails
 
-// We customize restifys error messages to display more information
-/* eslint-disable */
-server.on('restifyError', (req, res, err: any, callback) => {
-  if (err.name === 'GenericError') {
-    // eslint-disable-next-line no-param-reassign
-    err.toJSON = function customToJSON() {
-      return {
-        ...err.context,
-      }
-    }
-  }
-  return callback()
-})
-/* eslint-enable */
-
 server.listen(config().port, () => {
   console.log('%s listening at %s', server.name, server.url) // eslint-disable-line no-console
 })

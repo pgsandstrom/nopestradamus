@@ -13,6 +13,14 @@ interface PredictionProps {
 export default function Prediction({ prediction, style }: PredictionProps) {
   return (
     <div style={style}>
+      {prediction.creater.accepted !== true && (
+        <div style={{ marginTop: '20px', color: 'red' }}>
+          <Typography variant="caption">
+            NOTICE: This prediction has not yet been accepted by the creater, therefore it is set to
+            private and not shown anywhere else on the page.
+          </Typography>
+        </div>
+      )}
       <Typography variant="h5" style={{ marginTop: '20px' }}>
         {prediction.title}
       </Typography>

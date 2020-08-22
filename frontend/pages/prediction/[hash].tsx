@@ -10,12 +10,18 @@ export const getServerSideProps: GetServerSideProps<PredictionProps> = async (co
   const response = await fetch(`${getServerUrl()}/api/v1/prediction/${hash}`, {
     method: 'GET',
   })
-  const predictionCensored = (await response.json()) as PredictionCensored
-  return { props: { predictionCensored } }
+
+  if (response.status < 400) {
+    const predictionCensored = (await response.json()) as PredictionCensored
+    return { props: { predictionCensored } }
+  } else {
+    context.res.statusCode = response.status
+    return { props: {} }
+  }
 }
 
 interface PredictionProps {
-  predictionCensored: PredictionCensored
+  predictionCensored?: PredictionCensored
 }
 
 export default function PredictionHash({ predictionCensored }: PredictionProps) {
@@ -33,7 +39,11 @@ export default function PredictionHash({ predictionCensored }: PredictionProps) 
         <Link href="/">
           <Button variant="outlined">Go Back</Button>
         </Link>
-        <Prediction prediction={predictionCensored} />
+        {predictionCensored ? (
+          <Prediction prediction={predictionCensored} />
+        ) : (
+          <div style={{ width: '600px', marginTop: '20px' }}>Prediction not found</div>
+        )}
       </div>
     </div>
   )

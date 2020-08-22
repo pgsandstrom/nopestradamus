@@ -8,7 +8,6 @@ import {
   updateParticipantAcceptStatus,
   getCensoredPrediction,
 } from '../controller/prediction'
-import { getError } from '../util/genericError'
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -21,7 +20,7 @@ export default (server: Server) => {
       res.send(predictions)
       next()
     } catch (e) {
-      next(getError(e))
+      next(e)
     }
   })
 
@@ -33,7 +32,7 @@ export default (server: Server) => {
       res.send(censoredPrediction)
       next()
     } catch (e) {
-      next(getError(e))
+      next(e)
     }
   })
 
@@ -49,7 +48,7 @@ export default (server: Server) => {
         res.send(censoredPrediction)
         next()
       } catch (e) {
-        next(getError(e))
+        next(e)
       }
     },
   )
@@ -68,7 +67,7 @@ export default (server: Server) => {
       res.send('ok')
       next()
     } catch (e) {
-      next(getError(e))
+      next(e)
     }
   })
 
@@ -82,7 +81,7 @@ export default (server: Server) => {
         res.send('ok')
         next()
       } catch (e) {
-        next(getError(e))
+        next(e)
       }
     },
   )
@@ -97,7 +96,7 @@ export default (server: Server) => {
         res.send('ok')
         next()
       } catch (e) {
-        next(getError(e))
+        next(e)
       }
     },
   )
@@ -112,7 +111,7 @@ export default (server: Server) => {
         res.send('ok')
         next()
       } catch (e) {
-        next(getError(e))
+        next(e)
       }
     },
   )
@@ -127,7 +126,7 @@ export default (server: Server) => {
         res.send('ok')
         next()
       } catch (e) {
-        next(getError(e))
+        next(e)
       }
     },
   )

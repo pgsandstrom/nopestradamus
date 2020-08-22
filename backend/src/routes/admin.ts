@@ -1,7 +1,6 @@
 import { Request, Response, Next, Server } from 'restify'
 
 import config from '../util/config'
-import { getError } from '../util/genericError'
 import { handleAllUnsentMails } from '../controller/scheduler'
 import { sendMail } from '../controller/mailer'
 import { deletePrediction } from '../controller/prediction'
@@ -11,7 +10,6 @@ import { deletePrediction } from '../controller/prediction'
 
 const adminPassword = config().adminPassword
 
-// TODO either enable password or just disable this in prod...
 export default (server: Server) => {
   server.post('/api/v1/admin/checkmail', async (req: Request, res: Response, next: Next) => {
     try {
@@ -25,7 +23,7 @@ export default (server: Server) => {
       res.send('ok')
       next()
     } catch (e) {
-      next(getError(e))
+      next(e)
     }
   })
 
@@ -41,11 +39,11 @@ export default (server: Server) => {
       res.send('ok')
       next()
     } catch (e) {
-      next(getError(e))
+      next(e)
     }
   })
 
-  server.post('/api/v1/admin/deleteprediction', async (req: Request, res: Response, next: Next) => {
+  server.del('/api/v1/admin/deleteprediction', async (req: Request, res: Response, next: Next) => {
     try {
       const body = JSON.parse(req.body)
 
@@ -57,7 +55,7 @@ export default (server: Server) => {
       res.send(result)
       next()
     } catch (e) {
-      next(getError(e))
+      next(e)
     }
   })
 }

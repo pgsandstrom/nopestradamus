@@ -5,6 +5,7 @@ import { confirmAccountExistance, validateAccount } from './account'
 import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './scheduler'
 import { PredictionCensored, PredictionShallow } from '../../../frontend/shared'
 import { censorMail, isMailValid } from '../../../frontend/shared/mail-util'
+import { NotFoundError } from 'restify-errors'
 
 /**
  * Removes all private hashes from the predicition. Also censors the mails!
@@ -41,6 +42,11 @@ export const getPrediction = async (hash: string): Promise<Prediction> => {
   const prediction = await querySingle(
     SQL`SELECT created, title, body, hash, finish_date FROM prediction WHERE hash = ${hash}`,
   )
+
+  if (prediction === undefined) {
+    throw new NotFoundError(`Prediction ${hash} not found`)
+  }
+
   const creater = await querySingle(
     SQL`SELECT hash, mail, accepted, accepted_mail_sent, end_mail_sent FROM creater WHERE prediction_hash = ${hash}`,
   )

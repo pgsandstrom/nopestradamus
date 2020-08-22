@@ -11,6 +11,7 @@ export interface PredictionCensored {
   created: string
   creater: {
     mail: string
+    accepted?: boolean
     hash: undefined // 'undefined' to make sure we dont accidentally leave the hash
   }
   title: string

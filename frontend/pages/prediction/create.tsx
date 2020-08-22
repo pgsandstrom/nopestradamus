@@ -62,7 +62,7 @@ export default function CreatePrediction() {
     setIsPosting(false)
   }
 
-  if (!posted) {
+  if (posted) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'column', width: '400px' }}>
