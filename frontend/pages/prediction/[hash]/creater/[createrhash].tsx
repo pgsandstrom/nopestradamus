@@ -9,8 +9,9 @@ import { formatDateString } from '../../../../shared/date-util'
 import { removeUndefined } from '../../../../shared/object-util'
 
 export const getServerSideProps: GetServerSideProps<PredictionProps> = async (context) => {
-  const hash = context.params!.hash as string
-  const response = await fetch(`${getServerUrl()}/api/v1/prediction/${hash}`, {
+  const predictionHash = context.params!.hash as string
+  const createrHash = context.params!.createrhash as string
+  const response = await fetch(`${getServerUrl()}/api/v1/prediction/${predictionHash}`, {
     method: 'GET',
   })
 
@@ -21,20 +22,34 @@ export const getServerSideProps: GetServerSideProps<PredictionProps> = async (co
       props: removeUndefined({
         predictionCensored,
         createrAccepted: predictionCensored.creater.accepted,
+        predictionHash,
+        createrHash,
       }),
     }
   } else {
     context.res.statusCode = response.status
-    return { props: {} }
+    return {
+      props: {
+        predictionHash,
+        createrHash,
+      },
+    }
   }
 }
 
 interface PredictionProps {
   predictionCensored?: PredictionCensored
   createrAccepted?: boolean
+  predictionHash: string
+  createrHash: string
 }
 
-export default function PredictionHash({ predictionCensored, createrAccepted }: PredictionProps) {
+export default function PredictionHash({
+  predictionCensored,
+  createrAccepted,
+  predictionHash,
+  createrHash,
+}: PredictionProps) {
   const [isAccepting, setIsAccepting] = useState(false)
   const [accepted, setAccepted] = useState<boolean>()
 
@@ -42,14 +57,14 @@ export default function PredictionHash({ predictionCensored, createrAccepted }: 
     setIsAccepting(true)
     try {
       await fetch(
-        `${getServerUrl()}//api/v1/prediction/:prediction/creater/:hash/${
+        `${getServerUrl()}//api/v1/prediction/${predictionHash}/creater/${createrHash}/${
           accept ? 'accept' : 'deny'
         }`,
         {
           method: 'POST',
         },
       )
-      setAccepted(true)
+      setAccepted(accept)
     } catch (_e) {
       setIsAccepting(false)
     }
@@ -77,17 +92,18 @@ export default function PredictionHash({ predictionCensored, createrAccepted }: 
         <div>Thank you!</div>
         {predictionCensored.participants.length > 0 && (
           <div style={{ marginTop: '20px' }}>
-            <div>
+            <div style={{ marginBottom: '10px' }}>
               Please ask you participants to check their spam folders! They should receive a mail
-              any second now.
+              any second now:
             </div>
             {predictionCensored.participants.map((p) => {
               return <div key={p.mail}>{p.mail}</div>
             })}
           </div>
         )}
-        <div style={{ marginTop: '20px' }}>
-          You will receive a mail on {formatDateString(predictionCensored.finish_date)}
+        <div style={{ marginTop: '40px' }}>
+          And then you wait! You will all receive a mail when the prediction ends on{' '}
+          {formatDateString(predictionCensored.finish_date)}.
         </div>
       </GoBackWrapper>
     )
