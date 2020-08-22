@@ -57,7 +57,7 @@ export default function PredictionHash({
     setIsAccepting(true)
     try {
       await fetch(
-        `${getServerUrl()}//api/v1/prediction/${predictionHash}/creater/${createrHash}/${
+        `${getServerUrl()}/api/v1/prediction/${predictionHash}/creater/${createrHash}/${
           accept ? 'accept' : 'deny'
         }`,
         {
