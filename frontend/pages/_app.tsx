@@ -1,8 +1,18 @@
 import Head from 'next/head'
 import type { AppProps } from 'next/app'
 import '../styles/globals.css'
+import React from 'react'
 
 function MyApp({ Component, pageProps }: AppProps) {
+  // from https://github.com/mui-org/material-ui/blob/master/examples/nextjs/pages/_app.js
+  React.useEffect(() => {
+    // Remove the server-side injected CSS.
+    const jssStyles = document.querySelector('#jss-server-side')
+    if (jssStyles?.parentElement) {
+      jssStyles.parentElement.removeChild(jssStyles)
+    }
+  }, [])
+
   return (
     <>
       <Head>
