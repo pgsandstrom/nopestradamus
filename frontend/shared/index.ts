@@ -27,3 +27,7 @@ export interface PredictionCensored {
     end_mail_sent: boolean
   }[]
 }
+
+export type Dictionary<K extends string | number | symbol, V> = { [key in K]: V }
+
+export type PartialDict<K extends string | number | symbol, V> = { [key in K]?: V }

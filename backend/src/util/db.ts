@@ -1,9 +1,8 @@
 import { Pool, PoolClient, QueryConfig, QueryResult, types, QueryResultRow } from 'pg'
 import config from './config'
+import { nullToUndefined } from '../../../frontend/shared/object-util'
 
 const databaseConfig = config().database
-
-// TODO null returning instead of undefined from database might screw us. Can we transform all null to undefined?
 
 // Force count-function in database to return number instead of string
 // https://github.com/brianc/node-pg-types#use
@@ -20,20 +19,20 @@ const getDbPool = () => {
   return dbPool
 }
 
-// Use this for single query
-export const query = (stuff: QueryConfig) => getDbPool().query(stuff)
+export const query = (stuff: QueryConfig) => getDbPool().query(stuff).then(nullToUndefined)
+
 export function queryString<R extends QueryResultRow = any>(stuff: string, values?: any[]) {
-  return getDbPool().query<R>(stuff, values)
+  return getDbPool().query<R>(stuff, values).then(nullToUndefined)
 }
 
 export const querySingle = async <T = any>(stuff: QueryConfig) => {
   const result: QueryResult = await getDbPool().query(stuff)
-  return getSingle<T>(result)
+  return nullToUndefined(getSingle<T>(result))
 }
 
 export const querySingleString = async <T = any>(stuff: string, values?: any[]) => {
   const result: QueryResult = await getDbPool().query(stuff, values)
-  return getSingle<T>(result)
+  return nullToUndefined(getSingle<T>(result))
 }
 
 const getSingle = <T>(result: QueryResult): T | undefined => {

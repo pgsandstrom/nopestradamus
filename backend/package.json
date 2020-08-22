@@ -10,6 +10,7 @@
     "@babel/core": "7.11.4",
     "@babel/preset-env": "7.11.0",
     "@types/cron": "1.7.2",
+    "@types/lodash": "4.14.159",
     "@types/node": "12.12.5",
     "@types/nodemailer": "6.4.0",
     "@types/pg": "7.14.4",

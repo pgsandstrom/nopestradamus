@@ -7,13 +7,18 @@ import ClearIcon from '@material-ui/icons/Clear'
 
 interface PredictionProps {
   prediction: PredictionCensored
+  suppressNotAcceptedWarning?: boolean
   style?: React.CSSProperties
 }
 
-export default function Prediction({ prediction, style }: PredictionProps) {
+export default function Prediction({
+  prediction,
+  suppressNotAcceptedWarning,
+  style,
+}: PredictionProps) {
   return (
     <div style={style}>
-      {prediction.creater.accepted !== true && (
+      {prediction.creater.accepted !== true && suppressNotAcceptedWarning !== true && (
         <div style={{ marginTop: '20px', color: 'red' }}>
           <Typography variant="caption">
             NOTICE: This prediction has not yet been accepted by the creater, therefore it is set to
