@@ -27,7 +27,7 @@
     "next": "9.5.2",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "typescript": "4.0.1-rc"
+    "typescript": "4.0.2"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "3.9.1",
