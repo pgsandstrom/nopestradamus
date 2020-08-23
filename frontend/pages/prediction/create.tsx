@@ -11,6 +11,7 @@ import {
   validateParticipant,
 } from '../../shared/validatePrediction'
 import Link from 'next/link'
+import GoBackWrapper from '../../components/goBackWrapper'
 
 export default function CreatePrediction() {
   const [title, setTitle] = useState('')
@@ -24,10 +25,12 @@ export default function CreatePrediction() {
   const [isPublic, setIsPublic] = useState(true)
   const [participantList, setParticipantList] = useState<string[]>([])
 
-  const [showError, setShowError] = useState(false)
+  const [showValidationError, setShowValidationError] = useState(false)
 
   const [isPosting, setIsPosting] = useState(false)
   const [posted, setPosted] = useState(false)
+
+  const [error, setError] = useState(false)
 
   const onCreate = async () => {
     if (
@@ -37,7 +40,7 @@ export default function CreatePrediction() {
       !validateCreaterMail(createrMail) ||
       !participantList.every((p) => validateParticipant(p, participantList))
     ) {
-      setShowError(true)
+      setShowValidationError(true)
       return
     }
     setIsPosting(true)
@@ -57,51 +60,53 @@ export default function CreatePrediction() {
 
       setPosted(true)
     } catch (e) {
-      // TODO show error
+      setError(true)
     }
     setIsPosting(false)
   }
 
+  if (error) {
+    return (
+      <GoBackWrapper>
+        <div>An error has occurred. Sorry :(</div>
+      </GoBackWrapper>
+    )
+  }
+
   if (posted) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', width: '400px' }}>
-          <Link href="/">
-            <Button variant="outlined" style={{ alignSelf: 'start', marginTop: '20px' }}>
-              Go Back
-            </Button>
-          </Link>
-          <div style={{ marginTop: '10px' }}>A mail has been sent to {createrMail}</div>
-          <div style={{ marginTop: '10px' }}>
-            Please check your spam folder. It is VERY LIKELY that the mail is stuck there.
-          </div>
-          {participantList.length > 0 && (
-            <div style={{ marginTop: '10px' }}>
-              As soon as you confirm the prediction through the mail we have sent you, the other
-              participants will be mailed.
-            </div>
-          )}
+      <GoBackWrapper>
+        <div style={{ marginTop: '10px' }}>A mail has been sent to {createrMail}</div>
+        <div style={{ marginTop: '10px' }}>
+          Please check your spam folder. It is VERY LIKELY that the mail is stuck there.
         </div>
-      </div>
+        {participantList.length > 0 && (
+          <div style={{ marginTop: '10px' }}>
+            As soon as you confirm the prediction through the mail we have sent you, the other
+            participants will be mailed.
+          </div>
+        )}
+      </GoBackWrapper>
     )
   }
 
   return (
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', width: '400px' }}>
-          <Link href="/">
-            <Button variant="outlined" style={{ alignSelf: 'start', marginTop: '20px' }}>
-              Go Back
-            </Button>
-          </Link>
+      <GoBackWrapper>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '400px',
+          }}
+        >
           <TextField
             label="Title"
             multiline
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            error={showError && !validateTitle(title)}
-            helperText={showError && !validateTitle(title) ? 'Invalid title' : ''}
+            error={showValidationError && !validateTitle(title)}
+            helperText={showValidationError && !validateTitle(title) ? 'Invalid title' : ''}
             style={{ marginTop: '10px' }}
           />
           <TextField
@@ -109,8 +114,10 @@ export default function CreatePrediction() {
             multiline
             value={body}
             onChange={(e) => setBody(e.target.value)}
-            error={showError && !validateDescription(body)}
-            helperText={showError && !validateDescription(body) ? 'Invalid description' : ''}
+            error={showValidationError && !validateDescription(body)}
+            helperText={
+              showValidationError && !validateDescription(body) ? 'Invalid description' : ''
+            }
             style={{ marginTop: '10px' }}
           />
           <KeyboardDatePicker
@@ -123,15 +130,17 @@ export default function CreatePrediction() {
             KeyboardButtonProps={{
               'aria-label': 'change date',
             }}
-            error={showError && !validateDate(date)}
-            helperText={showError && !validateDate(date) ? 'Invalid date' : ''}
+            error={showValidationError && !validateDate(date)}
+            helperText={showValidationError && !validateDate(date) ? 'Invalid date' : ''}
           />
           <TextField
             label="Your mail"
             value={createrMail}
             onChange={(e) => setCreaterMail(e.target.value)}
-            error={showError && !validateCreaterMail(createrMail)}
-            helperText={showError && !validateCreaterMail(createrMail) ? 'Invalid mail' : ''}
+            error={showValidationError && !validateCreaterMail(createrMail)}
+            helperText={
+              showValidationError && !validateCreaterMail(createrMail) ? 'Invalid mail' : ''
+            }
           />
           <FormControlLabel
             control={
@@ -142,7 +151,7 @@ export default function CreatePrediction() {
                 }}
               />
             }
-            label="Should this prediction be public?"
+            label="Make this prediction public"
             style={{ marginTop: '10px' }}
           />
           <div
@@ -166,9 +175,11 @@ export default function CreatePrediction() {
                         participantList.map((p, i) => (index === i ? e.target.value : p)),
                       )
                     }}
-                    error={showError && !validateParticipant(participant, participantList)}
+                    error={
+                      showValidationError && !validateParticipant(participant, participantList)
+                    }
                     helperText={
-                      showError && !validateParticipant(participant, participantList)
+                      showValidationError && !validateParticipant(participant, participantList)
                         ? 'Invalid participant'
                         : ''
                     }
@@ -208,7 +219,7 @@ export default function CreatePrediction() {
             Create prediction
           </Button>
         </div>
-      </div>
+      </GoBackWrapper>
     </MuiPickersUtilsProvider>
   )
 }
