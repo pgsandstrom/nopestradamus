@@ -11,7 +11,8 @@ interface Prediction {
 interface Creater {
   mail: string
   hash: string
-  accepted: boolean
+  accepted?: boolean
+  accepted_date?: string
   accepted_mail_sent: boolean
   end_mail_sent: boolean
 }

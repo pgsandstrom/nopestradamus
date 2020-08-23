@@ -54,11 +54,11 @@ export const getPrediction = async (hash: string): Promise<Prediction> => {
   }
 
   const creater = await querySingle(
-    SQL`SELECT hash, mail, accepted, accepted_mail_sent, end_mail_sent FROM creater WHERE prediction_hash = ${hash}`,
+    SQL`SELECT hash, mail, accepted, accepted_date, accepted_mail_sent, end_mail_sent FROM creater WHERE prediction_hash = ${hash}`,
   )
   const participants: Participant[] = (
     await query(
-      SQL`SELECT hash, mail, accepted, accepted_mail_sent, end_mail_sent FROM participant WHERE prediction_hash = ${hash}`,
+      SQL`SELECT hash, mail, accepted, accepted_date, accepted_mail_sent, end_mail_sent FROM participant WHERE prediction_hash = ${hash}`,
     )
   ).rows
 
