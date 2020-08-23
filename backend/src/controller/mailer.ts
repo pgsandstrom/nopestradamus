@@ -93,9 +93,9 @@ Hope you had fun!`
 export const sendParticipantEndMail = async (prediction: Prediction, participant: Participant) => {
   console.log(`sending end mail to ${participant.mail}`)
 
-  const mailTitle = `Your bet from ${prediction.creater.mail} has finished!!!`
+  const mailTitle = `Your bet from ${prediction.creater.mail} has finished!`
   const mailBody = `A bet was accepted by you on ${formatDateString(
-    participant.accepted_date!,
+    participant.accepted_date,
   )} by ${prediction.creater.mail}. It has now finished! Here is the bet:
 
 ---
