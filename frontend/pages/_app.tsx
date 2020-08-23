@@ -8,6 +8,7 @@ import theme from '../styles/theme'
 import '../styles/globals.css'
 
 export default function MyApp({ Component, pageProps }: AppProps) {
+  // this hook is part of making material-ui work with nextjs
   React.useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side')

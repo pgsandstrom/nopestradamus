@@ -5,6 +5,7 @@ import theme from '../styles/theme'
 
 export default class MyDocument extends Document {
   render() {
+    // TODO remove roboto... it messes a bit with ssr
     return (
       <Html lang="en">
         <Head>
@@ -24,6 +25,7 @@ export default class MyDocument extends Document {
   }
 }
 
+// this stuff is part of making material-ui work with nextjs
 // `getInitialProps` belongs to `_document` (instead of `_app`),
 // it's compatible with server-side generation (SSG).
 MyDocument.getInitialProps = async (ctx) => {
