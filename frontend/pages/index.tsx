@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { GetServerSideProps } from 'next'
 import { PredictionShallow } from '../shared'
 import getServerUrl from '../util/serverUrl'
-import { Button } from '@material-ui/core'
+import { Button, Typography } from '@material-ui/core'
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async (_context) => {
   const response = await fetch(`${getServerUrl()}/api/v1/prediction`, {
@@ -79,16 +79,30 @@ export default function Home({ predictionShallowList }: HomeProps) {
             </p>
           </div>
         </div>
-        <div style={{ flex: '45 0 0' }}>
-          {predictionShallowList.map((predictionShallow) => {
-            return (
-              <div key={predictionShallow.hash}>
-                <Link href="/prediction/[hash]" as={`/prediction/${predictionShallow.hash}`}>
-                  <a>{predictionShallow.title}</a>
-                </Link>
-              </div>
-            )
-          })}
+        <div style={{ flex: '45 0 0', alignSelf: 'center', display: 'flex' }}>
+          <div
+            style={{
+              margin: '50px',
+              padding: '50px',
+              background: 'lightblue',
+              justifySelf: 'start',
+            }}
+          >
+            <Typography variant="h6">Latest predictions</Typography>
+            {predictionShallowList.map((predictionShallow) => {
+              return (
+                <Typography
+                  key={predictionShallow.hash}
+                  variant="body1"
+                  style={{ marginTop: '10px' }}
+                >
+                  <Link href="/prediction/[hash]" as={`/prediction/${predictionShallow.hash}`}>
+                    <a>{predictionShallow.title}</a>
+                  </Link>
+                </Typography>
+              )
+            })}
+          </div>
         </div>
       </main>
 

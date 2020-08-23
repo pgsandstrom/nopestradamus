@@ -199,7 +199,12 @@ export default function CreatePrediction() {
             </div>
           </div>
 
-          <Button onClick={onCreate} variant="outlined" style={{ marginTop: '20px' }}>
+          <Button
+            onClick={onCreate}
+            disabled={isPosting}
+            variant="outlined"
+            style={{ marginTop: '20px' }}
+          >
             Create prediction
           </Button>
         </div>
