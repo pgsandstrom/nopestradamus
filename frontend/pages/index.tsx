@@ -36,6 +36,7 @@ export default function Home({ predictionShallowList }: HomeProps) {
       }}
     >
       <main
+        className="main"
         style={{
           display: 'flex',
           flex: '1 0 0',
@@ -49,34 +50,33 @@ export default function Home({ predictionShallowList }: HomeProps) {
             flex: '30 0 0',
           }}
         >
-          <div style={{ width: '400px' }}>
+          <div className="logo-container" style={{ maxWidth: '400px' }}>
             <img src="/logo.png" style={{ width: '100%' }} />
           </div>
         </div>
-        <div style={{ flex: '25 0 0', alignSelf: 'center' }}>
-          <h1 style={{ fontSize: '2em' }}>Trying to predict the future, are we?</h1>
+        <div className="main-text" style={{ flex: '25 0 0', alignSelf: 'center' }}>
+          <div style={{ margin: '0 40px' }}>
+            <h1 style={{ fontSize: '2em' }}>Trying to predict the future, are we?</h1>
 
-          <div style={{ fontSize: '1.1em' }}>
-            <p>
-              So here is how this site works: You describe a prediction and an end date. If you
-              want, you can add other participants that have to accept what you have written.
-            </p>
-            <p>
-              When the end date is upon us, you all receive a mail. And that&apos;s it. No need to
-              create an account or stuff like that.
-            </p>
-            <p>
-              So whats the point? Well, sometimes people are very confident when they predict the
-              future. I hope being reminded of these long term predictions will humble people.
-              Predicting the future is hard.
-            </p>
-            <p>You can also just use it as a bet tracker.</p>
-            <p>
-              So go ahead:{' '}
+            <div style={{ fontSize: '1.1em' }}>
+              <p>
+                So here is how this site works: You describe a prediction and an end date. If you
+                want, you can add other participants that have to accept what you have written.
+              </p>
+              <p>
+                When the end date is upon us, you all receive a mail. And that&apos;s it. No need to
+                create an account or stuff like that.
+              </p>
+              <p>
+                So whats the point? Well, sometimes people are very confident when they predict the
+                future. I hope being reminded of these long term predictions will humble people.
+                Predicting the future is hard.
+              </p>
+              <p>You can also just use it as a bet tracker.</p>
               <Button variant="outlined" onClick={goToCreate}>
                 Create a prediction
               </Button>
-            </p>
+            </div>
           </div>
         </div>
         <div style={{ flex: '45 0 0', alignSelf: 'center', display: 'flex' }}>
@@ -119,6 +119,19 @@ export default function Home({ predictionShallowList }: HomeProps) {
           <a href="https://github.com/pgsandstrom/nopestradamus">Github</a>.
         </span>
       </footer>
+      <style jsx>{`
+        @media (max-width: 1280px) {
+          .logo-container {
+            margin: 40px 40px 0 40px;
+          }
+          .main {
+            flex-direction: column;
+          }
+          .main-text {
+            max-width: 600px;
+          }
+        }
+      `}</style>
     </div>
   )
 }
