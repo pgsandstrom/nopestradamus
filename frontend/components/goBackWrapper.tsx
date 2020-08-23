@@ -5,7 +5,6 @@ interface GoBackWrapperProps {
   children: React.ReactNode
 }
 
-// TODO use this in more places
 export default function GoBackWrapper({ children }: GoBackWrapperProps) {
   return (
     <div

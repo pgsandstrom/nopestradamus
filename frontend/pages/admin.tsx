@@ -1,6 +1,7 @@
 import getServerUrl from '../util/serverUrl'
 import { Button, TextField } from '@material-ui/core'
 import { useState } from 'react'
+import GoBackWrapper from '../components/goBackWrapper'
 
 export default function Admin() {
   const [password, setPassword] = useState('')
@@ -44,65 +45,55 @@ export default function Admin() {
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-        alignItems: 'center',
-        paddingTop: '20px',
-      }}
-    >
-      <div style={{ maxWidth: '600px' }}>
-        <div>This is the admin console. You need the admin password to actually do anything</div>
+    <GoBackWrapper>
+      <div>This is the admin console. You need the admin password to actually do anything</div>
+      <TextField
+        label="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        style={{ marginTop: '10px' }}
+      />
+      <div style={{ border: '1px solid red', marginTop: '20px' }}>
+        <Button variant="outlined" onClick={doTriggerCron}>
+          Trigger cron job
+        </Button>
+      </div>
+      <div style={{ border: '1px solid red', marginTop: '20px' }}>
+        <div>test send mail</div>
         <TextField
-          label="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          label="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
           style={{ marginTop: '10px' }}
         />
-        <div style={{ border: '1px solid red', marginTop: '20px' }}>
-          <Button variant="outlined" onClick={doTriggerCron}>
-            Trigger cron job
-          </Button>
-        </div>
-        <div style={{ border: '1px solid red', marginTop: '20px' }}>
-          <div>test send mail</div>
-          <TextField
-            label="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            style={{ marginTop: '10px' }}
-          />
-          <TextField
-            label="body"
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            style={{ marginTop: '10px' }}
-          />
-          <TextField
-            label="mail"
-            value={mail}
-            onChange={(e) => setMail(e.target.value)}
-            style={{ marginTop: '10px' }}
-          />
-          <Button variant="outlined" onClick={doSendMail}>
-            send mail
-          </Button>
-        </div>
-
-        <div style={{ border: '1px solid red', marginTop: '20px' }}>
-          <TextField
-            label="prediction hash"
-            value={hash}
-            onChange={(e) => setHash(e.target.value)}
-            style={{ marginTop: '10px' }}
-          />
-          <Button variant="outlined" onClick={doDeletePrediction}>
-            delete prediction
-          </Button>
-        </div>
+        <TextField
+          label="body"
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          style={{ marginTop: '10px' }}
+        />
+        <TextField
+          label="mail"
+          value={mail}
+          onChange={(e) => setMail(e.target.value)}
+          style={{ marginTop: '10px' }}
+        />
+        <Button variant="outlined" onClick={doSendMail}>
+          send mail
+        </Button>
       </div>
-    </div>
+
+      <div style={{ border: '1px solid red', marginTop: '20px' }}>
+        <TextField
+          label="prediction hash"
+          value={hash}
+          onChange={(e) => setHash(e.target.value)}
+          style={{ marginTop: '10px' }}
+        />
+        <Button variant="outlined" onClick={doDeletePrediction}>
+          delete prediction
+        </Button>
+      </div>
+    </GoBackWrapper>
   )
 }
