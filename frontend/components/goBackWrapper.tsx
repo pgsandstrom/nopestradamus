@@ -13,10 +13,10 @@ export default function GoBackWrapper({ children }: GoBackWrapperProps) {
         flexDirection: 'column',
         width: '100%',
         alignItems: 'center',
-        paddingTop: '20px',
+        padding: '20px',
       }}
     >
-      <div style={{ maxWidth: '600px', width: '600px' }}>
+      <div style={{ maxWidth: '600px', width: '100%' }}>
         <Link href="/">
           <Button variant="outlined" style={{ marginBottom: '20px' }}>
             Go Back

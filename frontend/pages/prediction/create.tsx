@@ -100,7 +100,8 @@ export default function CreatePrediction() {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            width: '400px',
+            maxWidth: '400px',
+            width: '100%',
           }}
         >
           <TextField
@@ -159,8 +160,6 @@ export default function CreatePrediction() {
           />
           <div
             style={{
-              // borderTop: '1px solid gray',
-              // borderBottom: '1px solid gray',
               margin: '20px 10px',
             }}
           >
