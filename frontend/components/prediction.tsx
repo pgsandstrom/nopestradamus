@@ -29,9 +29,7 @@ export default function Prediction({
       <Typography variant="h5" style={{ marginTop: '20px' }}>
         {prediction.title}
       </Typography>
-      <Typography variant="subtitle2">
-        created on {formatDateString(prediction.created)} by {prediction.creater.mail}
-      </Typography>
+      <Typography variant="subtitle2">created on {formatDateString(prediction.created)}</Typography>
       <Typography variant="body1" style={{ marginTop: '40px' }}>
         {prediction.body}
       </Typography>
@@ -46,47 +44,67 @@ export default function Prediction({
       ) : (
         <div>
           <Typography variant="h6" style={{ marginTop: '20px' }}>
-            Other participants
+            Participants
           </Typography>
-          {prediction.participants.map((participant) => {
-            return (
-              <div key={participant.mail} style={{ display: 'flex', alignItems: 'center' }}>
-                <div style={{ position: 'relative' }}>
-                  {participant.accepted === true && (
-                    <CheckIcon
-                      style={{
-                        position: 'absolute',
-                        top: '7px',
-                        left: '6px',
-                        fontSize: '1.2em',
-                        color: 'green',
-                      }}
-                    />
-                  )}
-                  {participant.accepted === false && (
-                    <ClearIcon
-                      style={{
-                        position: 'absolute',
-                        top: '7px',
-                        left: '6px',
-                        fontSize: '1.2em',
-                        color: 'red',
-                      }}
-                    />
-                  )}
-                  <CropSquareIcon style={{ fontSize: '2em' }} />
-                </div>
-
-                <span>{participant.mail}</span>
-                {participant.accepted === undefined && (
-                  <Typography variant="caption" style={{ marginLeft: '10px' }}>
-                    (waiting for confirmation)
-                  </Typography>
-                )}
-              </div>
-            )
-          })}
+          <ParticipantRow
+            accepted={prediction.creater.accepted}
+            name={prediction.creater.mail}
+            extraText="(creater)"
+          />
+          {prediction.participants.map((p) => (
+            <ParticipantRow key={p.mail} accepted={p.accepted} name={p.mail} />
+          ))}
         </div>
+      )}
+    </div>
+  )
+}
+
+interface ParticipantRowProps {
+  accepted?: boolean
+  name: string
+  extraText?: string
+}
+
+const ParticipantRow = ({ accepted, name, extraText }: ParticipantRowProps) => {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ position: 'relative' }}>
+        {accepted === true && (
+          <CheckIcon
+            style={{
+              position: 'absolute',
+              top: '7px',
+              left: '6px',
+              fontSize: '1.2em',
+              color: 'green',
+            }}
+          />
+        )}
+        {accepted === false && (
+          <ClearIcon
+            style={{
+              position: 'absolute',
+              top: '7px',
+              left: '6px',
+              fontSize: '1.2em',
+              color: 'red',
+            }}
+          />
+        )}
+        <CropSquareIcon style={{ fontSize: '2em' }} />
+      </div>
+
+      <span>{name}</span>
+      {extraText !== undefined && (
+        <Typography variant="caption" style={{ marginLeft: '10px' }}>
+          {extraText}
+        </Typography>
+      )}
+      {accepted === undefined && (
+        <Typography variant="caption" style={{ marginLeft: '10px' }}>
+          (waiting for confirmation)
+        </Typography>
       )}
     </div>
   )
