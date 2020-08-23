@@ -1,16 +1,19 @@
 import { isMailValid } from './mail-util'
 import { isValid } from 'date-fns'
 
-// TODO use this in backend as well
-export const validateTitle = (title?: string) => {
+export const validateTitle = (title?: string): title is string => {
   return title !== undefined && title.length > 0
 }
 
-export const validateDescription = (description?: string) => {
+export const validateDescription = (description?: string): description is string => {
   return description !== undefined && description.length > 0
 }
 
-export const validateDate = (date?: Date | null) => {
+export const validateDateString = (date?: string): date is string => {
+  return validateDate(date !== undefined ? new Date(date) : undefined)
+}
+
+export const validateDate = (date?: Date | null): date is Date => {
   if (date == null) {
     return false
   }
@@ -18,7 +21,7 @@ export const validateDate = (date?: Date | null) => {
   return isValid(date)
 }
 
-export const validateCreaterMail = (mail?: string) => {
+export const validateCreaterMail = (mail?: string): mail is string => {
   return mail !== undefined && isMailValid(mail)
 }
 

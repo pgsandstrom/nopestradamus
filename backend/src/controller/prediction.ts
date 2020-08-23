@@ -6,6 +6,13 @@ import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './sched
 import { PredictionCensored, PredictionShallow } from '../../../frontend/shared'
 import { censorMail, isMailValid } from '../../../frontend/shared/mail-util'
 import { NotFoundError } from 'restify-errors'
+import {
+  validateTitle,
+  validateParticipant,
+  validateDescription,
+  validateCreaterMail,
+  validateDateString,
+} from '../../../frontend/shared/validatePrediction'
 
 /**
  * Removes all private hashes from the predicition. Also censors the mails!
@@ -124,25 +131,26 @@ export const createPrediction = async (
   createrMail?: string,
   participantList?: string[],
 ) => {
-  // TODO validate data better maybe?
-
-  if (title === undefined || title === '') {
-    throw new Error('title must not be empty')
+  if (!validateTitle(title)) {
+    throw new Error('Invalid title')
   }
-  if (body === undefined) {
+  if (!validateDescription(body)) {
     throw new Error('title must be present')
   }
-  if (finishDate === undefined) {
+  if (!validateDateString(finishDate)) {
     throw new Error('finishDate must be present')
   }
   if (isPublic === undefined) {
-    throw new Error('isPublic must be present')
+    throw new Error('Invalid isPublic')
   }
-  if (createrMail === undefined) {
+  if (!validateCreaterMail(createrMail)) {
     throw new Error('createrMail must be present')
   }
-  if (participantList === undefined) {
-    throw new Error('participantList must be present')
+  if (
+    participantList === undefined ||
+    !participantList.every((p) => validateParticipant(p, participantList))
+  ) {
+    throw new Error('participantList invalid')
   }
 
   const hash = uuidv4()

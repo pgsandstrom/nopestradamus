@@ -10,7 +10,6 @@ import {
   validateDate,
   validateParticipant,
 } from '../../shared/validatePrediction'
-import Link from 'next/link'
 import GoBackWrapper from '../../components/goBackWrapper'
 
 export default function CreatePrediction() {
@@ -45,7 +44,7 @@ export default function CreatePrediction() {
     }
     setIsPosting(true)
     try {
-      await fetch(`${getServerUrl()}/api/v1/prediction`, {
+      const response = await fetch(`${getServerUrl()}/api/v1/prediction`, {
         method: 'PUT',
         body: JSON.stringify({
           title,
@@ -58,7 +57,11 @@ export default function CreatePrediction() {
         credentials: 'same-origin',
       })
 
-      setPosted(true)
+      if (response.status < 400) {
+        setPosted(true)
+      } else {
+        setError(true)
+      }
     } catch (e) {
       setError(true)
     }
