@@ -78,6 +78,7 @@ export default (server: Server) => {
       const hash = req.params.hash
       try {
         await updateCreaterAcceptStatus(predictionHash, hash, true)
+        // TODO throw error if miss
         res.send('ok')
         next()
       } catch (e) {
@@ -93,6 +94,7 @@ export default (server: Server) => {
       const hash = req.params.hash
       try {
         await updateCreaterAcceptStatus(predictionHash, hash, false)
+        // TODO throw error if miss
         res.send('ok')
         next()
       } catch (e) {
@@ -102,12 +104,13 @@ export default (server: Server) => {
   )
 
   server.post(
-    '/api/v1/prediction/:prediction/participant/:hash/accept/',
+    '/api/v1/prediction/:prediction/participant/:hash/accept',
     async (req: Request, res: Response, next: Next) => {
       const predictionHash = req.params.prediction
       const hash = req.params.hash
       try {
         await updateParticipantAcceptStatus(predictionHash, hash, true)
+        // TODO throw error if miss
         res.send('ok')
         next()
       } catch (e) {
@@ -117,12 +120,13 @@ export default (server: Server) => {
   )
 
   server.post(
-    '/api/v1/prediction/:prediction/participant/:hash/deny/',
+    '/api/v1/prediction/:prediction/participant/:hash/deny',
     async (req: Request, res: Response, next: Next) => {
       const predictionHash = req.params.prediction
       const hash = req.params.hash
       try {
         await updateParticipantAcceptStatus(predictionHash, hash, false)
+        // TODO throw error if miss
         res.send('ok')
         next()
       } catch (e) {

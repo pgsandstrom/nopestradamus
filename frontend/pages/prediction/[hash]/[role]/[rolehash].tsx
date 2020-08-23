@@ -10,10 +10,21 @@ import { removeUndefined } from '../../../../shared/object-util'
 
 export const getServerSideProps: GetServerSideProps<PredictionProps> = async (context) => {
   const predictionHash = context.params!.hash as string
-  const createrHash = context.params!.createrhash as string
-  const response = await fetch(`${getServerUrl()}/api/v1/prediction/${predictionHash}`, {
+  const roleHash = context.params!.rolehash as string
+  const role = context.params!.role as string
+
+  let url: string
+  if (role === 'participant') {
+    url = `${getServerUrl()}/api/v1/prediction/${predictionHash}/participant/${roleHash}`
+  } else {
+    url = `${getServerUrl()}/api/v1/prediction/${predictionHash}`
+  }
+
+  const response = await fetch(url, {
     method: 'GET',
   })
+
+  console.log(role)
 
   if (response.status < 400) {
     const predictionCensored = (await response.json()) as PredictionCensored
@@ -21,9 +32,9 @@ export const getServerSideProps: GetServerSideProps<PredictionProps> = async (co
     return {
       props: removeUndefined({
         predictionCensored,
-        createrAccepted: predictionCensored.creater.accepted,
         predictionHash,
-        createrHash,
+        roleHash,
+        role,
       }),
     }
   } else {
@@ -31,7 +42,8 @@ export const getServerSideProps: GetServerSideProps<PredictionProps> = async (co
     return {
       props: {
         predictionHash,
-        createrHash,
+        roleHash,
+        role,
       },
     }
   }
@@ -39,38 +51,52 @@ export const getServerSideProps: GetServerSideProps<PredictionProps> = async (co
 
 interface PredictionProps {
   predictionCensored?: PredictionCensored
-  createrAccepted?: boolean
   predictionHash: string
-  createrHash: string
+  roleHash: string
+  role: string
 }
 
 export default function PredictionHash({
   predictionCensored,
-  createrAccepted,
   predictionHash,
-  createrHash,
+  roleHash,
+  role,
 }: PredictionProps) {
   const [isAccepting, setIsAccepting] = useState(false)
   const [accepted, setAccepted] = useState<boolean>()
+  const [error, setError] = useState(false)
 
   const doAcceptPrediction = async (accept: boolean) => {
     setIsAccepting(true)
     try {
-      await fetch(
-        `${getServerUrl()}/api/v1/prediction/${predictionHash}/creater/${createrHash}/${
+      const response = await fetch(
+        `${getServerUrl()}/api/v1/prediction/${predictionHash}/${role}/${roleHash}/${
           accept ? 'accept' : 'deny'
         }`,
         {
           method: 'POST',
         },
       )
-      setAccepted(accept)
+      if (response.status < 400) {
+        setAccepted(accept)
+      } else {
+        setError(true)
+      }
     } catch (_e) {
-      setIsAccepting(false)
+      //
     }
+    setIsAccepting(false)
   }
 
-  if (predictionCensored === undefined) {
+  if (error) {
+    return (
+      <GoBackWrapper>
+        <div>An error has occurred. Sorry :(</div>
+      </GoBackWrapper>
+    )
+  }
+
+  if ((role !== 'creater' && role !== 'participant') || predictionCensored === undefined) {
     return (
       <GoBackWrapper>
         <div>Prediction not found</div>
@@ -78,10 +104,19 @@ export default function PredictionHash({
     )
   }
 
-  if (createrAccepted !== undefined) {
+  if (role === 'creater' && predictionCensored.creater.accepted !== undefined) {
     return (
       <GoBackWrapper>
-        <div>Prediction already {createrAccepted ? 'accepted' : 'denied'}</div>
+        <div>Prediction already {predictionCensored.creater.accepted ? 'accepted' : 'denied'}</div>
+      </GoBackWrapper>
+    )
+  }
+
+  const participantAccepted = predictionCensored.participants.find((p) => p.isCurrentUser)?.accepted
+  if (role === 'participant' && participantAccepted !== undefined) {
+    return (
+      <GoBackWrapper>
+        <div>Prediction already {participantAccepted ? 'accepted' : 'denied'}</div>
       </GoBackWrapper>
     )
   }
@@ -90,7 +125,7 @@ export default function PredictionHash({
     return (
       <GoBackWrapper>
         <div>Thank you!</div>
-        {predictionCensored.participants.length > 0 && (
+        {predictionCensored.participants.length > 0 && role === 'creater' && (
           <div style={{ marginTop: '20px' }}>
             <div style={{ marginBottom: '10px' }}>
               Please ask you participants to check their spam folders! They should receive a mail
@@ -102,7 +137,7 @@ export default function PredictionHash({
           </div>
         )}
         <div style={{ marginTop: '40px' }}>
-          And then you wait! You will all receive a mail when the prediction ends on{' '}
+          And now you wait! You will receive a mail when the prediction ends on{' '}
           {formatDateString(predictionCensored.finish_date)}.
         </div>
       </GoBackWrapper>

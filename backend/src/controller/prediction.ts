@@ -25,6 +25,7 @@ export const getCensoredPrediction = (
     },
     participants: prediction.participants.map((participant) => ({
       ...participant,
+      hash: undefined,
       isCurrentUser: currentUserHash === participant.hash,
       mail: censorMail(participant.mail),
     })),

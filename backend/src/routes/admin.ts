@@ -23,6 +23,7 @@ export default (server: Server) => {
       res.send('ok')
       next()
     } catch (e) {
+      console.log(`admin checkmail threw error: ${JSON.stringify(e)}`)
       next(e)
     }
   })
