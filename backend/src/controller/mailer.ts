@@ -17,7 +17,7 @@ ${prediction.participants.map((p) => p.mail).join('\n')}`
 export const sendCreaterAcceptMail = async (prediction: Prediction) => {
   console.log(`sending creater accept mail to ${prediction.creater.mail}`)
 
-  const mailTitle = 'Nopestradamus: Validate your mail for your bet!'
+  const mailTitle = 'Nopestradamus: Validate your mail for your prediction!'
   const mailBody = `Below is the bet that was created by this mail:
 
 ---
@@ -25,14 +25,12 @@ export const sendCreaterAcceptMail = async (prediction: Prediction) => {
 Title: ${prediction.title}
 
 ${prediction.body}
-
+${getPredictionList(prediction)}
 ---
 
-To validate or deny this prediction, visit the following link:
+To start the prediction you must visit the following link and accept it:
 http://nopestradamus.com/prediction/${prediction.hash}/creater/${prediction.creater.hash}
-
-To get an overview of the bet before you accept visit this link:
-http://nopestradamus.com/prediction/${prediction.hash}`
+`
   return sendMail(prediction.creater.mail, mailTitle, mailBody)
 }
 
@@ -41,29 +39,25 @@ export const sendParticipantAcceptMail = async (
   participant: Participant,
 ) => {
   console.log(`sending accept mail to ${participant.mail}`)
-  // console.log(`accept: /prediction/${predictionHash}/participant/${acceptHash}`);
-  // console.log(`view: /prediction/${predictionHash}`);
   const mailTitle = `Your opinion has been requested by ${prediction.creater.mail}!`
   const mailBody = `${
     prediction.creater.mail
-  } has asked you to accept a bet! The bet is described below
+  } has asked you to accept a prediction! The prediction is described below.
 
 ---
 
 Title: ${prediction.title}
 
 ${prediction.body}
-
+${getPredictionList(prediction)}
 ---
 
-The bet ends at ${formatDateString(
+The prediction ends at ${formatDateString(
     prediction.finish_date,
   )}. At the given date, you will all receive a mail and be confronted with your predictions!
-To accept or deny the bet, click the following link:
-http://nopestradamus.com/prediction/${prediction.hash}/participant/${participant.hash}
 
-To get an overview of the bet before you accept
-http://nopestradamus.com/prediction/${prediction.hash}
+Click here to view the prediction and decide if you want to accept or reject it:
+http://nopestradamus.com/prediction/${prediction.hash}/participant/${participant.hash}
 `
   return sendMail(participant.mail, mailTitle, mailBody)
 }

@@ -24,8 +24,6 @@ export const getServerSideProps: GetServerSideProps<PredictionProps> = async (co
     method: 'GET',
   })
 
-  console.log(role)
-
   if (response.status < 400) {
     const predictionCensored = (await response.json()) as PredictionCensored
 

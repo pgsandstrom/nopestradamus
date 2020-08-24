@@ -201,7 +201,6 @@ export const deletePrediction = async (hash: string) => {
 
 // TODO throw exceptions when stuff miss?
 export const setCreaterAcceptMailSent = async (hash: string) => {
-  console.log(`setCreaterAcceptMailSent: ${hash}`)
   const result = await query(SQL`UPDATE creater SET accepted_mail_sent = true WHERE hash = ${hash}`)
   if (result.rowCount !== 1) {
     throw new Error('failed to set creater accepted_mail_sent')
