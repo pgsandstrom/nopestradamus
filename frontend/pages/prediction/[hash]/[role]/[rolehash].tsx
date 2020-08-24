@@ -102,23 +102,6 @@ export default function PredictionHash({
     )
   }
 
-  if (role === 'creater' && predictionCensored.creater.accepted !== undefined) {
-    return (
-      <GoBackWrapper>
-        <div>Prediction already {predictionCensored.creater.accepted ? 'accepted' : 'denied'}</div>
-      </GoBackWrapper>
-    )
-  }
-
-  const participantAccepted = predictionCensored.participants.find((p) => p.isCurrentUser)?.accepted
-  if (role === 'participant' && participantAccepted !== undefined) {
-    return (
-      <GoBackWrapper>
-        <div>Prediction already {participantAccepted ? 'accepted' : 'denied'}</div>
-      </GoBackWrapper>
-    )
-  }
-
   if (accepted === true) {
     return (
       <GoBackWrapper>
@@ -152,16 +135,70 @@ export default function PredictionHash({
 
   return (
     <GoBackWrapper>
-      <div>You can see the prediction below. Are you satisfied with it?</div>
-      <div>
-        <Button variant="outlined" disabled={isAccepting} onClick={() => doAcceptPrediction(true)}>
-          Accept
-        </Button>
-        <Button variant="outlined" disabled={isAccepting} onClick={() => doAcceptPrediction(false)}>
-          Deny
-        </Button>
-      </div>
+      <AcceptController
+        predictionCensored={predictionCensored}
+        role={role}
+        isAccepting={isAccepting}
+        doAcceptPrediction={doAcceptPrediction}
+      />
       <Prediction prediction={predictionCensored} suppressNotAcceptedWarning={true} />
     </GoBackWrapper>
+  )
+}
+
+interface AcceptControllerProps {
+  predictionCensored: PredictionCensored
+  role: string
+  isAccepting: boolean
+  doAcceptPrediction: (b: boolean) => void
+}
+
+const AcceptController = ({
+  predictionCensored,
+  role,
+  isAccepting,
+  doAcceptPrediction,
+}: AcceptControllerProps) => {
+  if (role === 'creater' && predictionCensored.creater.accepted !== undefined) {
+    return (
+      <div>
+        You own this prediction and has{' '}
+        {predictionCensored.creater.accepted ? 'accepted' : 'rejected'} it.
+      </div>
+    )
+  }
+
+  const participantAccepted = predictionCensored.participants.find((p) => p.isCurrentUser)?.accepted
+  if (role === 'participant' && participantAccepted !== undefined) {
+    return (
+      <div>
+        You are a participant in this prediction and has{' '}
+        {participantAccepted ? 'accepted' : 'rejected'} it.
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <div>You can see the prediction below. Are you satisfied with it?</div>
+      <div style={{ marginTop: '10px' }}>
+        <Button
+          variant="outlined"
+          color="primary"
+          disabled={isAccepting}
+          onClick={() => doAcceptPrediction(true)}
+        >
+          Accept
+        </Button>
+        <Button
+          variant="outlined"
+          disabled={isAccepting}
+          onClick={() => doAcceptPrediction(false)}
+          style={{ marginLeft: '20px', color: 'red' }}
+        >
+          Reject
+        </Button>
+      </div>
+    </div>
   )
 }

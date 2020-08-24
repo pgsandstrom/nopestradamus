@@ -40,7 +40,7 @@ export default function Prediction({
         The predictions finishes on {formatDateString(prediction.finish_date)}
       </Typography>
       {prediction.participants.length === 0 ? (
-        <div>No other participants</div>
+        <div />
       ) : (
         <div>
           <Typography variant="h6" style={{ marginTop: '20px' }}>
