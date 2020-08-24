@@ -44,6 +44,16 @@ export default function Admin() {
     })
   }
 
+  const doDeleteTestPredictions = async () => {
+    await fetch(`${getServerUrl()}/api/v1/admin/deletetest`, {
+      method: 'DELETE',
+      body: JSON.stringify({
+        password,
+      }),
+      credentials: 'same-origin',
+    })
+  }
+
   return (
     <GoBackWrapper>
       <div>This is the admin console. You need the admin password to actually do anything</div>
@@ -92,6 +102,12 @@ export default function Admin() {
         />
         <Button variant="outlined" onClick={doDeletePrediction}>
           delete prediction
+        </Button>
+      </div>
+
+      <div style={{ border: '1px solid red', marginTop: '20px' }}>
+        <Button variant="outlined" onClick={doDeleteTestPredictions}>
+          delete predictions named &quot;test&quot; created by your mail, you know.
         </Button>
       </div>
     </GoBackWrapper>

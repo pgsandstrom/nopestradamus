@@ -49,6 +49,15 @@ ORDER BY created DESC
 LIMIT 20`,
   ).then((cursor) => cursor.rows as PredictionShallow[])
 
+export const getPredictions = (title: string) => {
+  const likeTitle = `%${title}%`
+  return query(SQL`SELECT title, body, prediction.hash FROM prediction
+JOIN creater on prediction.hash = creater.prediction_hash
+WHERE public is true
+AND prediction.title LIKE ${likeTitle}
+ORDER BY created DESC`).then((cursor) => cursor.rows as PredictionShallow[])
+}
+
 export const getPrediction = async (hash: string): Promise<Prediction> => {
   // TODO serialize this
   /* eslint-disable @typescript-eslint/no-unsafe-assignment */
