@@ -39,23 +39,19 @@ export default function Prediction({
       >
         The predictions finishes on {formatDateString(prediction.finish_date)}
       </Typography>
-      {prediction.participants.length === 0 ? (
-        <div />
-      ) : (
-        <div>
-          <Typography variant="h6" style={{ marginTop: '20px' }}>
-            Participants
-          </Typography>
-          <ParticipantRow
-            accepted={prediction.creater.accepted}
-            name={prediction.creater.mail}
-            extraText="(creater)"
-          />
-          {prediction.participants.map((p) => (
-            <ParticipantRow key={p.mail} accepted={p.accepted} name={p.mail} />
-          ))}
-        </div>
-      )}
+      <div>
+        <Typography variant="h6" style={{ marginTop: '20px' }}>
+          Participants
+        </Typography>
+        <ParticipantRow
+          accepted={prediction.creater.accepted}
+          name={prediction.creater.mail}
+          extraText="(creater)"
+        />
+        {prediction.participants.map((p) => (
+          <ParticipantRow key={p.mail} accepted={p.accepted} name={p.mail} />
+        ))}
+      </div>
     </div>
   )
 }

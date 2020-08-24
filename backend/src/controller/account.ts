@@ -8,7 +8,7 @@ import { isMailValid } from '../../../frontend/shared/mail-util'
 
 export const confirmAccountExistance = async (mail: string, validated = false) => {
   if (!isMailValid(mail)) {
-    throw new Error(`creater mail is invalid:${mail}`)
+    throw new Error(`creater mail is invalid: ${mail}`)
   }
   const hash = uuidv4()
   const result = await query(SQL`SELECT count(*) FROM mail WHERE mail = ${mail}`).then(
