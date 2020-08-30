@@ -170,7 +170,7 @@ export default function CreatePrediction() {
                   style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}
                 >
                   <TextField
-                    label="Participant"
+                    label="Participant e-mail"
                     value={participant}
                     onChange={(e) => {
                       setParticipantList(
@@ -182,7 +182,7 @@ export default function CreatePrediction() {
                     }
                     helperText={
                       showValidationError && !validateParticipant(participant, participantList)
-                        ? 'Invalid participant'
+                        ? 'Invalid participant e-mail'
                         : ''
                     }
                     style={{ flex: '1 0 0' }}
