@@ -1,8 +1,9 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import { query, SQL } from '../util/db'
+import { query, SQL, querySingle } from '../util/db'
 import { QueryResult } from 'pg'
 import { isMailValid } from '../../../frontend/shared/mail-util'
+import { AppAccount } from '../../../frontend/shared'
 
 // TODO add database constraints and indexes and stuff
 
@@ -25,4 +26,20 @@ export const validateAccount = async (mail: string) => {
   await confirmAccountExistance(mail, true)
 
   await query(SQL`UPDATE mail SET validated = true WHERE mail = ${mail}`)
+}
+
+export const getAccount = async (hash: string): Promise<AppAccount> => {
+  const account = await querySingle<AppAccount>(
+    SQL`SELECT mail, validated, blocked FROM mail WHERE hash = ${hash}`,
+  )
+
+  if (account === undefined) {
+    throw new Error('account not found')
+  }
+
+  return account
+}
+
+export const setAccountBlocked = async (hash: string, blocked: boolean) => {
+  await query(SQL`UPDATE mail SET blocked = ${blocked} WHERE hash = ${hash}`)
 }

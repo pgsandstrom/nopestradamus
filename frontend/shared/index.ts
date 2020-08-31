@@ -28,6 +28,12 @@ export interface PredictionCensored {
   }[]
 }
 
+export interface AppAccount {
+  mail: string
+  validated: boolean
+  blocked: boolean
+}
+
 export type Dictionary<K extends string | number | symbol, V> = { [key in K]: V }
 
 export type PartialDict<K extends string | number | symbol, V> = { [key in K]?: V }
