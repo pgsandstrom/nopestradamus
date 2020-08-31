@@ -21,4 +21,8 @@ export const confirmAccountExistance = async (mail: string, validated = false) =
   }
 }
 
-export const validateAccount = (mail: string) => confirmAccountExistance(mail, true)
+export const validateAccount = async (mail: string) => {
+  await confirmAccountExistance(mail, true)
+
+  await query(SQL`UPDATE mail SET validated = true WHERE mail = ${mail}`)
+}
