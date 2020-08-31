@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer'
 import { getPrivateKey } from '../util/config'
 import { isDev } from '../util/env'
 import { formatDateString } from '../../../frontend/shared/date-util'
+import { getAccountHashByMail, getAccountByHash } from './account'
 
 const getPredictionList = (prediction: Prediction): string => {
   if (prediction.participants.length === 0) {
@@ -12,6 +13,15 @@ const getPredictionList = (prediction: Prediction): string => {
 Here are the participants:
 
 ${prediction.participants.map((p) => p.mail).join('\n')}`
+}
+
+const getBlockMeFooter = async (mail: string) => {
+  const hash = await getAccountHashByMail(mail)
+
+  return `---
+
+Dont want to receive these mails? Block yourself here:
+http://nopestradamus.com/blockme/${hash}`
 }
 
 export const sendCreaterAcceptMail = async (prediction: Prediction) => {
@@ -107,7 +117,20 @@ Now you must discuss who won the bet!`
   return sendMail(participant.mail, mailTitle, mailBody)
 }
 
-export const sendMail = async (receiver: string, title: string, body: string) => {
+export const sendMail = async (receiver: string, title: string, rawBody: string) => {
+  const blockmeFooter = await getBlockMeFooter(receiver)
+  const body = `${rawBody}
+
+${blockmeFooter}`
+
+  const accountHash = await getAccountHashByMail(receiver)
+  const account = await getAccountByHash(accountHash)
+
+  if (account.blocked) {
+    console.log(`${account.mail} is blocked, not sending mail`)
+    return Promise.resolve()
+  }
+
   if (isDev()) {
     console.log('faking sending mail')
     return Promise.resolve()

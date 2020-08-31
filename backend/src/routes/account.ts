@@ -1,5 +1,5 @@
 import { Request, Response, Next, Server } from 'restify'
-import { getAccount, setAccountBlocked } from '../controller/account'
+import { getAccountByHash, setAccountBlocked } from '../controller/account'
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -9,7 +9,7 @@ export default (server: Server) => {
     try {
       const hash = req.params.hash as string
 
-      const account = await getAccount(hash)
+      const account = await getAccountByHash(hash)
       res.send(account)
       next()
     } catch (e) {

@@ -28,7 +28,7 @@ export const validateAccount = async (mail: string) => {
   await query(SQL`UPDATE mail SET validated = true WHERE mail = ${mail}`)
 }
 
-export const getAccount = async (hash: string): Promise<AppAccount> => {
+export const getAccountByHash = async (hash: string): Promise<AppAccount> => {
   const account = await querySingle<AppAccount>(
     SQL`SELECT mail, validated, blocked FROM mail WHERE hash = ${hash}`,
   )
@@ -38,6 +38,16 @@ export const getAccount = async (hash: string): Promise<AppAccount> => {
   }
 
   return account
+}
+
+export const getAccountHashByMail = async (mail: string): Promise<string> => {
+  const entry = await querySingle<{ hash: string }>(SQL`SELECT hash FROM mail WHERE mail = ${mail}`)
+
+  if (entry === undefined) {
+    throw new Error('account not found')
+  }
+
+  return entry.hash
 }
 
 export const setAccountBlocked = async (hash: string, blocked: boolean) => {
