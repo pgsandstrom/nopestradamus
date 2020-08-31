@@ -19,10 +19,17 @@ const getDbPool = () => {
   return dbPool
 }
 
-export const query = (stuff: QueryConfig) => getDbPool().query(stuff).then(nullToUndefined)
+// TODO: in query and queryString we mutate the queryResult. Is that dangerous? Read up on it.
+export const query = async <T = any>(stuff: QueryConfig): Promise<QueryResult<T>> => {
+  const queryResult = await getDbPool().query(stuff)
+  queryResult.rows = nullToUndefined(queryResult.rows)
+  return queryResult
+}
 
-export function queryString<R extends QueryResultRow = any>(stuff: string, values?: any[]) {
-  return getDbPool().query<R>(stuff, values).then(nullToUndefined)
+export async function queryString<R extends QueryResultRow = any>(stuff: string, values?: any[]) {
+  const queryResult = await getDbPool().query<R>(stuff, values)
+  queryResult.rows = nullToUndefined(queryResult.rows)
+  return queryResult
 }
 
 export const querySingle = async <T = any>(stuff: QueryConfig) => {
