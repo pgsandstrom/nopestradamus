@@ -9,13 +9,13 @@ import { AppAccount } from '../../../frontend/shared'
 
 export const confirmAccountExistance = async (mail: string, validated = false) => {
   if (!isMailValid(mail)) {
-    throw new Error(`creater mail is invalid: ${mail}`)
+    throw new Error(`Confirm account failure. Mail is invalid: ${mail}`)
   }
   const hash = uuidv4()
   const result = await query(SQL`SELECT count(*) FROM mail WHERE mail = ${mail}`).then(
-    (cursor: QueryResult) => cursor.rows[0] as { count: string },
+    (cursor: QueryResult) => cursor.rows[0] as { count: number },
   )
-  if (result.count === '0') {
+  if (result.count === 0) {
     await query(
       SQL`INSERT INTO mail (mail, hash, validated) VALUES(${mail}, ${hash}, ${validated})`,
     )
