@@ -137,9 +137,12 @@ export const createPrediction = async (
   body?: string,
   finishDate?: string,
   isPublic?: boolean,
-  createrMail?: string,
-  participantList?: string[],
+  createrMailRaw?: string,
+  participantListRaw?: string[],
 ) => {
+  const createrMail = createrMailRaw?.trim()
+  const participantList = participantListRaw?.map((p) => p.trim())
+
   if (!validateTitle(title)) {
     throw new Error('Invalid title')
   }
