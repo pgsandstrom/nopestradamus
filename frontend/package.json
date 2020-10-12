@@ -42,10 +42,10 @@
     "prettier": "2.1.2"
   },
   "lint-staged": {
-    "*.{json,md,css,scss}": [
+    "*.{js,json,md,css,scss}": [
       "prettier --write"
     ],
-    "*.{js,jsx,ts,tsx}": [
+    "*.{jsx,ts,tsx}": [
       "node ./node_modules/eslint/bin/eslint.js --ext .ts --ext .tsx --fix",
       "prettier --write"
     ]

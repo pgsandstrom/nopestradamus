@@ -53,10 +53,10 @@
     "cleanup": "find ./src -name \"*.js\" -type f -delete && find ./src -name \"*.js.map\" -type f -delete"
   },
   "lint-staged": {
-    "*.{json,md,css,scss}": [
+    "*.{js,json,md,css,scss}": [
       "prettier --write"
     ],
-    "*.{js,jsx,ts,tsx}": [
+    "*.{jsx,ts,tsx}": [
       "node ./node_modules/eslint/bin/eslint.js --fix",
       "prettier --write"
     ]
