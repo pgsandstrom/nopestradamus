@@ -13,7 +13,7 @@
     "start": "next start -p 8003",
     "typecheck": "tsc --noEmit"
   },
-  "//": "DO NOT UPDATE @date-io/date-fns. Currently not compatible with material ui pickers  v3: https://github.com/dmtrKovalenko/date-io/releases/tag/v2.0.0",
+  "//": "DO NOT UPDATE @date-io/date-fns. It has some weird problems with nextjs",
   "dependencies": {
     "@types/lodash": "4.14.162",
     "@date-io/date-fns": "1.3.13",
