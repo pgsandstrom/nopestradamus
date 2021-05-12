@@ -43,8 +43,8 @@ export const getLatestPredictions = () =>
   queryString(
     `SELECT title, body, prediction.hash FROM prediction
 JOIN creater on prediction.hash = creater.prediction_hash
-WHERE public is true
-AND creater.accepted is true
+WHERE public IS true
+AND creater.accepted IS true
 ORDER BY created DESC
 LIMIT 20`,
   ).then((cursor) => cursor.rows as PredictionShallow[])
@@ -53,7 +53,7 @@ export const getPredictions = (title: string) => {
   const likeTitle = `%${title}%`
   return query(SQL`SELECT title, body, prediction.hash FROM prediction
 JOIN creater on prediction.hash = creater.prediction_hash
-WHERE public is true
+WHERE public IS true
 AND prediction.title LIKE ${likeTitle}
 ORDER BY created DESC`).then((cursor) => cursor.rows as PredictionShallow[])
 }

@@ -100,6 +100,7 @@ export const handleUnsentAcceptEmail = async (hash: string) => {
     (participant) => participant.accepted_mail_sent === false,
   )
 
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   participantNeedingMailList.forEach(async (participant) => {
     try {
       if (isMailValid(participant.mail)) {

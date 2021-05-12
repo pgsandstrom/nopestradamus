@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import { Dictionary, PartialDict } from '../shared'
 
 /**
@@ -7,14 +6,14 @@ import { Dictionary, PartialDict } from '../shared'
 export function nullToUndefined<T = any>(item: T): T {
   if (Array.isArray(item)) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return (item.map((arrayItem) => nullToUndefined(arrayItem)) as unknown) as T
+    return item.map((arrayItem) => nullToUndefined(arrayItem)) as unknown as T
   } else if (item === null) {
-    return (undefined as unknown) as T
+    return undefined as unknown as T
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   } else if ((item as any)?.constructor?.name === 'Object') {
-    return (objectKeys(item).reduce((current, key) => {
+    return objectKeys(item).reduce((current, key) => {
       return { ...current, [key]: nullToUndefined(item[key]) }
-    }, {}) as unknown) as T
+    }, {}) as unknown as T
   } else {
     return item
   }
