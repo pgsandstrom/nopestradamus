@@ -28,3 +28,9 @@ There is some weirdness about adding this DNS record. It belongs to the subdomai
 
 Finally, when you receive a mail in for example gmail you can click 'show origin' to see if SPF and DKIM was accepted.
 This tool can be used to debug DKIM: https://www.dmarcanalyzer.com/dkim/dkim-check
+
+## Serer setup
+
+You need to install postfix. Something like this should work:
+dnf install postfix mailx
+systemctl enable --now postfix

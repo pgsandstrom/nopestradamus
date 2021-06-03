@@ -139,7 +139,7 @@ ${blockmeFooter}`
   const privateKey = getPrivateKey()
   const transporter = nodemailer.createTransport({
     host: 'localhost',
-    port: 587,
+    port: 25,
     secure: false,
     ignoreTLS: true,
     dkim: {
@@ -147,10 +147,9 @@ ${blockmeFooter}`
       keySelector: 'hej',
       privateKey,
     },
-    tls: {
-      // do not fail on invalid certs
-      rejectUnauthorized: false,
-    },
+    // tls: {
+    // rejectUnauthorized: false, // do not fail on invalid certs
+    // },
   })
 
   const mailOptions = {
