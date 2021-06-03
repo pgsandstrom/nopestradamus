@@ -141,6 +141,7 @@ ${blockmeFooter}`
     host: 'localhost',
     port: 587,
     secure: false,
+    ignoreTLS: true,
     dkim: {
       domainName: 'nopestradamus.com',
       keySelector: 'hej',
