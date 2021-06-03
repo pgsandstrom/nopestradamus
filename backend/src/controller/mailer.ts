@@ -139,7 +139,7 @@ ${blockmeFooter}`
   const privateKey = getPrivateKey()
   const transporter = nodemailer.createTransport({
     host: 'localhost',
-    port: 25,
+    port: 587,
     secure: false,
     dkim: {
       domainName: 'nopestradamus.com',
