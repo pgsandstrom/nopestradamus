@@ -147,6 +147,10 @@ ${blockmeFooter}`
       keySelector: 'hej',
       privateKey,
     },
+    tls: {
+      // do not fail on invalid certs
+      rejectUnauthorized: false,
+    },
   })
 
   const mailOptions = {
