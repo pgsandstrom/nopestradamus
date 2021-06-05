@@ -20,8 +20,10 @@ const getDbPool = () => {
 }
 
 // TODO: in query and queryString we mutate the queryResult. Is that dangerous? Read up on it.
-export const query = async <T = any>(stuff: QueryConfig): Promise<QueryResult<T>> => {
-  const queryResult = await getDbPool().query(stuff)
+export const query = async <T extends QueryResultRow = any>(
+  stuff: QueryConfig,
+): Promise<QueryResult<T>> => {
+  const queryResult = await getDbPool().query<T>(stuff)
   queryResult.rows = nullToUndefined(queryResult.rows)
   return queryResult
 }
@@ -32,23 +34,26 @@ export async function queryString<R extends QueryResultRow = any>(stuff: string,
   return queryResult
 }
 
-export const querySingle = async <T = any>(stuff: QueryConfig) => {
+export const querySingle = async <T extends QueryResultRow = any>(stuff: QueryConfig) => {
   const result: QueryResult = await getDbPool().query(stuff)
   return nullToUndefined(getSingle<T>(result))
 }
 
-export const querySingleString = async <T = any>(stuff: string, values?: any[]) => {
+export const querySingleString = async <T extends QueryResultRow = any>(
+  stuff: string,
+  values?: any[],
+) => {
   const result: QueryResult = await getDbPool().query(stuff, values)
   return nullToUndefined(getSingle<T>(result))
 }
 
-const getSingle = <T>(result: QueryResult): T | undefined => {
+const getSingle = <T extends QueryResultRow>(result: QueryResult<T>): T | undefined => {
   if (result.rowCount > 1) {
     throw new Error(`Unexpected number of rows: ${result.rowCount}`)
   } else if (result.rowCount === 0) {
     return undefined
   } else {
-    return result.rows[0] as T
+    return result.rows[0]
   }
 }
 
