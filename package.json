@@ -11,7 +11,7 @@
     "pre-push": "npm run frontend-pre-push && npm run backend-pre-push",
     "prepare": "husky install"
   },
-  "devDependencies": {
+  "dependencies": {
     "husky": "7.0.0"
   }
 }
