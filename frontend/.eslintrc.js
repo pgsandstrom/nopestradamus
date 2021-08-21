@@ -9,7 +9,6 @@ module.exports = {
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
-    // 'prettier' disables linting rules that conflict with prettier (this is dependency eslint-config-prettier)
     'prettier',
   ],
   parser: '@typescript-eslint/parser',
@@ -30,7 +29,6 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
-    '@typescript-eslint/camelcase': 'off', // There are a few exceptions, like variables from the backend and stuff
     '@typescript-eslint/explicit-module-boundary-types': 'off', // This feels unnecessary and verbose
     '@typescript-eslint/no-inferrable-types': 'off', // I dont feel as if this makes the code much cleaner
 
@@ -47,7 +45,12 @@ module.exports = {
       },
     ],
     '@typescript-eslint/no-unnecessary-condition': ['error'],
-    '@typescript-eslint/strict-boolean-expressions': ['error'],
+    '@typescript-eslint/strict-boolean-expressions': [
+      'error',
+      {
+        allowNullableBoolean: true,
+      },
+    ],
 
     // here is frontend/backend exclusive rules
 
