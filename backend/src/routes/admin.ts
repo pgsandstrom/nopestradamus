@@ -7,13 +7,14 @@ import { deletePrediction, getPredictions, getPrediction } from '../controller/p
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 
 const adminPassword = config().adminPassword
 
 export default (server: Server) => {
   server.post('/api/v1/admin/checkmail', async (req: Request, res: Response, next: Next) => {
     try {
-      const body = JSON.parse(req.body)
+      const body = JSON.parse(req.body as string)
 
       if (adminPassword !== body.password) {
         throw new Error('Wrong admin password')

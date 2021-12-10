@@ -22,7 +22,7 @@ export default (server: Server) => {
     try {
       const hash = req.params.hash as string
 
-      const body = JSON.parse(req.body)
+      const body = JSON.parse(req.body as string)
 
       const blocked = body.blocked as boolean
 
