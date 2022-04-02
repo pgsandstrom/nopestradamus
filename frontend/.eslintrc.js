@@ -48,6 +48,12 @@ module.exports = {
         allowNullableBoolean: true,
       },
     ],
+    'sort-imports': [
+      'error',
+      {
+        ignoreDeclarationSort: true,
+      },
+    ],
 
     // here is frontend/backend exclusive rules
 

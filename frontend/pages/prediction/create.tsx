@@ -1,14 +1,14 @@
 import DateFnsUtils from '@date-io/date-fns'
-import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers'
+import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import { useState } from 'react'
-import { Button, TextField, Checkbox, FormControlLabel } from '@material-ui/core'
+import { Button, Checkbox, FormControlLabel, TextField } from '@material-ui/core'
 import getServerUrl from '../../util/serverUrl'
 import {
   validateCreaterMail,
-  validateTitle,
-  validateDescription,
   validateDate,
+  validateDescription,
   validateParticipant,
+  validateTitle,
 } from '../../shared/validatePrediction'
 import GoBackWrapper from '../../components/goBackWrapper'
 

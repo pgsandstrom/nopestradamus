@@ -1,9 +1,9 @@
-import { Request, Response, Next, Server } from 'restify'
+import { Next, Request, Response, Server } from 'restify'
 
 import config from '../util/config'
 import { handleAllUnsentMails } from '../controller/scheduler'
 import { sendMail } from '../controller/mailer'
-import { deletePrediction, getPredictions, getPrediction } from '../controller/prediction'
+import { deletePrediction, getPrediction, getPredictions } from '../controller/prediction'
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */

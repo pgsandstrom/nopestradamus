@@ -1,4 +1,4 @@
-import { Pool, PoolClient, QueryConfig, QueryResult, types, QueryResultRow } from 'pg'
+import { Pool, PoolClient, QueryConfig, QueryResult, QueryResultRow, types } from 'pg'
 import config from './config'
 import { nullToUndefined } from '../../../frontend/shared/object-util'
 

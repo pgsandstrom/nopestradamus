@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer'
 import { getPrivateKey } from '../util/config'
 import { isDev } from '../util/env'
 import { formatDateString } from '../../../frontend/shared/date-util'
-import { getAccountHashByMail, getAccountByHash } from './account'
+import { getAccountByHash, getAccountHashByMail } from './account'
 
 const getPredictionList = (prediction: Prediction): string => {
   if (prediction.participants.length === 0) {

@@ -1,4 +1,4 @@
-import { Request, Response, Next, Server } from 'restify'
+import { Next, Request, Response, Server } from 'restify'
 import prediction from './prediction'
 import account from './account'
 import admin from './admin'

@@ -1,17 +1,17 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import { query, queryString, SQL, querySingle } from '../util/db'
+import { SQL, query, querySingle, queryString } from '../util/db'
 import { confirmAccountExistance, validateAccount } from './account'
 import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './scheduler'
 import { PredictionCensored, PredictionShallow } from '../../../frontend/shared'
 import { censorMail, isMailValid } from '../../../frontend/shared/mail-util'
 import { NotFoundError } from 'restify-errors'
 import {
-  validateTitle,
-  validateParticipant,
-  validateDescription,
   validateCreaterMail,
   validateDateString,
+  validateDescription,
+  validateParticipant,
+  validateTitle,
 } from '../../../frontend/shared/validatePrediction'
 
 /**

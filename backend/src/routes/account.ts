@@ -1,4 +1,4 @@
-import { Request, Response, Next, Server } from 'restify'
+import { Next, Request, Response, Server } from 'restify'
 import { getAccountByHash, setAccountBlocked } from '../controller/account'
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */

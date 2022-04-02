@@ -1,12 +1,12 @@
-import { Request, Response, Next, Server } from 'restify'
+import { Next, Request, Response, Server } from 'restify'
 
 import {
+  createPrediction,
+  getCensoredPrediction,
   getLatestPredictions,
   getPrediction,
-  createPrediction,
   updateCreaterAcceptStatus,
   updateParticipantAcceptStatus,
-  getCensoredPrediction,
 } from '../controller/prediction'
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */

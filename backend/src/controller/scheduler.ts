@@ -1,19 +1,19 @@
 import {
+  getOldBetWithUnsentCreaterAcceptMails,
+  getOldBetWithUnsentCreaterEndMails,
   getOldBetWithUnsentParticipantsAcceptMails,
   getOldBetWithUnsentParticipantsEndMails,
   getPrediction,
-  getOldBetWithUnsentCreaterAcceptMails,
   setCreaterAcceptMailSent,
+  setCreaterEndMailSent,
   setParticipantAcceptMailSent,
   setParticipantEndMailSent,
-  getOldBetWithUnsentCreaterEndMails,
-  setCreaterEndMailSent,
 } from './prediction'
 import {
-  sendParticipantAcceptMail,
   sendCreaterAcceptMail,
-  sendParticipantEndMail,
   sendCreaterEndMail,
+  sendParticipantAcceptMail,
+  sendParticipantEndMail,
 } from './mailer'
 import { isMailValid } from '../../../frontend/shared/mail-util'
 

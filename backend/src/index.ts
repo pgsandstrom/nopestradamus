@@ -1,4 +1,4 @@
-import { createServer, plugins, Server } from 'restify'
+import { Server, createServer, plugins } from 'restify'
 
 import encodeUtf8Plugin from './util/encodeUtf8Plugin'
 import routes from './routes/index'
