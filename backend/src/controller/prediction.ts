@@ -5,7 +5,6 @@ import { confirmAccountExistance, validateAccount } from './account'
 import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './scheduler'
 import { PredictionCensored, PredictionShallow } from '../../../frontend/shared'
 import { censorMail, isMailValid } from '../../../frontend/shared/mail-util'
-import { NotFoundError } from 'restify-errors'
 import {
   validateCreaterMail,
   validateDateString,
@@ -66,7 +65,9 @@ export const getPrediction = async (hash: string): Promise<Prediction> => {
   )
 
   if (prediction === undefined) {
-    throw new NotFoundError(`Prediction ${hash} not found`)
+    // we needed to abandon restify-errors, so now we get a 500 instead of 404 when loading non-existing predictions
+    // throw new NotFoundError(`Prediction ${hash} not found`)
+    throw `Prediction ${hash} not found`
   }
 
   const creater = await querySingle(

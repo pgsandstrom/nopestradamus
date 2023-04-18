@@ -24,19 +24,19 @@ export const query = async <T extends QueryResultRow = any>(
   stuff: QueryConfig,
 ): Promise<QueryResult<T>> => {
   const queryResult = await getDbPool().query<T>(stuff)
-  queryResult.rows = nullToUndefined(queryResult.rows)
+  queryResult.rows = nullToUndefined(queryResult.rows) as T[]
   return queryResult
 }
 
 export async function queryString<R extends QueryResultRow = any>(stuff: string, values?: any[]) {
   const queryResult = await getDbPool().query<R>(stuff, values)
-  queryResult.rows = nullToUndefined(queryResult.rows)
+  queryResult.rows = nullToUndefined(queryResult.rows) as R[]
   return queryResult
 }
 
 export const querySingle = async <T extends QueryResultRow = any>(stuff: QueryConfig) => {
   const result: QueryResult<T> = await getDbPool().query(stuff)
-  return nullToUndefined(getSingle<T>(result))
+  return nullToUndefined(getSingle<T>(result)) as T
 }
 
 export const querySingleString = async <T extends QueryResultRow = any>(
@@ -44,7 +44,7 @@ export const querySingleString = async <T extends QueryResultRow = any>(
   values?: any[],
 ) => {
   const result: QueryResult<T> = await getDbPool().query(stuff, values)
-  return nullToUndefined(getSingle<T>(result))
+  return nullToUndefined(getSingle<T>(result)) as T
 }
 
 const getSingle = <T extends QueryResultRow>(result: QueryResult<T>): T | undefined => {
