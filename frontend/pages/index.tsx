@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { GetServerSideProps } from 'next'
 import { PredictionShallow } from '../shared'
 import getServerUrl from '../util/serverUrl'
-import { Button, Typography } from '@material-ui/core'
+import { Button, Typography } from '@mui/material'
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async (_context) => {
   const response = await fetch(`${getServerUrl()}/api/v1/prediction`, {

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Button } from '@material-ui/core'
+import { Button } from '@mui/material'
 
 interface GoBackWrapperProps {
   children: React.ReactNode

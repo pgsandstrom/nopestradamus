@@ -1,7 +1,5 @@
-import DateFnsUtils from '@date-io/date-fns'
-import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import { useState } from 'react'
-import { Button, Checkbox, FormControlLabel, TextField } from '@material-ui/core'
+import { Button, Checkbox, FormControlLabel, TextField } from '@mui/material'
 import getServerUrl from '../../util/serverUrl'
 import {
   validateCreaterMail,
@@ -11,6 +9,9 @@ import {
   validateTitle,
 } from '../../shared/validatePrediction'
 import GoBackWrapper from '../../components/goBackWrapper'
+import { DatePicker } from '@mui/x-date-pickers'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 
 export default function CreatePrediction() {
   const [title, setTitle] = useState('')
@@ -94,7 +95,7 @@ export default function CreatePrediction() {
   }
 
   return (
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
       <GoBackWrapper>
         <div
           style={{
@@ -122,20 +123,16 @@ export default function CreatePrediction() {
             helperText={
               showValidationError && !validateDescription(body) ? 'Invalid description' : ''
             }
-            style={{ marginTop: '10px' }}
+            style={{ marginTop: '10px', marginBottom: '10px' }}
           />
-          <KeyboardDatePicker
-            variant="inline"
+          <DatePicker
             format="yyyy-MM-dd"
-            margin="normal"
             label="End date"
             value={date}
             onChange={(date) => setDate(date)}
-            KeyboardButtonProps={{
-              'aria-label': 'change date',
-            }}
-            error={showValidationError && !validateDate(date)}
-            helperText={showValidationError && !validateDate(date) ? 'Invalid date' : ''}
+            disablePast={true}
+            // onError={() => console.log('error')}
+            // onAccept={() => console.log('accept')}
           />
           <TextField
             label="Your mail"
@@ -145,6 +142,7 @@ export default function CreatePrediction() {
             helperText={
               showValidationError && !validateCreaterMail(createrMail) ? 'Invalid mail' : ''
             }
+            style={{ marginTop: '10px' }}
           />
           <FormControlLabel
             control={
@@ -222,6 +220,6 @@ export default function CreatePrediction() {
           </Button>
         </div>
       </GoBackWrapper>
-    </MuiPickersUtilsProvider>
+    </LocalizationProvider>
   )
 }

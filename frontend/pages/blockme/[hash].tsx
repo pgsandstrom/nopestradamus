@@ -2,7 +2,7 @@ import { GetServerSideProps } from 'next'
 import getServerUrl from '../../util/serverUrl'
 import GoBackWrapper from '../../components/goBackWrapper'
 import { AppAccount } from '../../shared'
-import { Button, Typography } from '@material-ui/core'
+import { Button, Typography } from '@mui/material'
 import { useState } from 'react'
 
 export const getServerSideProps: GetServerSideProps<BlockMeProps> = async (context) => {

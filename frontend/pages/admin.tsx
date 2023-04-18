@@ -1,5 +1,5 @@
 import getServerUrl from '../util/serverUrl'
-import { Button, TextField } from '@material-ui/core'
+import { Button, TextField } from '@mui/material'
 import { useState } from 'react'
 import GoBackWrapper from '../components/goBackWrapper'
 

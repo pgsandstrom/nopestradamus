@@ -1,9 +1,9 @@
 import { PredictionCensored } from '../shared'
-import { Typography } from '@material-ui/core'
+import { Typography } from '@mui/material'
 import { formatDateString } from '../shared/date-util'
-import CropSquareIcon from '@material-ui/icons/CropSquare'
-import CheckIcon from '@material-ui/icons/Check'
-import ClearIcon from '@material-ui/icons/Clear'
+import CropSquareIcon from '@mui/icons-material/CropSquare'
+import CheckIcon from '@mui/icons-material/Check'
+import ClearIcon from '@mui/icons-material/Clear'
 
 interface PredictionProps {
   prediction: PredictionCensored
