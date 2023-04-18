@@ -97,7 +97,7 @@ export default function Home({ predictionShallowList }: HomeProps) {
                   style={{ marginTop: '10px' }}
                 >
                   <Link href="/prediction/[hash]" as={`/prediction/${predictionShallow.hash}`}>
-                    <a>{predictionShallow.title}</a>
+                    {predictionShallow.title}
                   </Link>
                 </Typography>
               )
