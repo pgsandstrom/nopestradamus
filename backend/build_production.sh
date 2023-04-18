@@ -4,7 +4,7 @@ set -u
 
 cd "$(dirname "$0")"
 
-npm install --legacy-peer-deps
+npm install
 
 rm -rf ./release
 mkdir ./release
