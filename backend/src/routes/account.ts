@@ -1,24 +1,23 @@
-import { Next, Request, Response, Server } from 'restify'
+import { Request, Response, Server } from 'restify'
 import { getAccountByHash, setAccountBlocked } from '../controller/account'
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
 export default (server: Server) => {
-  server.get('/api/v1/account/:hash', async (req: Request, res: Response, next: Next) => {
+  server.get('/api/v1/account/:hash', async (req: Request, res: Response) => {
     try {
       const hash = req.params.hash as string
 
       const account = await getAccountByHash(hash)
       res.send(account)
-      next()
     } catch (e) {
       console.log(`admin checkmail threw error: ${JSON.stringify(e)}`)
-      next(e)
+      throw e
     }
   })
 
-  server.post('/api/v1/account/:hash/block', async (req: Request, res: Response, next: Next) => {
+  server.post('/api/v1/account/:hash/block', async (req: Request, res: Response) => {
     try {
       const hash = req.params.hash as string
 
@@ -28,9 +27,8 @@ export default (server: Server) => {
 
       await setAccountBlocked(hash, blocked)
       res.send('ok')
-      next()
     } catch (e) {
-      next(e)
+      throw e
     }
   })
 }

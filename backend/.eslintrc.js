@@ -28,6 +28,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-inferrable-types': 'off', // I dont feel as if this makes the code much cleaner
+    'no-useless-catch': 'off',
 
     // activate extra rules:
     eqeqeq: ['error', 'smart'],

@@ -1,4 +1,4 @@
-import { Next, Request, Response, Server } from 'restify'
+import { Request, Response, Server } from 'restify'
 
 import config from '../util/config'
 import { handleAllUnsentMails } from '../controller/scheduler'
@@ -12,7 +12,7 @@ import { deletePrediction, getPrediction, getPredictions } from '../controller/p
 const adminPassword = config().adminPassword
 
 export default (server: Server) => {
-  server.post('/api/v1/admin/checkmail', async (req: Request, res: Response, next: Next) => {
+  server.post('/api/v1/admin/checkmail', async (req: Request, res: Response) => {
     try {
       const body = JSON.parse(req.body as string)
 
@@ -22,14 +22,13 @@ export default (server: Server) => {
 
       await handleAllUnsentMails()
       res.send('ok')
-      next()
     } catch (e) {
       console.log(`admin checkmail threw error: ${JSON.stringify(e)}`)
-      next(e)
+      throw e
     }
   })
 
-  server.post('/api/v1/admin/sendmail', async (req: Request, res: Response, next: Next) => {
+  server.post('/api/v1/admin/sendmail', async (req: Request, res: Response) => {
     try {
       const body = JSON.parse(req.body)
 
@@ -39,13 +38,12 @@ export default (server: Server) => {
 
       await sendMail(body.mail, body.title, body.body)
       res.send('ok')
-      next()
     } catch (e) {
-      next(e)
+      throw e
     }
   })
 
-  server.del('/api/v1/admin/deleteprediction', async (req: Request, res: Response, next: Next) => {
+  server.del('/api/v1/admin/deleteprediction', async (req: Request, res: Response) => {
     try {
       const body = JSON.parse(req.body)
 
@@ -55,13 +53,12 @@ export default (server: Server) => {
 
       const result = await deletePrediction(body.hash)
       res.send(result)
-      next()
     } catch (e) {
-      next(e)
+      throw e
     }
   })
 
-  server.del('/api/v1/admin/deletetest', async (req: Request, res: Response, next: Next) => {
+  server.del('/api/v1/admin/deletetest', async (req: Request, res: Response) => {
     try {
       const body = JSON.parse(req.body)
 
@@ -81,10 +78,9 @@ export default (server: Server) => {
       }
 
       res.send({ deleted })
-      next()
     } catch (e) {
       console.log(JSON.stringify(e))
-      next(e)
+      throw e
     }
   })
 }
