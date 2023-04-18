@@ -4,7 +4,7 @@ set -u
 
 cd "$(dirname "$0")"
 
-npm install --only=prod
+npm install --only=prod --legacy-peer-deps
 
 rm -rf ./release
 mkdir ./release
