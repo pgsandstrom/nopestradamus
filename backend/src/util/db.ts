@@ -36,7 +36,7 @@ export async function queryString<R extends QueryResultRow = any>(stuff: string,
 
 export const querySingle = async <T extends QueryResultRow = any>(stuff: QueryConfig) => {
   const result: QueryResult<T> = await getDbPool().query(stuff)
-  return nullToUndefined(getSingle<T>(result)) as T
+  return nullToUndefined(getSingle<T>(result)) as T | undefined
 }
 
 export const querySingleString = async <T extends QueryResultRow = any>(
