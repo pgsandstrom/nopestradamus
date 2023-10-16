@@ -11,6 +11,7 @@ RUN apt-get install --assume-yes postfix
 
 # TODO Is this how we want to handle privkey?
 COPY privkey.pem .
+COPY config.json .
 
 EXPOSE 80
 

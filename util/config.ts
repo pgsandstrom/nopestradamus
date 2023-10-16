@@ -1,7 +1,6 @@
 import fs from 'fs'
 
-const dbconfigPath = '/apps/nopestradamus/config.json'
-// const dbconfigDevPath = 'config.dev.json'
+const configPath = './config.json'
 
 const privateKeyPath = './privkey.pem'
 
@@ -14,14 +13,10 @@ interface MyConfig {
 let config: MyConfig
 
 const loadConfig = (): void => {
-  if (fs.existsSync(dbconfigPath)) {
-    config = JSON.parse(fs.readFileSync(dbconfigPath, 'utf8')) as MyConfig
+  if (fs.existsSync(configPath)) {
+    config = JSON.parse(fs.readFileSync(configPath, 'utf8')) as MyConfig
   } else {
-    // TODO fix
-    // config = JSON.parse(fs.readFileSync(dbconfigDevPath, 'utf8')) as MyConfig
-    config = {
-      adminPassword: 'abc',
-    }
+    throw new Error('no config file exists')
   }
 }
 

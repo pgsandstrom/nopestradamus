@@ -12,7 +12,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const body = JSON.parse(req.body as string)
 
   if (adminPassword !== body.password) {
-    throw new Error('Wrong admin password')
+    res.statusCode = 500
+    res.json({ status: `Wrong admin password in body: ${req.body}` })
+    return
   }
 
   await handleAllUnsentMails()

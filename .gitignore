@@ -20,7 +20,7 @@ tsconfig.tsbuildinfo
 
 # misc
 .DS_Store
-*.pem
+#*.pem
 
 # debug
 npm-debug.log*
@@ -39,6 +39,9 @@ yarn-error.log*
 # because openoffice
 .~lock*.xlsx#
 
+# config files required for nopestradamus to work
+privkey.pem
+config.json
+
 # just to avoid accidentally commit some super important secret key
 private.ppk
-privkey.pem

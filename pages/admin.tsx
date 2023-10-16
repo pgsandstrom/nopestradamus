@@ -46,7 +46,7 @@ export default function Admin() {
 
   const doDeleteTestPredictions = async () => {
     await fetch(`${getServerUrl()}/api/admin/deletetest`, {
-      method: 'DELETE',
+      method: 'POST',
       body: JSON.stringify({
         password,
       }),
