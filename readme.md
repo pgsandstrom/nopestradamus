@@ -2,9 +2,7 @@
 
 Service for long term predictions.
 
-The backend expects some files for config and signing emails. Check out the config file for clues!
-
-## mail setup
+## Mail setup
 
 Here I describe how to fix so the mail the program sends are not always marked as spam (but mostly they will be, either way).
 
@@ -29,14 +27,17 @@ There is some weirdness about adding this DNS record. It belongs to the subdomai
 Finally, when you receive a mail in for example gmail you can click 'show origin' to see if SPF and DKIM was accepted.
 This tool can be used to debug DKIM: https://www.dmarcanalyzer.com/dkim/dkim-check
 
-## Server setup
+### Program to send the mails
 
-You need to install postfix. Something like this should work:
-dnf install postfix mailx
-systemctl enable --now postfix
+You need to install postfix. Check out the docker files for that stuff.
+
+### Mail troubleshooting
+
+`postqueue -j` is a nice command to check if the mails are not being sent.
+When running locally you will most likely get `connection refused` errors. I believe this is ISPs blocking outgoing mails.
 
 ## Technical notes
 
-From a coding standpoint, this project sucks. The "shared" folder has to be manually copied between frontend and backend when changed. Remember that!!!
-
 The whole frontend should be rebuild without shitty mui/emotion crap.
+
+The project is two processes: One nextjs project, and one node project which holds a cron job
