@@ -21,21 +21,21 @@ app
   .then(() => {
     server = express()
 
-    const devProxy = {
-      '/api': {
-        target: `http://localhost:${process.env.BACKEND_PORT}/api/`,
-        pathRewrite: { '^/api': '/' },
-        changeOrigin: true,
-      },
-    }
+    // const devProxy = {
+    //   '/api': {
+    //     target: `http://localhost:${process.env.BACKEND_PORT}/api/`,
+    //     pathRewrite: { '^/api': '/' },
+    //     changeOrigin: true,
+    //   },
+    // }
 
-    // Set up the proxy.
-    if (dev && devProxy) {
-      const { createProxyMiddleware } = require('http-proxy-middleware')
-      Object.keys(devProxy).forEach(function (context) {
-        server.use(context, createProxyMiddleware(devProxy[context]))
-      })
-    }
+    // // Set up the proxy.
+    // if (dev && devProxy) {
+    //   const { createProxyMiddleware } = require('http-proxy-middleware')
+    //   Object.keys(devProxy).forEach(function (context) {
+    //     server.use(context, createProxyMiddleware(devProxy[context]))
+    //   })
+    // }
 
     // Default catch-all handler to allow Next.js to handle all other routes
     server.all('*', (req, res) => handle(req, res))

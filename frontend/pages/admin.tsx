@@ -11,7 +11,7 @@ export default function Admin() {
   const [hash, setHash] = useState('')
 
   const doTriggerCron = async () => {
-    await fetch(`${getServerUrl()}/api/v1/admin/checkmail`, {
+    await fetch(`${getServerUrl()}/api/admin/checkmail`, {
       method: 'POST',
       body: JSON.stringify({
         password,
@@ -21,7 +21,7 @@ export default function Admin() {
   }
 
   const doSendMail = async () => {
-    await fetch(`${getServerUrl()}/api/v1/admin/sendmail`, {
+    await fetch(`${getServerUrl()}/api/admin/sendmail`, {
       method: 'POST',
       body: JSON.stringify({
         password,
@@ -34,7 +34,7 @@ export default function Admin() {
   }
 
   const doDeletePrediction = async () => {
-    await fetch(`${getServerUrl()}/api/v1/admin/deleteprediction`, {
+    await fetch(`${getServerUrl()}/api/admin/deleteprediction`, {
       method: 'DELETE',
       body: JSON.stringify({
         password,
@@ -45,7 +45,7 @@ export default function Admin() {
   }
 
   const doDeleteTestPredictions = async () => {
-    await fetch(`${getServerUrl()}/api/v1/admin/deletetest`, {
+    await fetch(`${getServerUrl()}/api/admin/deletetest`, {
       method: 'DELETE',
       body: JSON.stringify({
         password,

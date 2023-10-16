@@ -45,7 +45,7 @@ export default function CreatePrediction() {
     }
     setIsPosting(true)
     try {
-      const response = await fetch(`${getServerUrl()}/api/v1/prediction`, {
+      const response = await fetch(`${getServerUrl()}/api/prediction`, {
         method: 'PUT',
         body: JSON.stringify({
           title,

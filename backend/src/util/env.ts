@@ -14,9 +14,10 @@ export const NODE_ENV_DEV = 'development'
 export const isDev = () => isProdServer() === false && isTestServer() === false
 
 const isProduction = () => {
-  if (process.env.NODE_ENV !== NODE_ENV_PRODUCTION && process.env.NODE_ENV !== NODE_ENV_DEV) {
-    throw new Error(`invalid NODE_ENV: ${process.env.NODE_ENV ?? 'it was undefined'}`)
-  }
+  // TODO fix
+  // if (process.env.NODE_ENV !== NODE_ENV_PRODUCTION && process.env.NODE_ENV !== NODE_ENV_DEV) {
+  //   throw new Error(`invalid NODE_ENV: ${process.env.NODE_ENV ?? 'it was undefined'}`)
+  // }
   return process.env.NODE_ENV === 'production'
 }
 

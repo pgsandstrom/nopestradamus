@@ -1,6 +1,7 @@
 {
   "apps": [
     {
+      "TODO": "remove all pm2 files",
       "name": "nopestradamus-nextjs",
       "script": "npm run start",
       "args": [],

@@ -2,15 +2,11 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { GetServerSideProps } from 'next'
 import { PredictionShallow } from '../shared'
-import getServerUrl from '../util/serverUrl'
 import { Button, Typography } from '@mui/material'
+import { getLatestPredictions } from '../server/prediction'
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async (_context) => {
-  const response = await fetch(`${getServerUrl()}/api/v1/prediction`, {
-    method: 'GET',
-  })
-
-  const predictionShallowList = (await response.json()) as PredictionShallow[]
+  const predictionShallowList = await getLatestPredictions()
   return { props: { predictionShallowList } }
 }
 
@@ -23,6 +19,14 @@ export default function Home({ predictionShallowList }: HomeProps) {
 
   const goToCreate = () => {
     void router.push('/prediction/create')
+  }
+
+  if (!Array.isArray(predictionShallowList)) {
+    return (
+      <div>
+        Got unexpected reply from backend: <code>{JSON.stringify(predictionShallowList)}</code>
+      </div>
+    )
   }
 
   return (

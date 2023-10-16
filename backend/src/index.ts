@@ -3,7 +3,6 @@ import { Server, createServer, plugins } from 'restify'
 import encodeUtf8Plugin from './util/encodeUtf8Plugin'
 import routes from './routes/index'
 import noCachePlugin from './util/noCachePlugin'
-import config from './util/config'
 
 import { startCronStuff } from './controller/cronController'
 import { isDev } from './util/env'
@@ -18,7 +17,7 @@ server.use(noCachePlugin())
 
 routes(server)
 
-server.listen(config().port, () => {
+server.listen(3000, () => {
   console.log('%s listening at %s', server.name, server.url) // eslint-disable-line no-console
 })
 

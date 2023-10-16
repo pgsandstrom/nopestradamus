@@ -4,18 +4,11 @@ import GoBackWrapper from '../../components/goBackWrapper'
 import { AppAccount } from '../../shared'
 import { Button, Typography } from '@mui/material'
 import { useState } from 'react'
+import { getAccountByHash } from '../../server/account'
 
 export const getServerSideProps: GetServerSideProps<BlockMeProps> = async (context) => {
   const hash = context.params!.hash as string
-  const response = await fetch(`${getServerUrl()}/api/v1/account/${hash}`, {
-    method: 'GET',
-  })
-
-  if (response.status >= 400) {
-    return { props: { hash } }
-  }
-
-  const initAccount = (await response.json()) as AppAccount
+  const initAccount = await getAccountByHash(hash)
   return { props: { hash, initAccount } }
 }
 
@@ -32,13 +25,13 @@ export default function BlockMe({ hash, initAccount }: BlockMeProps) {
     setIsLoading(true)
 
     try {
-      await fetch(`${getServerUrl()}/api/v1/account/${hash}/block`, {
+      await fetch(`${getServerUrl()}/api/account/${hash}/block`, {
         method: 'POST',
         body: JSON.stringify({
           blocked,
         }),
       })
-      const response = await fetch(`${getServerUrl()}/api/v1/account/${hash}`, {
+      const response = await fetch(`${getServerUrl()}/api/account/${hash}`, {
         method: 'GET',
       })
       const account = (await response.json()) as AppAccount

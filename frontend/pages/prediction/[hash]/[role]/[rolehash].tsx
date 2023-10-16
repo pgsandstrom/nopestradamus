@@ -7,36 +7,16 @@ import { Button } from '@mui/material'
 import { useState } from 'react'
 import { formatDateString } from '../../../../shared/date-util'
 import { removeUndefined } from '../../../../shared/object-util'
+import { getCensoredPrediction, getPrediction } from '../../../../server/prediction'
 
 export const getServerSideProps: GetServerSideProps<PredictionProps> = async (context) => {
   const predictionHash = context.params!.hash as string
   const roleHash = context.params!.rolehash as string
-  const role = context.params!.role as string
+  // TODO maybe create type for this
+  const role = context.params!.role as 'creater' | 'participant'
 
-  let url: string
-  if (role === 'participant') {
-    url = `${getServerUrl()}/api/v1/prediction/${predictionHash}/participant/${roleHash}`
-  } else {
-    url = `${getServerUrl()}/api/v1/prediction/${predictionHash}`
-  }
-
-  const response = await fetch(url, {
-    method: 'GET',
-  })
-
-  if (response.status < 400) {
-    const predictionCensored = (await response.json()) as PredictionCensored
-
-    return {
-      props: removeUndefined({
-        predictionCensored,
-        predictionHash,
-        roleHash,
-        role,
-      }),
-    }
-  } else {
-    context.res.statusCode = response.status
+  const prediction = await getPrediction(predictionHash)
+  if (!prediction) {
     return {
       props: {
         predictionHash,
@@ -44,6 +24,21 @@ export const getServerSideProps: GetServerSideProps<PredictionProps> = async (co
         role,
       },
     }
+  }
+  let predictionCensored
+  if (role === 'participant') {
+    predictionCensored = getCensoredPrediction(prediction, roleHash)
+  } else {
+    predictionCensored = getCensoredPrediction(prediction)
+  }
+
+  return {
+    props: removeUndefined({
+      predictionCensored,
+      predictionHash,
+      roleHash,
+      role,
+    }),
   }
 }
 
@@ -68,7 +63,7 @@ export default function PredictionHash({
     setIsAccepting(true)
     try {
       const response = await fetch(
-        `${getServerUrl()}/api/v1/prediction/${predictionHash}/${role}/${roleHash}/${
+        `${getServerUrl()}/api/prediction/${predictionHash}/${role}/${roleHash}/${
           accept ? 'accept' : 'deny'
         }`,
         {

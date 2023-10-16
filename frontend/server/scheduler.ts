@@ -53,12 +53,17 @@ const handleAllUnsentParticipantsEndEmails = async () => {
   return Promise.all(promiseList)
 }
 
-export const handleUnsentCreaterAcceptEmail = async (hash: string) => {
-  const prediction = await getPrediction(hash)
+export const handleUnsentCreaterAcceptEmail = async (predictionHash: string) => {
+  const prediction = await getPrediction(predictionHash)
+
+  if (prediction === undefined) {
+    throw new Error(`Prediction not found: ${predictionHash}`)
+  }
+
   const mail = prediction.creater.mail
 
   if (prediction.creater.accepted_mail_sent) {
-    throw new Error(`created accept mail already sent for ${hash}`)
+    throw new Error(`created accept mail already sent for ${predictionHash}`)
   }
   try {
     if (isMailValid(mail)) {
@@ -73,12 +78,17 @@ export const handleUnsentCreaterAcceptEmail = async (hash: string) => {
   }
 }
 
-export const handleUnsentCreaterEndEmail = async (hash: string) => {
-  const prediction = await getPrediction(hash)
+export const handleUnsentCreaterEndEmail = async (predictionHash: string) => {
+  const prediction = await getPrediction(predictionHash)
+
+  if (prediction === undefined) {
+    throw new Error(`Prediction not found: ${predictionHash}`)
+  }
+
   const mail = prediction.creater.mail
 
   if (prediction.creater.end_mail_sent) {
-    throw new Error(`created end mail already sent for ${hash}`)
+    throw new Error(`created end mail already sent for ${predictionHash}`)
   }
   try {
     if (isMailValid(mail)) {
@@ -93,8 +103,12 @@ export const handleUnsentCreaterEndEmail = async (hash: string) => {
   }
 }
 
-export const handleUnsentAcceptEmail = async (hash: string) => {
-  const prediction = await getPrediction(hash)
+export const handleUnsentAcceptEmail = async (predictionHash: string) => {
+  const prediction = await getPrediction(predictionHash)
+
+  if (prediction === undefined) {
+    throw new Error(`Prediction not found: ${predictionHash}`)
+  }
 
   const participantNeedingMailList = prediction.participants.filter(
     (participant) => participant.accepted_mail_sent === false,
@@ -118,6 +132,10 @@ export const handleUnsentAcceptEmail = async (hash: string) => {
 
 const handleUnsentEndEmail = async (predictionHash: string) => {
   const prediction = await getPrediction(predictionHash)
+
+  if (prediction === undefined) {
+    throw new Error(`Prediction not found: ${predictionHash}`)
+  }
 
   const participantNeedingMailList = prediction.participants
     .filter((participant) => participant.accepted)

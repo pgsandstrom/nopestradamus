@@ -57,7 +57,7 @@ AND prediction.title LIKE ${likeTitle}
 ORDER BY created DESC`).then((cursor) => cursor.rows as PredictionShallow[])
 }
 
-export const getPrediction = async (hash: string): Promise<Prediction> => {
+export const getPrediction = async (hash: string): Promise<Prediction | undefined> => {
   // TODO serialize this
   /* eslint-disable @typescript-eslint/no-unsafe-assignment */
   const prediction = await querySingle(
@@ -65,9 +65,7 @@ export const getPrediction = async (hash: string): Promise<Prediction> => {
   )
 
   if (prediction === undefined) {
-    // we needed to abandon restify-errors, so now we get a 500 instead of 404 when loading non-existing predictions
-    // throw new NotFoundError(`Prediction ${hash} not found`)
-    throw `Prediction ${hash} not found`
+    return undefined
   }
 
   const creater = await querySingle(
@@ -240,10 +238,16 @@ export const updateCreaterAcceptStatus = async (
   hash: string,
   accepted: boolean,
 ) => {
-  await query(
+  const result = await query(
     SQL`UPDATE creater SET accepted = ${accepted}, accepted_date = now() WHERE prediction_hash = ${predictionHash} AND hash = ${hash}`,
   )
+  if (result.rowCount === 0) {
+    throw new Error(`Failed to update with prediction ${predictionHash} and hash ${hash}`)
+  }
   const prediction = await getPrediction(predictionHash)
+  if (prediction === undefined) {
+    throw new Error(`Prediction not found: ${predictionHash}`)
+  }
   await validateAccount(prediction.creater.mail)
   return handleUnsentAcceptEmail(predictionHash)
 }
@@ -253,10 +257,16 @@ export const updateParticipantAcceptStatus = async (
   hash: string,
   accepted: boolean,
 ) => {
-  await query(
+  const result = await query(
     SQL`UPDATE participant SET accepted = ${accepted}, accepted_date = now() WHERE prediction_hash = ${predictionHash} AND hash = ${hash}`,
   )
+  if (result.rowCount === 0) {
+    throw new Error(`Failed to update with prediction ${predictionHash} and hash ${hash}`)
+  }
   const prediction = await getPrediction(predictionHash)
+  if (prediction === undefined) {
+    throw new Error(`Prediction not found: ${predictionHash}`)
+  }
   const participant = prediction.participants.find((p) => p.hash === hash)!
   return validateAccount(participant.mail)
 }

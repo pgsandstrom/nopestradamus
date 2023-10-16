@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "dev-database": "docker compose -f docker-compose-dev.yml up -d",
+    "dev-database-build": "docker compose -f docker-compose-dev.yml build",
+    "docker-build": "docker compose build --no-cache",
+    "docker-up": "docker compose up",
     "frontend-pre-commit": "cd ./frontend && npm run pre-commit",
     "frontend-pre-push": "cd ./frontend && npm run pre-push",
     "backend-pre-commit": "cd ./backend && npm run pre-commit",

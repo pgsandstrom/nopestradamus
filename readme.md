@@ -34,3 +34,9 @@ This tool can be used to debug DKIM: https://www.dmarcanalyzer.com/dkim/dkim-che
 You need to install postfix. Something like this should work:
 dnf install postfix mailx
 systemctl enable --now postfix
+
+## Technical notes
+
+From a coding standpoint, this project sucks. The "shared" folder has to be manually copied between frontend and backend when changed. Remember that!!!
+
+The whole frontend should be rebuild without shitty mui/emotion crap.

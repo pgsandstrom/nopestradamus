@@ -9,7 +9,7 @@ types.setTypeParser(20, (val: string) => {
 
 let dbPool: Pool | undefined
 
-const getDbPool = () => {
+const getDbPool = (): Pool => {
   if (dbPool === undefined) {
     const dev = process.env.NODE_ENV !== 'production'
     console.log(`process.env.NODE_ENV: ${process.env.NODE_ENV}`)
@@ -71,17 +71,9 @@ const getSingle = <T extends QueryResultRow>(result: QueryResult<T>): T | undefi
 }
 
 // Use this to gain a client for multiple operations, such as transactions
-export const getClient = (): Promise<PoolClient> =>
-  new Promise((resolve, reject) => {
-    getDbPool().connect((err, client: PoolClient) => {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (err !== undefined) {
-        reject(err)
-      } else {
-        resolve(client)
-      }
-    })
-  })
+export const getClient = (): Promise<PoolClient> => {
+  return getDbPool().connect()
+}
 
 export const SQL = (parts: TemplateStringsArray, ...values: any[]): QueryConfig => ({
   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
