@@ -2,7 +2,11 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import {
   updateCreaterAcceptStatus,
   updateParticipantAcceptStatus,
-} from '../../../../../server/prediction'
+} from '../../../../../../server/prediction'
+
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const predictionHash = req.query.prediction as string
