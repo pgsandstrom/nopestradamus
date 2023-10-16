@@ -1,14 +1,44 @@
-.idea/
-.settings/
-*.iml
-.vscode
-.DS_STORE
-.project
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-node_modules/
-.module-cache
-npm-debug.log
+# typescript
+tsconfig.tsbuildinfo
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# vercel
+.vercel
 
 # because openoffice
 .~lock*.xlsx#
 
+# just to avoid accidentally commit some super important secret key
+private.ppk
+privkey.pem
