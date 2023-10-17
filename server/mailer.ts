@@ -4,53 +4,36 @@ import { isDev } from '../util/env'
 import { getAccountByHash, getAccountHashByMail } from './account'
 import { formatDateString } from '../shared/date-util'
 
-const getPredictionList = (prediction: Prediction): string => {
-  if (prediction.participants.length === 0) {
-    return ''
-  }
-  return `---
-
-Here are the participants:
-
-${prediction.participants.map((p) => p.mail).join('\n')}`
+export interface Mail {
+  title: string
+  body: string
 }
 
-const getBlockMeFooter = async (mail: string) => {
-  const hash = await getAccountHashByMail(mail)
-
-  return `---
-
-Dont want to receive these mails? Block yourself here:
-http://nopestradamus.com/blockme/${hash}`
-}
-
-export const sendCreaterAcceptMail = async (prediction: Prediction) => {
-  console.log(`sending creater accept mail to ${prediction.creater.mail}`)
-
-  const mailTitle = 'Nopestradamus: Validate your mail for your prediction!'
-  const mailBody = `Below is the bet that was created by this mail:
+export const getCreaterAcceptMail = (prediction: Prediction): Mail => {
+  const title = 'Nopestradamus: Validate your mail for your prediction!'
+  const body = `Below is the bet that was created by this mail:
 
 ---
 
 Title: ${prediction.title}
 
 ${prediction.body}
-${getPredictionList(prediction)}
+${getParticipantList(prediction)}
 ---
 
 To start the prediction you must visit the following link and accept it:
 http://nopestradamus.com/prediction/${prediction.hash}/creater/${prediction.creater.hash}
 `
-  return sendMail(prediction.creater.mail, mailTitle, mailBody)
+
+  return { title, body }
 }
 
-export const sendParticipantAcceptMail = async (
+export const getParticipantAcceptMail = (
   prediction: Prediction,
   participant: Participant,
-) => {
-  console.log(`sending accept mail to ${participant.mail}`)
-  const mailTitle = `Your opinion has been requested by ${prediction.creater.mail}!`
-  const mailBody = `${
+): Mail => {
+  const title = `Your opinion has been requested by ${prediction.creater.mail}!`
+  const body = `${
     prediction.creater.mail
   } has asked you to accept a prediction! The prediction is described below.
 
@@ -59,7 +42,7 @@ export const sendParticipantAcceptMail = async (
 Title: ${prediction.title}
 
 ${prediction.body}
-${getPredictionList(prediction)}
+${getParticipantList(prediction)}
 ---
 
 The prediction ends at ${formatDateString(
@@ -69,12 +52,16 @@ The prediction ends at ${formatDateString(
 Click here to view the prediction and decide if you want to accept or reject it:
 http://nopestradamus.com/prediction/${prediction.hash}/participant/${participant.hash}
 `
-  return sendMail(participant.mail, mailTitle, mailBody)
+
+  return {
+    title,
+    body,
+  }
 }
 
-export const sendCreaterEndMail = async (prediction: Prediction) => {
-  const mailTitle = `Your bet has finished: ${prediction.title}`
-  const mailBody = `A bet was created by you on ${formatDateString(
+export const getCreaterEndMail = (prediction: Prediction): Mail => {
+  const title = `Your bet has finished: ${prediction.title}`
+  const body = `A bet was created by you on ${formatDateString(
     prediction.created,
   )}. It has now finished! Here is the bet:
 
@@ -83,7 +70,7 @@ export const sendCreaterEndMail = async (prediction: Prediction) => {
 Title: ${prediction.title}
 
 ${prediction.body}
-${getPredictionList(prediction)}
+${getParticipantList(prediction)}
 ---
 
 To get an overview of the bet visit this link:
@@ -91,35 +78,40 @@ http://nopestradamus.com/prediction/${prediction.hash}
 
 Hope you had fun!`
   // TODO reminders about who was involved and stuff like that
-  return sendMail(prediction.creater.mail, mailTitle, mailBody)
+  return {
+    title,
+    body,
+  }
 }
 
-export const sendParticipantEndMail = async (prediction: Prediction, participant: Participant) => {
-  console.log(`sending end mail to ${participant.mail}`)
-
-  const mailTitle = `Your bet from ${prediction.creater.mail} has finished!`
-  const mailBody = `A bet was accepted by you on ${formatDateString(
-    participant.accepted_date,
-  )} by ${prediction.creater.mail}. It has now finished! Here is the bet:
+export const getParticipantEndMail = (prediction: Prediction, participant: Participant): Mail => {
+  const title = `Your bet from ${prediction.creater.mail} has finished!`
+  const body = `A bet was accepted by you on ${formatDateString(participant.accepted_date)} by ${
+    prediction.creater.mail
+  }. It has now finished! Here is the bet:
 
 ---
 
 Title: ${prediction.title}
 
 ${prediction.body}
-${getPredictionList(prediction)}
+${getParticipantList(prediction)}
 ---
 
 To get an overview of the bet visit this link:
 http://nopestradamus.com/prediction/${prediction.hash}
 
 Now you must discuss who won the bet!`
-  return sendMail(participant.mail, mailTitle, mailBody)
+
+  return {
+    title,
+    body,
+  }
 }
 
-export const sendMail = async (receiver: string, title: string, rawBody: string) => {
+export const sendMail = async (receiver: string, mail: Mail) => {
   const blockmeFooter = await getBlockMeFooter(receiver)
-  const body = `${rawBody}
+  const body = `${mail.body}
 
 ${blockmeFooter}`
 
@@ -155,7 +147,7 @@ ${blockmeFooter}`
   const mailOptions = {
     from: '"Nopestradamus" <no-reply@nopestradamus.com>',
     to: [receiver],
-    subject: title,
+    subject: mail.title,
     text: body,
     // html: body,
   }
@@ -169,4 +161,24 @@ ${blockmeFooter}`
     console.error(`send mail fail: ${JSON.stringify(e)}`)
     throw e
   }
+}
+
+const getParticipantList = (prediction: Prediction): string => {
+  if (prediction.participants.length === 0) {
+    return ''
+  }
+  return `---
+
+Here are the participants:
+
+${prediction.participants.map((p) => p.mail).join('\n')}`
+}
+
+const getBlockMeFooter = async (mail: string) => {
+  const hash = await getAccountHashByMail(mail)
+
+  return `---
+
+Dont want to receive these mails? Block yourself here:
+http://nopestradamus.com/blockme/${hash}`
 }

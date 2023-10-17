@@ -3,6 +3,8 @@ FROM node:18
 # Create app directory
 WORKDIR /app
 
+ENV NPM_CONFIG_LOGLEVEL info
+
 RUN apt-get update
 RUN echo "postfix postfix/mailname string nopestradamus.com" | debconf-set-selections
 RUN echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections

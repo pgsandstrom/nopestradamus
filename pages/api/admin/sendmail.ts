@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import config from '../../../util/config'
-import { sendMail } from '../../../server/mailer'
+import { Mail, sendMail } from '../../../server/mailer'
 
 const adminPassword = config().adminPassword
 
@@ -17,7 +17,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return
   }
 
-  await sendMail(body.mail, body.title, body.body)
+  const mail: Mail = {
+    title: body.title,
+    body: body.body,
+  }
+
+  await sendMail(body.mail, mail)
 
   res.statusCode = 200
   res.json({ status: 'ok' })

@@ -10,10 +10,11 @@ import {
   setParticipantEndMailSent,
 } from './prediction'
 import {
-  sendCreaterAcceptMail,
-  sendCreaterEndMail,
-  sendParticipantAcceptMail,
-  sendParticipantEndMail,
+  getCreaterAcceptMail,
+  getCreaterEndMail,
+  getParticipantAcceptMail,
+  getParticipantEndMail,
+  sendMail,
 } from './mailer'
 import { isMailValid } from '../shared/mail-util'
 import SMTPTransport from 'nodemailer/lib/smtp-transport'
@@ -69,7 +70,9 @@ export const handleUnsentCreaterAcceptEmail = async (predictionHash: string) => 
   try {
     let result: SMTPTransport.SentMessageInfo | undefined
     if (isMailValid(mail)) {
-      result = await sendCreaterAcceptMail(prediction)
+      const mail = getCreaterAcceptMail(prediction)
+      console.log(`sending creater accept mail to ${prediction.creater.mail}`)
+      return sendMail(prediction.creater.mail, mail)
     } else {
       console.log(`creater skipping invalid mail: ${mail}`)
     }
@@ -95,7 +98,8 @@ export const handleUnsentCreaterEndEmail = async (predictionHash: string) => {
   }
   try {
     if (isMailValid(mail)) {
-      await sendCreaterEndMail(prediction)
+      const mail = getCreaterEndMail(prediction)
+      return sendMail(prediction.creater.mail, mail)
     } else {
       console.log(`creater skipping invalid mail: ${mail}`)
     }
@@ -121,7 +125,9 @@ export const handleUnsentAcceptEmail = async (predictionHash: string) => {
   participantNeedingMailList.forEach(async (participant) => {
     try {
       if (isMailValid(participant.mail)) {
-        await sendParticipantAcceptMail(prediction, participant)
+        const mail = getParticipantAcceptMail(prediction, participant)
+        console.log(`sending accept mail to ${participant.mail}`)
+        return sendMail(participant.mail, mail)
       } else {
         console.log(`participant skipping invalid mail: ${participant.mail}`)
       }
@@ -147,7 +153,9 @@ const handleUnsentEndEmail = async (predictionHash: string) => {
   const promiseList = participantNeedingMailList.map(async (participant) => {
     try {
       if (isMailValid(participant.mail)) {
-        await sendParticipantEndMail(prediction, participant)
+        const mail = getParticipantEndMail(prediction, participant)
+        console.log(`sending end mail to ${participant.mail}`)
+        return sendMail(participant.mail, mail)
       } else {
         console.log(`endmail skipping invalid mail: ${participant.mail}`)
       }
