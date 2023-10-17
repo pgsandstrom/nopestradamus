@@ -11,7 +11,7 @@ import {
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const predictionHash = req.query.prediction as string
   const role = req.query.role as string
-  const hash = req.query.roleHash as string
+  const hash = req.query.hash as string
   const answer = req.query.answer as string
 
   if (role === 'creater') {
