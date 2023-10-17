@@ -2,8 +2,37 @@ import getServerUrl from '../util/serverUrl'
 import { Button, TextField } from '@mui/material'
 import { useState } from 'react'
 import GoBackWrapper from '../components/goBackWrapper'
+import { GetServerSideProps } from 'next'
+import { getCreaterNotAcceptedPredictions, getPrediction } from '../server/prediction'
+import { getCreaterAcceptMail } from '../server/mailer'
+import config from '../util/config'
 
-export default function Admin() {
+interface AdminProps {
+  mails: string
+}
+
+export const getServerSideProps: GetServerSideProps<AdminProps> = async (context) => {
+  let mails: string
+  const password = context.query.password
+  if (password === config().adminPassword) {
+    const result: string[] = []
+
+    const predictionHashList = await getCreaterNotAcceptedPredictions()
+    for (const predictionHash of predictionHashList) {
+      const prediction = await getPrediction(predictionHash)
+      if (prediction) {
+        const mail = getCreaterAcceptMail(prediction)
+        result.push(JSON.stringify(mail))
+      }
+    }
+    mails = JSON.stringify(result)
+  } else {
+    mails = 'invalid password'
+  }
+  return { props: { mails } }
+}
+
+export default function Admin(props: AdminProps) {
   const [password, setPassword] = useState('')
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
@@ -53,6 +82,16 @@ export default function Admin() {
       credentials: 'same-origin',
     })
   }
+
+  // const getSomeMailz = async () => {
+  //   const result = await fetch(`${getServerUrl()}/api/admin/getsomemailz`, {
+  //     method: 'POST',
+  //     body: JSON.stringify({
+  //       password,
+  //     }),
+  //     credentials: 'same-origin',
+  //   })
+  // }
 
   return (
     <GoBackWrapper>
@@ -110,6 +149,8 @@ export default function Admin() {
           delete predictions named &quot;test&quot; created by your mail, you know.
         </Button>
       </div>
+
+      <code>{props.mails}</code>
     </GoBackWrapper>
   )
 }

@@ -96,6 +96,15 @@ WHERE creater.accepted_mail_sent = false
   return cursor.rows.map((row) => row.hash)
 }
 
+export const getCreaterNotAcceptedPredictions = async () => {
+  const cursor = await queryString<{ hash: string }>(`
+SELECT DISTINCT prediction.hash FROM prediction
+JOIN creater on prediction.hash = creater.prediction_hash
+WHERE creater.accepted IS NOT true
+`)
+  return cursor.rows.map((row) => row.hash)
+}
+
 export const getOldBetWithUnsentCreaterEndMails = async () => {
   const cursor = await queryString<{ hash: string }>(`
 SELECT DISTINCT prediction.hash FROM prediction
