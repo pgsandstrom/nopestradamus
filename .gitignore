@@ -8,6 +8,9 @@ tsconfig.tsbuildinfo
 /.pnp
 .pnp.js
 
+#builds
+/dist*
+
 # testing
 /coverage
 

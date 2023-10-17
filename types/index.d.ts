@@ -1,3 +1,5 @@
+// TODO why do we have these as global types?
+
 interface Prediction {
   created: string
   creater: Creater

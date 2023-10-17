@@ -1,9 +1,14 @@
 version: '3.8'
 services:
   frontend:
-    build: .
+    build:
+      dockerfile: ./Dockerfile.frontend
     ports:
       - '8300:3000'
+    restart: always
+  cron:
+    build:
+      dockerfile: ./Dockerfile.cron
     restart: always
   db:
     image: postgres:16

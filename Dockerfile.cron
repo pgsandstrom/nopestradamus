@@ -7,7 +7,6 @@ RUN apt-get update
 RUN echo "postfix postfix/mailname string nopestradamus.com" | debconf-set-selections
 RUN echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections
 RUN apt-get install --assume-yes postfix
-# RUN service postfix start
 
 # TODO Is this how we want to handle privkey?
 COPY privkey.pem .
@@ -29,4 +28,4 @@ COPY . .
 
 RUN npm run build
 
-CMD service postfix start && npm run start
+CMD service postfix start && node dist-cron/server-cron.js
