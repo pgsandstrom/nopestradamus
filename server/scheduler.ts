@@ -72,7 +72,7 @@ export const handleUnsentCreaterAcceptEmail = async (predictionHash: string) => 
     if (isMailValid(mail)) {
       const mail = getCreaterAcceptMail(prediction)
       console.log(`sending creater accept mail to ${prediction.creater.mail}`)
-      return sendMail(prediction.creater.mail, mail)
+      await sendMail(prediction.creater.mail, mail)
     } else {
       console.log(`creater skipping invalid mail: ${mail}`)
     }
@@ -99,7 +99,7 @@ export const handleUnsentCreaterEndEmail = async (predictionHash: string) => {
   try {
     if (isMailValid(mail)) {
       const mail = getCreaterEndMail(prediction)
-      return sendMail(prediction.creater.mail, mail)
+      await sendMail(prediction.creater.mail, mail)
     } else {
       console.log(`creater skipping invalid mail: ${mail}`)
     }
@@ -127,7 +127,7 @@ export const handleUnsentAcceptEmail = async (predictionHash: string) => {
       if (isMailValid(participant.mail)) {
         const mail = getParticipantAcceptMail(prediction, participant)
         console.log(`sending accept mail to ${participant.mail}`)
-        return sendMail(participant.mail, mail)
+        await sendMail(participant.mail, mail)
       } else {
         console.log(`participant skipping invalid mail: ${participant.mail}`)
       }
@@ -155,7 +155,7 @@ const handleUnsentEndEmail = async (predictionHash: string) => {
       if (isMailValid(participant.mail)) {
         const mail = getParticipantEndMail(prediction, participant)
         console.log(`sending end mail to ${participant.mail}`)
-        return sendMail(participant.mail, mail)
+        await sendMail(participant.mail, mail)
       } else {
         console.log(`endmail skipping invalid mail: ${participant.mail}`)
       }
