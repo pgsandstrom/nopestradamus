@@ -55,6 +55,7 @@ export default function Home({ predictionShallowList }: HomeProps) {
           }}
         >
           <div className="logo-container" style={{ maxWidth: '400px' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" style={{ width: '100%' }} />
           </div>
         </div>
@@ -123,6 +124,7 @@ export default function Home({ predictionShallowList }: HomeProps) {
           <a href="https://github.com/pgsandstrom/nopestradamus">Github</a>.
         </span>
       </footer>
+      {/* eslint-disable-next-line react/no-unknown-property */}
       <style jsx>{`
         @media (max-width: 1280px) {
           .logo-container {
