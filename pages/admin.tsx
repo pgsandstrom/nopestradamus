@@ -4,32 +4,31 @@ import { useState } from 'react'
 import GoBackWrapper from '../components/goBackWrapper'
 import { GetServerSideProps } from 'next'
 import { getCreaterNotAcceptedPredictions, getPrediction } from '../server/prediction'
-import { getCreaterAcceptMail } from '../server/mailer'
+import { Mail, getCreaterAcceptMail } from '../server/mailer'
 import config from '../util/config'
 
 interface AdminProps {
-  mails: string
+  passwordValid: boolean
+  acceptMails?: Mail[]
 }
 
 export const getServerSideProps: GetServerSideProps<AdminProps> = async (context) => {
-  let mails: string
-  const password = context.query.password
-  if (password === config().adminPassword) {
-    const result: string[] = []
-
-    const predictionHashList = await getCreaterNotAcceptedPredictions()
-    for (const predictionHash of predictionHashList) {
-      const prediction = await getPrediction(predictionHash)
-      if (prediction) {
-        const mail = getCreaterAcceptMail(prediction)
-        result.push(JSON.stringify(mail))
-      }
-    }
-    mails = JSON.stringify(result)
-  } else {
-    mails = 'invalid password'
+  const passwordValid = context.query.password === config().adminPassword
+  if (!passwordValid) {
+    return { props: { passwordValid } }
   }
-  return { props: { mails } }
+
+  const acceptMails: Mail[] = []
+
+  const predictionHashList = await getCreaterNotAcceptedPredictions()
+  for (const predictionHash of predictionHashList) {
+    const prediction = await getPrediction(predictionHash)
+    if (prediction) {
+      const mail = getCreaterAcceptMail(prediction)
+      acceptMails.push(mail)
+    }
+  }
+  return { props: { acceptMails, passwordValid } }
 }
 
 export default function Admin(props: AdminProps) {
@@ -150,7 +149,16 @@ export default function Admin(props: AdminProps) {
         </Button>
       </div>
 
-      <code>{props.mails}</code>
+      <div style={{ width: '1000px', marginTop: '40px' }}>
+        {props.acceptMails?.map((acceptMail) => {
+          return (
+            <div key={acceptMail.body} style={{ marginBottom: '10px' }}>
+              <h3>{acceptMail.title}</h3>
+              <p style={{ whiteSpace: 'pre-wrap' }}>{acceptMail.body}</p>
+            </div>
+          )
+        })}
+      </div>
     </GoBackWrapper>
   )
 }
