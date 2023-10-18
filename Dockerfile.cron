@@ -28,6 +28,6 @@ RUN npm install
 COPY . .
 
 
-RUN npm run build
+RUN npm run build-cron
 
 CMD service postfix start && node dist-cron/server-cron.js
