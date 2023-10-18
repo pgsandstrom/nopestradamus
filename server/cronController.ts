@@ -12,5 +12,5 @@ export const startCronStuff = () => {
     }
   })
   cronJob.start()
-  console.log('Cron jobs initiated')
+  console.log(`Cron jobs initiated. process.env.NODE_ENV: "${process.env.NODE_ENV}"`)
 }
