@@ -109,18 +109,20 @@ Now you must discuss who won the bet!`
   }
 }
 
-export const sendMail = async (receiver: string, mail: Mail) => {
+export const sendMail = async (receiver: string, mail: Mail, overrideBlock = false) => {
   const blockmeFooter = await getBlockMeFooter(receiver)
   const body = `${mail.body}
 
 ${blockmeFooter}`
 
-  const accountHash = await getAccountHashByMail(receiver)
-  const account = await getAccountByHash(accountHash)
+  if (!overrideBlock) {
+    const accountHash = await getAccountHashByMail(receiver)
+    const account = await getAccountByHash(accountHash)
 
-  if (account.blocked) {
-    console.log(`${account.mail} is blocked, not sending mail`)
-    return
+    if (account.blocked) {
+      console.log(`${account.mail} is blocked, not sending mail`)
+      return
+    }
   }
 
   if (isDev()) {

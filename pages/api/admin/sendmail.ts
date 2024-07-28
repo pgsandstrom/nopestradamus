@@ -22,7 +22,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     body: body.body,
   }
 
-  await sendMail(body.mail, mail)
+  await sendMail(body.mail, mail, true)
 
   res.statusCode = 200
   res.json({ status: 'ok' })
