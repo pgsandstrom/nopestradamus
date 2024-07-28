@@ -77,6 +77,6 @@ export const getClient = (): Promise<PoolClient> => {
 
 export const SQL = (parts: TemplateStringsArray, ...values: any[]): QueryConfig => ({
   // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-  text: parts.reduce((prev, curr, i) => prev + '$' + i + curr), // eslint-disable-line prefer-template
+  text: parts.reduce((prev, curr, i) => prev + '$' + i + curr),
   values,
 })

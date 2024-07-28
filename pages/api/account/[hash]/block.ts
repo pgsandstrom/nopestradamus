@@ -3,7 +3,6 @@ import { setAccountBlocked } from '../../../../server/account'
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const hash = req.query.hash as string

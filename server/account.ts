@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import { SQL, query, querySingle } from '../util/db'
+import { query, querySingle, SQL } from '../util/db'
 import { QueryResult } from 'pg'
 import { isMailValid } from '../shared/mail-util'
 import { AppAccount } from '../shared'

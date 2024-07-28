@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 
-import { SQL, query, querySingle, queryString } from '../util/db'
+import { query, querySingle, queryString, SQL } from '../util/db'
 import { confirmAccountExistance, validateAccount } from './account'
 import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './scheduler'
 import { PredictionCensored, PredictionShallow } from '../shared'

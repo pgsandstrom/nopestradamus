@@ -11,7 +11,7 @@
     "docker-build": "docker compose build --no-cache",
     "docker-up": "docker compose up",
     "format": "prettier --write \"{,!(.next|dist|node_modules)/**/}!(package-lock).{json,md,js,jsx,ts,tsx,css,scss}\"",
-    "lint": "node ./node_modules/eslint/bin/eslint.js --ext .ts --ext .tsx --fix .",
+    "lint": "eslint --max-warnings 0 \"**/*.{ts,tsx,js}\"",
     "pre-commit": "lint-staged",
     "pre-push": "npm run lint && npm run typecheck",
     "//": "TODO: we should not specify port here, but instead only in .env.local. But for some reason it does not work unless we specify it here",
@@ -29,7 +29,7 @@
     "@types/cron": "2.0.1",
     "@types/lodash": "4.14.194",
     "@types/node": "16.18.23",
-    "@types/nodemailer": "^6.4.11",
+    "@types/nodemailer": "6.4.15",
     "@types/pg": "8.10.5",
     "@types/react": "18.2.28",
     "@types/uuid": "9.0.1",
@@ -38,7 +38,7 @@
     "date-fns": "2.28.0",
     "lodash": "4.17.21",
     "next": "13.5.5",
-    "nodemailer": "^6.9.6",
+    "nodemailer": "6.9.14",
     "pg": "8.10.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -46,26 +46,28 @@
     "uuid": "9.0.0"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "13.5.4",
-    "@typescript-eslint/eslint-plugin": "6.8.0",
-    "@typescript-eslint/parser": "6.8.0",
-    "eslint": "8.51.0",
-    "eslint-config-prettier": "9.0.0",
+    "@eslint/compat": "1.1.1",
+    "@eslint/js": "9.8.0",
+    "@next/eslint-plugin-next": "14.2.5",
+    "@types/eslint__js": "8.42.3",
+    "eslint": "9.8.0",
+    "eslint-config-prettier": "9.1.0",
     "eslint-plugin-no-only-tests": "3.1.0",
-    "eslint-plugin-react": "7.33.2",
-    "eslint-plugin-react-hooks": "4.6.0",
+    "eslint-plugin-react": "7.35.0",
+    "eslint-plugin-react-hooks": "4.6.2",
     "express": "4.18.2",
     "http-proxy-middleware": "2.0.2",
     "husky": "8.0.3",
     "lint-staged": "13.2.1",
-    "prettier": "2.8.7"
+    "prettier": "3.3.3",
+    "typescript-eslint": "7.17.0"
   },
   "lint-staged": {
-    "*.{js,json,md,css,scss}": [
+    "*.{js,json,md,css,scss,html}": [
       "prettier --write"
     ],
-    "*.{jsx,ts,tsx}": [
-      "node ./node_modules/eslint/bin/eslint.js --ext .ts --ext .tsx --fix",
+    "*.{ts,tsx}": [
+      "eslint --fix --max-warnings 0",
       "prettier --write"
     ]
   }

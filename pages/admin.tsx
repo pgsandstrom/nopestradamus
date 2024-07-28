@@ -4,7 +4,7 @@ import { useState } from 'react'
 import GoBackWrapper from '../components/goBackWrapper'
 import { GetServerSideProps } from 'next'
 import { getCreaterNotAcceptedPredictions, getPrediction } from '../server/prediction'
-import { Mail, getCreaterAcceptMail } from '../server/mailer'
+import { getCreaterAcceptMail, Mail } from '../server/mailer'
 import config from '../util/config'
 
 interface AdminProps {

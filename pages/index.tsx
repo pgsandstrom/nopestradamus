@@ -55,7 +55,6 @@ export default function Home({ predictionShallowList }: HomeProps) {
           }}
         >
           <div className="logo-container" style={{ maxWidth: '400px' }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" style={{ width: '100%' }} />
           </div>
         </div>

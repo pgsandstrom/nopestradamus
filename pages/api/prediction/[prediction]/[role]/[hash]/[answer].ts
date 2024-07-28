@@ -4,10 +4,6 @@ import {
   updateParticipantAcceptStatus,
 } from '../../../../../../server/prediction'
 
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const predictionHash = req.query.prediction as string
   const role = req.query.role as string
