@@ -18,9 +18,10 @@ import {
 } from './mailer'
 import { isMailValid } from '../shared/mail-util'
 import SMTPTransport from 'nodemailer/lib/smtp-transport'
+import { formatDateTime } from '../shared/date-util'
 
 export const handleAllUnsentMails = async () => {
-  console.log('handle all unsent mails')
+  console.log('handle all unsent mails', formatDateTime(new Date()))
   await handleAllUnsentCreaterAcceptEmails()
 
   await handleAllUnsentParticipantsAcceptEmails()

@@ -11,3 +11,11 @@ export function formatDate(date?: Date) {
     return '[MISSING DATE]'
   }
 }
+
+export function formatDateTime(date?: Date) {
+  if (date) {
+    return format(new Date(date), 'yyyy-MM-dd HH:mm')
+  } else {
+    return '[MISSING DATE]'
+  }
+}
