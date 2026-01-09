@@ -34,7 +34,7 @@ export const getAccountByHash = async (hash: string): Promise<AppAccount> => {
   )
 
   if (account === undefined) {
-    throw new Error('account not found')
+    throw new Error(`account not found. Hash: "${hash}"`)
   }
 
   return account
@@ -44,7 +44,7 @@ export const getAccountHashByMail = async (mail: string): Promise<string> => {
   const entry = await querySingle<{ hash: string }>(SQL`SELECT hash FROM mail WHERE mail = ${mail}`)
 
   if (entry === undefined) {
-    throw new Error('account not found')
+    throw new Error(`account not found. Mail: "${mail}"`)
   }
 
   return entry.hash
