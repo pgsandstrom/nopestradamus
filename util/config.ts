@@ -6,6 +6,7 @@ const privateKeyPath = './privkey.pem'
 
 export const getPrivateKey = () => fs.readFileSync(privateKeyPath, 'utf8')
 
+// to find the config file, just check config.json in the project folder on the server
 interface MyConfig {
   adminPassword: string
 }

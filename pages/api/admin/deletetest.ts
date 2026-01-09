@@ -25,7 +25,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (prediction === undefined) {
       throw new Error(`Prediction not found: ${p.hash}`)
     }
-    if (prediction.creater.mail === 'hello@persandstrom.com') {
+    if (
+      prediction.creater.mail === 'hello@persandstrom.com' ||
+      prediction.creater.mail === 'pg.sandstrom@gmail.com'
+    ) {
       await deletePrediction(prediction.hash)
       deleted += 1
     }
