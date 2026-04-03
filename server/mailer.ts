@@ -22,7 +22,7 @@ ${getParticipantList(prediction)}
 ---
 
 To start the prediction you must visit the following link and accept it:
-http://nopestradamus.com/prediction/${prediction.hash}/creater/${prediction.creater.hash}
+https://nopestradamus.com/prediction/${prediction.hash}/creater/${prediction.creater.hash}
 `
 
   return { title, body }
@@ -50,7 +50,7 @@ The prediction ends at ${formatDateString(
   )}. At the given date, you will all receive a mail and be confronted with your predictions!
 
 Click here to view the prediction and decide if you want to accept or reject it:
-http://nopestradamus.com/prediction/${prediction.hash}/participant/${participant.hash}
+https://nopestradamus.com/prediction/${prediction.hash}/participant/${participant.hash}
 `
 
   return {
@@ -74,7 +74,7 @@ ${getParticipantList(prediction)}
 ---
 
 To get an overview of the bet visit this link:
-http://nopestradamus.com/prediction/${prediction.hash}
+https://nopestradamus.com/prediction/${prediction.hash}
 
 Hope you had fun!`
   // TODO reminders about who was involved and stuff like that
@@ -99,7 +99,7 @@ ${getParticipantList(prediction)}
 ---
 
 To get an overview of the bet visit this link:
-http://nopestradamus.com/prediction/${prediction.hash}
+https://nopestradamus.com/prediction/${prediction.hash}
 
 Now you must discuss who won the bet!`
 
@@ -187,5 +187,5 @@ const getBlockMeFooter = (accountHash: string) => {
   return `---
 
 Dont want to receive these mails? Block yourself here:
-http://nopestradamus.com/blockme/${accountHash}`
+https://nopestradamus.com/blockme/${accountHash}`
 }
