@@ -110,13 +110,13 @@ Now you must discuss who won the bet!`
 }
 
 export const sendMail = async (receiver: string, mail: Mail, overrideBlock = false) => {
-  const blockmeFooter = await getBlockMeFooter(receiver)
+  const accountHash = await getAccountHashByMail(receiver)
+  const blockmeFooter = getBlockMeFooter(accountHash)
   const body = `${mail.body}
 
 ${blockmeFooter}`
 
   if (!overrideBlock) {
-    const accountHash = await getAccountHashByMail(receiver)
     const account = await getAccountByHash(accountHash)
 
     if (account.blocked) {
@@ -147,12 +147,18 @@ ${blockmeFooter}`
     // },
   })
 
+  const unsubscribeUrl = `https://nopestradamus.com/api/account/${accountHash}/block`
+
   const mailOptions = {
     from: '"Nopestradamus" <no-reply@nopestradamus.com>',
     to: [receiver],
     subject: mail.title,
     text: body,
     // html: body,
+    headers: {
+      'List-Unsubscribe': `<${unsubscribeUrl}>`,
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    },
   }
 
   try {
@@ -177,11 +183,9 @@ Here are the participants:
 ${prediction.participants.map((p) => p.mail).join('\n')}`
 }
 
-const getBlockMeFooter = async (mail: string) => {
-  const hash = await getAccountHashByMail(mail)
-
+const getBlockMeFooter = (accountHash: string) => {
   return `---
 
 Dont want to receive these mails? Block yourself here:
-http://nopestradamus.com/blockme/${hash}`
+http://nopestradamus.com/blockme/${accountHash}`
 }

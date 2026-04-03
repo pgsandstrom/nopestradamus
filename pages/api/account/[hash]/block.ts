@@ -7,9 +7,13 @@ import { setAccountBlocked } from '../../../../server/account'
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const hash = req.query.hash as string
 
-  const body = JSON.parse(req.body as string)
-
-  const blocked = body.blocked as boolean
+  let blocked = true
+  try {
+    const body = JSON.parse(req.body as string)
+    blocked = body.blocked as boolean
+  } catch {
+    // Default to blocking (e.g. List-Unsubscribe one-click POST)
+  }
 
   await setAccountBlocked(hash, blocked)
 
