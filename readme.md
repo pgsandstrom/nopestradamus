@@ -4,7 +4,7 @@ Service for long term predictions.
 
 ## Mail setup
 
-Here I describe how to fix so the mail the program sends are not always marked as spam (but mostly they will be, either way).
+Here I describe how to fix so the mail the program sends are not always marked as spam.
 
 ### SPF
 
@@ -26,6 +26,9 @@ There is some weirdness about adding this DNS record. It belongs to the subdomai
 
 Finally, when you receive a mail in for example gmail you can click 'show origin' to see if SPF and DKIM was accepted.
 This tool can be used to debug DKIM: https://www.dmarcanalyzer.com/dkim/dkim-check
+
+This tool is even better, just use this: https://www.mail-tester.com
+Use mail-tester and you can see that there is still some issue with reverse DNS lookup. Fix that someday, TODO.
 
 ### Program to send the mails
 
