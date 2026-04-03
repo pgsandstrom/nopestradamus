@@ -134,6 +134,7 @@ ${blockmeFooter}`
   const transporter = nodemailer.createTransport({
     host: 'localhost',
     port: 25,
+    name: 'nopestradamus.com',
     secure: false,
     ignoreTLS: true,
     dkim: {

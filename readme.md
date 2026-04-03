@@ -41,3 +41,9 @@ When running locally you will most likely get `connection refused` errors. I bel
 The whole frontend should be rebuild without shitty mui/emotion crap.
 
 The project is two processes: One nextjs project, and one node project which holds a cron job
+
+## deploy
+
+with this command:
+
+`docker compose up -d --build`
