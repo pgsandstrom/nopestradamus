@@ -3,7 +3,7 @@
 # Nopestradamus
 
 Service for long term predictions. Two processes: a Next.js 16 app (App Router, React 19) and a
-Node process holding a cron job. `readme.md` covers setup, deploy and the mail/DNS configuration.
+Node process holding a cron job. `README.md` covers setup, deploy and the mail/DNS configuration.
 
 ## Commands
 
@@ -47,5 +47,5 @@ clients POST to it directly for RFC 8058 List-Unsubscribe one-click. It is refer
 
 ## Known issues are deliberate
 
-`readme.md` ends with a list of real behaviour bugs left alone during the modernization. They are
+`README.md` ends with a list of real behaviour bugs left alone during the modernization. They are
 behaviour changes, not cleanups — don't fix them as drive-by work.
