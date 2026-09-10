@@ -1,7 +1,7 @@
 import GoBackWrapper from '../../components/go-back-wrapper.tsx'
+import { isAdminPassword } from '../../server/admin-auth.ts'
 import { getCreaterAcceptMail, type Mail } from '../../server/mailer.ts'
 import { getCreaterNotAcceptedPredictions, getPrediction } from '../../server/prediction.ts'
-import { isAdminPassword } from './actions.ts'
 import AdminConsole from './admin-console.tsx'
 import styles from './page.module.css'
 
@@ -13,7 +13,7 @@ interface AdminPageProps {
 
 export default async function AdminPage({ searchParams }: AdminPageProps) {
   const { password } = await searchParams
-  const passwordValid = password !== undefined && (await isAdminPassword(password))
+  const passwordValid = password !== undefined && isAdminPassword(password)
 
   return (
     <GoBackWrapper>

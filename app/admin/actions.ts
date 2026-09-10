@@ -1,28 +1,18 @@
 'use server'
 
-import { timingSafeEqual } from 'node:crypto'
-
+import { isAdminPassword } from '../../server/admin-auth.ts'
 import { type Mail, sendMail } from '../../server/mailer.ts'
 import { deletePrediction, getPrediction, getPredictions } from '../../server/prediction.ts'
 import { handleAllUnsentMails } from '../../server/scheduler.ts'
-import { getConfig } from '../../util/config.ts'
 import type { ActionResult } from '../action-result.ts'
 
 const TEST_PREDICTION_OWNERS = ['hello@persandstrom.com', 'pg.sandstrom@gmail.com']
 
 type AdminResult<T> = ActionResult & { data?: T }
 
-// must be async because files with the 'use server' directive may only export async functions
-// eslint-disable-next-line @typescript-eslint/require-await
-export async function isAdminPassword(password: string): Promise<boolean> {
-  const expected = Buffer.from(getConfig().adminPassword)
-  const actual = Buffer.from(password)
-  return expected.length === actual.length && timingSafeEqual(expected, actual)
-}
-
 /** Runs `action` only when the password checks out, turning any throw into an ActionResult. */
 async function asAdmin<T>(password: string, action: () => Promise<T>): Promise<AdminResult<T>> {
-  if (!(await isAdminPassword(password))) {
+  if (!isAdminPassword(password)) {
     return { ok: false, error: 'Wrong admin password' }
   }
   try {
