@@ -2,8 +2,6 @@
 
 import { revalidatePath } from 'next/cache'
 
-import type { AppAccount, Role } from '../shared/index.ts'
-import { isRole } from '../shared/index.ts'
 import { getAccountByHash, setAccountBlocked } from '../server/account.ts'
 import {
   createPrediction,
@@ -11,6 +9,8 @@ import {
   updateCreaterAcceptStatus,
   updateParticipantAcceptStatus,
 } from '../server/prediction.ts'
+import type { AppAccount, Role } from '../shared/index.ts'
+import { isRole } from '../shared/index.ts'
 import { type ActionResult, failed, OK } from './action-result.ts'
 
 export async function createPredictionAction(input: CreatePredictionInput): Promise<ActionResult> {

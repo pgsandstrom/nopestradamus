@@ -1,8 +1,8 @@
 import GoBackWrapper from '../../components/go-back-wrapper.tsx'
 import { getCreaterAcceptMail, type Mail } from '../../server/mailer.ts'
 import { getCreaterNotAcceptedPredictions, getPrediction } from '../../server/prediction.ts'
-import AdminConsole from './admin-console.tsx'
 import { isAdminPassword } from './actions.ts'
+import AdminConsole from './admin-console.tsx'
 import styles from './page.module.css'
 
 export const dynamic = 'force-dynamic'

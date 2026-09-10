@@ -65,7 +65,7 @@ export const handleUnsentCreaterAcceptEmail = async (predictionHash: string): Pr
   }
 }
 
-export const handleUnsentCreaterEndEmail = async (predictionHash: string): Promise<void> => {
+const handleUnsentCreaterEndEmail = async (predictionHash: string): Promise<void> => {
   const prediction = await requirePrediction(predictionHash)
   const { mail, hash } = prediction.creater
 

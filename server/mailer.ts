@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer'
 
-import type { Participant, Prediction } from '../shared/index.ts'
 import { formatDateString } from '../shared/date-util.ts'
+import type { Participant, Prediction } from '../shared/index.ts'
 import { getPrivateKey } from '../util/config.ts'
 import { isDev } from '../util/env.ts'
 import { getAccountByHash, getAccountHashByMail } from './account.ts'

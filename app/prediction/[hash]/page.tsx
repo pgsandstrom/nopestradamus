@@ -1,5 +1,5 @@
-import Prediction from '../../../components/prediction.tsx'
 import GoBackWrapper from '../../../components/go-back-wrapper.tsx'
+import Prediction from '../../../components/prediction.tsx'
 import { getCensoredPrediction, getPrediction } from '../../../server/prediction.ts'
 
 export const dynamic = 'force-dynamic'

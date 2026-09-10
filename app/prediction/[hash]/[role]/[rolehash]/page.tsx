@@ -1,6 +1,6 @@
 import GoBackWrapper from '../../../../../components/go-back-wrapper.tsx'
-import { isRole } from '../../../../../shared/index.ts'
 import { getCensoredPrediction, getPrediction } from '../../../../../server/prediction.ts'
+import { isRole } from '../../../../../shared/index.ts'
 import AnswerController from './answer-controller.tsx'
 
 export const dynamic = 'force-dynamic'

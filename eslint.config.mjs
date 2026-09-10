@@ -3,7 +3,9 @@
 import eslint from '@eslint/js'
 import nextPlugin from '@next/eslint-plugin-next'
 import prettierConfig from 'eslint-config-prettier'
+import noOnlyTests from 'eslint-plugin-no-only-tests'
 import reactHooks from 'eslint-plugin-react-hooks'
+import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
@@ -28,6 +30,10 @@ export default tseslint.config(
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
+    },
+    plugins: {
+      'no-only-tests': noOnlyTests,
+      'simple-import-sort': simpleImportSort,
     },
     rules: {
       // turn off unwanted rules:
@@ -57,16 +63,22 @@ export default tseslint.config(
       ],
       '@typescript-eslint/strict-boolean-expressions': ['error', { allowNullableBoolean: true }],
       '@typescript-eslint/prefer-enum-initializers': ['error'],
-      'sort-imports': [
-        'error',
-        {
-          ignoreCase: true,
-          ignoreDeclarationSort: true, // disabled since it does not have a '--fix' option
-        },
-      ],
+      'simple-import-sort/imports': 'error', // unlike core 'sort-imports', this one autofixes
+      'no-only-tests/no-only-tests': 'error', // a stray .only silently skips the rest of the file
 
       // change config of activated rules
-      '@typescript-eslint/no-unused-vars': ['error', { vars: 'all', args: 'none' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          vars: 'all',
+          args: 'none',
+          caughtErrors: 'all',
+          caughtErrorsIgnorePattern: '^_',
+          destructuredArrayIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
+      ],
       '@typescript-eslint/no-confusing-void-expression': [
         'error',
         { ignoreArrowShorthand: true }, // having this active is too verbose

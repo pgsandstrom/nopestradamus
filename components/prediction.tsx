@@ -1,5 +1,5 @@
-import type { PredictionCensored } from '../shared/index.ts'
 import { formatDateString } from '../shared/date-util.ts'
+import type { PredictionCensored } from '../shared/index.ts'
 import styles from './prediction.module.css'
 
 interface PredictionProps {

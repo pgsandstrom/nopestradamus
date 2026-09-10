@@ -49,9 +49,12 @@ Database connection details can be overridden with the standard `PGHOST`, `PGPOR
 `PGUSER` and `PGPASSWORD` environment variables.
 
 ```sh
+pnpm validate       # typecheck + lint + test, same as pre-push runs
 pnpm lint
 pnpm typecheck
 pnpm test
+pnpm format         # prettier over the repo, format:check to only report
+pnpm knip           # unused files, exports and dependencies
 pnpm cron           # run the cron process locally
 ```
 

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 
-import { LinkButton } from './ui/button.tsx'
 import styles from './go-back-wrapper.module.css'
+import { LinkButton } from './ui/button.tsx'
 
 export default function GoBackWrapper({ children }: { children: ReactNode }) {
   return (
