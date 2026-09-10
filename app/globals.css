@@ -9,6 +9,8 @@
   --color-success: #15803d;
   --color-danger: #b91c1c;
 
+  --content-max: 1200px;
+
   --radius: 6px;
   --space-1: 4px;
   --space-2: 8px;
@@ -21,21 +23,7 @@
     system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji',
     'Segoe UI Emoji';
 
-  color-scheme: light dark;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #0f172a;
-    --color-surface: #1e293b;
-    --color-text: #e2e8f0;
-    --color-text-muted: #94a3b8;
-    --color-border: #475569;
-    --color-primary: #8b9df0;
-    --color-primary-hover: #a5b3f4;
-    --color-success: #4ade80;
-    --color-danger: #f87171;
-  }
+  color-scheme: light;
 }
 
 *,
