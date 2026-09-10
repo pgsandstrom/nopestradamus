@@ -1,68 +1,58 @@
 {
-  "name": "nopestradamus-frontend",
-  "version": "0.1.0",
+  "name": "nopestradamus",
+  "version": "0.2.0",
   "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "build": "next build",
-    "build-cron": "rm -rf dist-cron && tsc -p tsconfig-cron.json --outDir dist-cron",
+    "cron": "node server-cron.ts",
     "dev": "next dev",
     "dev-database": "docker compose -f docker-compose-dev.yml up -d",
     "dev-database-build": "docker compose -f docker-compose-dev.yml build",
     "docker-build": "docker compose build --no-cache",
     "docker-up": "docker compose up",
-    "format": "prettier --write \"{,!(.next|dist|node_modules)/**/}!(package-lock).{json,md,js,jsx,ts,tsx,css,scss}\"",
-    "lint": "eslint --max-warnings 0 \"**/*.{ts,tsx,js}\"",
+    "format": "prettier --write .",
+    "lint": "eslint --max-warnings 0",
     "pre-commit": "lint-staged",
-    "pre-push": "npm run lint && npm run typecheck",
-    "//": "TODO: we should not specify port here, but instead only in .env.local. But for some reason it does not work unless we specify it here",
+    "pre-push": "npm run lint && npm run typecheck && npm run test",
     "start": "next start -p 3000",
+    "test": "vitest run",
+    "test-watch": "vitest",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@emotion/cache": "11.10.7",
-    "@emotion/react": "11.10.6",
-    "@emotion/server": "11.10.0",
-    "@emotion/styled": "11.10.6",
-    "@mui/icons-material": "5.11.16",
-    "@mui/material": "5.12.1",
-    "@mui/x-date-pickers": "6.2.0",
-    "@types/lodash": "4.17.7",
-    "@types/node": "22.0.0",
-    "@types/nodemailer": "6.4.15",
-    "@types/pg": "8.11.6",
-    "@types/react": "18.3.3",
-    "@types/uuid": "10.0.0",
-    "cron": "2.4.4",
-    "cross-env": "7.0.3",
-    "date-fns": "2.30.0",
-    "lodash": "4.17.21",
-    "next": "14.2.5",
-    "nodemailer": "6.9.14",
-    "pg": "8.12.0",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "typescript": "5.5.4",
-    "uuid": "10.0.0"
+    "cron": "4.4.0",
+    "next": "16.3.4",
+    "nodemailer": "10.0.3",
+    "pg": "8.23.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
   },
   "devDependencies": {
-    "@eslint/compat": "1.1.1",
-    "@eslint/js": "9.8.0",
-    "@next/eslint-plugin-next": "14.2.5",
-    "@types/eslint__js": "8.42.3",
-    "eslint": "9.8.0",
-    "eslint-config-prettier": "9.1.0",
-    "eslint-plugin-no-only-tests": "3.1.0",
-    "eslint-plugin-react": "7.35.0",
-    "eslint-plugin-react-hooks": "4.6.2",
-    "lint-staged": "15.2.7",
-    "prettier": "3.3.3",
-    "typescript-eslint": "7.17.0"
+    "@eslint/js": "10.0.1",
+    "@next/eslint-plugin-next": "16.3.4",
+    "@types/node": "26.5.1",
+    "@types/pg": "8.23.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "10.10.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "17.12.0",
+    "lint-staged": "17.5.1",
+    "prettier": "3.9.6",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.70.0",
+    "vitest": "5.0.0"
   },
   "optionalDependencies": {
-    "husky": "9.1.3"
+    "husky": "9.1.7"
   },
   "lint-staged": {
-    "*.{js,json,md,css,scss,html}": [
+    "*.{js,mjs,json,md,css,html}": [
       "prettier --write"
     ],
     "*.{ts,tsx}": [

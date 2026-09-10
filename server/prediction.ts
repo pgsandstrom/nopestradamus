@@ -1,134 +1,132 @@
-import { v4 as uuidv4 } from 'uuid'
+import { randomUUID } from 'node:crypto'
 
-import { query, querySingle, queryString, SQL } from '../util/db'
-import { confirmAccountExistance, validateAccount } from './account'
-import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './scheduler'
-import { PredictionCensored, PredictionShallow } from '../shared'
-import { censorMail, isMailValid } from '../shared/mail-util'
+import type {
+  Creater,
+  Participant,
+  Prediction,
+  PredictionCensored,
+  PredictionShallow,
+} from '../shared/index.ts'
+import { censorMail, isMailValid } from '../shared/mail-util.ts'
 import {
   validateCreaterMail,
   validateDateString,
   validateDescription,
   validateParticipant,
   validateTitle,
-} from '../shared/validatePrediction'
+} from '../shared/validate-prediction.ts'
+import { query, querySingle, queryString, SQL } from '../util/db.ts'
+import { confirmAccountExistance, validateAccount } from './account.ts'
+import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './scheduler.ts'
 
 /**
- * Removes all private hashes from the predicition. Also censors the mails!
- * @param prediction
- * @param keepHashes These hashes will not be removed
+ * Removes all private hashes from the prediction. Also censors the mails!
+ * @param currentUserHash the participant hash of the viewer, so we can flag their own row
  */
 export const getCensoredPrediction = (
   prediction: Prediction,
   currentUserHash?: string,
-): PredictionCensored => {
-  return {
-    ...prediction,
-    creater: {
-      ...prediction.creater,
-      hash: undefined,
-      mail: censorMail(prediction.creater.mail),
-    },
-    participants: prediction.participants.map((participant) => ({
-      ...participant,
-      hash: undefined,
-      isCurrentUser: currentUserHash === participant.hash,
-      mail: censorMail(participant.mail),
-    })),
-  }
-}
+): PredictionCensored => ({
+  ...prediction,
+  creater: {
+    ...prediction.creater,
+    hash: undefined,
+    mail: censorMail(prediction.creater.mail),
+  },
+  participants: prediction.participants.map((participant) => ({
+    ...participant,
+    hash: undefined,
+    isCurrentUser: currentUserHash === participant.hash,
+    mail: censorMail(participant.mail),
+  })),
+})
 
-export const getLatestPredictions = () =>
-  queryString(
+export const getLatestPredictions = async (): Promise<PredictionShallow[]> => {
+  const cursor = await queryString<PredictionShallow>(
     `SELECT title, body, prediction.hash FROM prediction
 JOIN creater on prediction.hash = creater.prediction_hash
 WHERE public IS true
 AND creater.accepted IS true
 ORDER BY created DESC
 LIMIT 20`,
-  ).then((cursor) => cursor.rows as PredictionShallow[])
+  )
+  return cursor.rows
+}
 
-export const getPredictions = (title: string) => {
+export const getPredictions = async (title: string): Promise<PredictionShallow[]> => {
   const likeTitle = `%${title}%`
-  return query(SQL`SELECT title, body, prediction.hash FROM prediction
+  const cursor = await query<PredictionShallow>(
+    SQL`SELECT title, body, prediction.hash FROM prediction
 JOIN creater on prediction.hash = creater.prediction_hash
 WHERE public IS true
 AND prediction.title LIKE ${likeTitle}
-ORDER BY created DESC`).then((cursor) => cursor.rows as PredictionShallow[])
+ORDER BY created DESC`,
+  )
+  return cursor.rows
 }
 
 export const getPrediction = async (hash: string): Promise<Prediction | undefined> => {
-  // TODO serialize this
-  /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-  const prediction = await querySingle(
+  const prediction = await querySingle<Omit<Prediction, 'creater' | 'participants'>>(
     SQL`SELECT created, title, body, hash, finish_date FROM prediction WHERE hash = ${hash}`,
   )
-
   if (prediction === undefined) {
     return undefined
   }
 
-  const creater = await querySingle(
-    SQL`SELECT hash, mail, accepted, accepted_date, accepted_mail_sent, end_mail_sent FROM creater WHERE prediction_hash = ${hash}`,
-  )
-  const participants: Participant[] = (
-    await query(
+  const [creater, participants] = await Promise.all([
+    querySingle<Creater>(
+      SQL`SELECT hash, mail, accepted, accepted_date, accepted_mail_sent, end_mail_sent FROM creater WHERE prediction_hash = ${hash}`,
+    ),
+    query<Participant>(
       SQL`SELECT hash, mail, accepted, accepted_date, accepted_mail_sent, end_mail_sent FROM participant WHERE prediction_hash = ${hash}`,
-    )
-  ).rows
-
-  const result: Prediction = {
-    ...prediction,
-    creater,
-    participants,
+    ),
+  ])
+  if (creater === undefined) {
+    throw new Error(`Prediction ${hash} has no creater`)
   }
-  /* eslint-enable @typescript-eslint/no-unsafe-assignment */
 
-  return result
+  return { ...prediction, creater, participants: participants.rows }
 }
 
-export const getOldBetWithUnsentCreaterAcceptMails = async () => {
-  const cursor = await queryString<{ hash: string }>(`
-SELECT DISTINCT prediction.hash FROM prediction
-JOIN creater on prediction.hash = creater.prediction_hash
-WHERE creater.accepted_mail_sent = false 
-`)
+const selectPredictionHashes = async (text: string): Promise<string[]> => {
+  const cursor = await queryString<{ hash: string }>(text)
   return cursor.rows.map((row) => row.hash)
 }
 
-export const getCreaterNotAcceptedPredictions = async () => {
-  const cursor = await queryString<{ hash: string }>(`
+export const getOldBetWithUnsentCreaterAcceptMails = (): Promise<string[]> =>
+  selectPredictionHashes(`
+SELECT DISTINCT prediction.hash FROM prediction
+JOIN creater on prediction.hash = creater.prediction_hash
+WHERE creater.accepted_mail_sent = false
+`)
+
+export const getCreaterNotAcceptedPredictions = (): Promise<string[]> =>
+  selectPredictionHashes(`
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN creater on prediction.hash = creater.prediction_hash
 WHERE creater.accepted IS NOT true
 `)
-  return cursor.rows.map((row) => row.hash)
-}
 
-export const getOldBetWithUnsentCreaterEndMails = async () => {
-  const cursor = await queryString<{ hash: string }>(`
+export const getOldBetWithUnsentCreaterEndMails = (): Promise<string[]> =>
+  selectPredictionHashes(`
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN creater on prediction.hash = creater.prediction_hash
 WHERE prediction.finish_date < now()
   AND creater.accepted = true
-  AND creater.end_mail_sent = false 
+  AND creater.end_mail_sent = false
 `)
-  return cursor.rows.map((row) => row.hash)
-}
 
-export const getOldBetWithUnsentParticipantsAcceptMails = async () => {
-  const cursor = await queryString<{ hash: string }>(`
+export const getOldBetWithUnsentParticipantsAcceptMails = (): Promise<string[]> =>
+  selectPredictionHashes(`
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN participant on prediction.hash = participant.prediction_hash
 JOIN creater on prediction.hash = creater.prediction_hash
 WHERE participant.accepted_mail_sent = false
   AND creater.accepted = true
 `)
-  return cursor.rows.map((row) => row.hash)
-}
 
-export const getOldBetWithUnsentParticipantsEndMails = async () => {
-  const cursor = await queryString<{ hash: string }>(`
+export const getOldBetWithUnsentParticipantsEndMails = (): Promise<string[]> =>
+  selectPredictionHashes(`
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN participant on prediction.hash = participant.prediction_hash
 JOIN creater on prediction.hash = creater.prediction_hash
@@ -137,116 +135,111 @@ WHERE prediction.finish_date < now()
   AND participant.end_mail_sent = false
   AND creater.accepted = true
 `)
-  return cursor.rows.map((row) => row.hash)
+
+export interface CreatePredictionInput {
+  title?: string
+  body?: string
+  finishDate?: string
+  isPublic?: boolean
+  createrMail?: string
+  participantList?: string[]
 }
 
-export const createPrediction = async (
-  title?: string,
-  body?: string,
-  finishDate?: string,
-  isPublic?: boolean,
-  createrMailRaw?: string,
-  participantListRaw?: string[],
-) => {
-  const createrMail = createrMailRaw?.trim()
-  const participantList = participantListRaw?.map((p) => p.trim())
+export const createPrediction = async (input: CreatePredictionInput): Promise<void> => {
+  const { title, body, finishDate, isPublic } = input
+  const createrMail = input.createrMail?.trim()
+  const participantList = input.participantList?.map((p) => p.trim())
 
   if (!validateTitle(title)) {
     throw new Error('Invalid title')
   }
   if (!validateDescription(body)) {
-    throw new Error('title must be present')
+    throw new Error('Invalid description')
   }
   if (!validateDateString(finishDate)) {
-    throw new Error('finishDate must be present')
+    throw new Error('Invalid finishDate')
   }
   if (isPublic === undefined) {
     throw new Error('Invalid isPublic')
   }
   if (!validateCreaterMail(createrMail)) {
-    throw new Error('createrMail must be present')
+    throw new Error('Invalid createrMail')
   }
   if (
     participantList === undefined ||
     !participantList.every((p) => validateParticipant(p, participantList))
   ) {
-    throw new Error('participantList invalid')
+    throw new Error('Invalid participantList')
   }
 
-  const hash = uuidv4()
+  const hash = randomUUID()
   await query(
     SQL`INSERT INTO prediction (title, body, hash, finish_date, public) VALUES(${title}, ${body}, ${hash}, ${finishDate}, ${isPublic})`,
   )
   await createCreater(hash, createrMail)
-  const promiseList = participantList.map((participant) => createParticipant(hash, participant))
-  await Promise.all(promiseList)
-  return handleUnsentCreaterAcceptEmail(hash)
+  await Promise.all(participantList.map((participant) => createParticipant(hash, participant)))
+  await handleUnsentCreaterAcceptEmail(hash)
 }
 
-const createCreater = async (predictionHash: string, mail: string) => {
+const createCreater = async (predictionHash: string, mail: string): Promise<void> => {
   if (!isMailValid(mail)) {
-    throw new Error(`creater mail is invalid:${mail}`)
+    throw new Error(`creater mail is invalid: ${mail}`)
   }
-  const hash = uuidv4()
   await confirmAccountExistance(mail)
-  return query(
-    SQL`INSERT INTO creater (hash, prediction_hash, mail) VALUES (${hash}, ${predictionHash}, ${mail})`,
+  await query(
+    SQL`INSERT INTO creater (hash, prediction_hash, mail) VALUES (${randomUUID()}, ${predictionHash}, ${mail})`,
   )
 }
 
-const createParticipant = async (predictionHash: string, mail: string) => {
+const createParticipant = async (predictionHash: string, mail: string): Promise<void> => {
   if (!isMailValid(mail)) {
-    throw new Error(`participant mail is invalid:${mail}`)
+    throw new Error(`participant mail is invalid: ${mail}`)
   }
-  const hash = uuidv4()
   await confirmAccountExistance(mail)
-  return query(
-    SQL`INSERT INTO participant (hash, prediction_hash, mail) VALUES (${hash}, ${predictionHash}, ${mail})`,
+  await query(
+    SQL`INSERT INTO participant (hash, prediction_hash, mail) VALUES (${randomUUID()}, ${predictionHash}, ${mail})`,
   )
 }
 
 export const deletePrediction = async (hash: string) => {
-  const predictionPromise = await query(SQL`DELETE FROM prediction WHERE hash = ${hash}`)
-  const createrPromise = await query(SQL`DELETE FROM creater WHERE prediction_hash = ${hash}`)
-  const participantPromise = await query(
-    SQL`DELETE FROM participant WHERE prediction_hash = ${hash}`,
-  )
+  const prediction = await query(SQL`DELETE FROM prediction WHERE hash = ${hash}`)
+  const creater = await query(SQL`DELETE FROM creater WHERE prediction_hash = ${hash}`)
+  const participant = await query(SQL`DELETE FROM participant WHERE prediction_hash = ${hash}`)
 
   return {
-    predictionDeleted: predictionPromise.rowCount,
-    createrDeleted: createrPromise.rowCount,
-    participantDeleted: participantPromise.rowCount,
+    predictionDeleted: prediction.rowCount,
+    createrDeleted: creater.rowCount,
+    participantDeleted: participant.rowCount,
   }
 }
 
-// TODO throw exceptions when stuff miss?
-export const setCreaterAcceptMailSent = async (hash: string) => {
+export const setCreaterAcceptMailSent = async (hash: string): Promise<void> => {
   const result = await query(SQL`UPDATE creater SET accepted_mail_sent = true WHERE hash = ${hash}`)
   if (result.rowCount !== 1) {
     throw new Error('failed to set creater accepted_mail_sent')
   }
-  return result
 }
 
-export const setCreaterEndMailSent = async (hash: string) => {
+export const setCreaterEndMailSent = async (hash: string): Promise<void> => {
   const result = await query(SQL`UPDATE creater SET end_mail_sent = true WHERE hash = ${hash}`)
   if (result.rowCount !== 1) {
     throw new Error('failed to set creater end_mail_sent')
   }
-  return result
 }
 
-export const setParticipantAcceptMailSent = (hash: string) =>
-  query(SQL`UPDATE participant SET accepted_mail_sent = true WHERE hash = ${hash}`)
+export const setParticipantAcceptMailSent = async (hash: string): Promise<void> => {
+  await query(SQL`UPDATE participant SET accepted_mail_sent = true WHERE hash = ${hash}`)
+}
 
-export const setParticipantEndMailSent = (participantHash: string) =>
-  query(SQL`UPDATE participant SET end_mail_sent = true WHERE hash = ${participantHash}`)
+export const setParticipantEndMailSent = async (hash: string): Promise<void> => {
+  await query(SQL`UPDATE participant SET end_mail_sent = true WHERE hash = ${hash}`)
+}
 
 export const updateCreaterAcceptStatus = async (
   predictionHash: string,
   hash: string,
   accepted: boolean,
-) => {
+): Promise<void> => {
   const result = await query(
     SQL`UPDATE creater SET accepted = ${accepted}, accepted_date = now() WHERE prediction_hash = ${predictionHash} AND hash = ${hash}`,
   )
@@ -258,14 +251,14 @@ export const updateCreaterAcceptStatus = async (
     throw new Error(`Prediction not found: ${predictionHash}`)
   }
   await validateAccount(prediction.creater.mail)
-  return handleUnsentAcceptEmail(predictionHash)
+  await handleUnsentAcceptEmail(predictionHash)
 }
 
 export const updateParticipantAcceptStatus = async (
   predictionHash: string,
   hash: string,
   accepted: boolean,
-) => {
+): Promise<void> => {
   const result = await query(
     SQL`UPDATE participant SET accepted = ${accepted}, accepted_date = now() WHERE prediction_hash = ${predictionHash} AND hash = ${hash}`,
   )
@@ -276,6 +269,9 @@ export const updateParticipantAcceptStatus = async (
   if (prediction === undefined) {
     throw new Error(`Prediction not found: ${predictionHash}`)
   }
-  const participant = prediction.participants.find((p) => p.hash === hash)!
-  return validateAccount(participant.mail)
+  const participant = prediction.participants.find((p) => p.hash === hash)
+  if (participant === undefined) {
+    throw new Error(`Participant not found: ${hash}`)
+  }
+  await validateAccount(participant.mail)
 }

@@ -1,48 +1,29 @@
-import { PredictionCensored } from '../shared'
-import { Typography } from '@mui/material'
-import { formatDateString } from '../shared/date-util'
-import CropSquareIcon from '@mui/icons-material/CropSquare'
-import CheckIcon from '@mui/icons-material/Check'
-import ClearIcon from '@mui/icons-material/Clear'
+import type { PredictionCensored } from '../shared/index.ts'
+import { formatDateString } from '../shared/date-util.ts'
+import styles from './prediction.module.css'
 
 interface PredictionProps {
   prediction: PredictionCensored
   suppressNotAcceptedWarning?: boolean
-  style?: React.CSSProperties
 }
 
-export default function Prediction({
-  prediction,
-  suppressNotAcceptedWarning,
-  style,
-}: PredictionProps) {
+export default function Prediction({ prediction, suppressNotAcceptedWarning }: PredictionProps) {
   return (
-    <div style={style}>
+    <section>
       {prediction.creater.accepted !== true && suppressNotAcceptedWarning !== true && (
-        <div style={{ marginTop: '20px', color: 'red' }}>
-          <Typography variant="caption">
-            NOTICE: This prediction has not yet been accepted by the creater, therefore it is set to
-            private and not shown anywhere else on the page.
-          </Typography>
-        </div>
+        <p className={styles.warning}>
+          NOTICE: This prediction has not yet been accepted by the creater, therefore it is set to
+          private and not shown anywhere else on the page.
+        </p>
       )}
-      <Typography variant="h5" style={{ marginTop: '20px' }}>
-        {prediction.title}
-      </Typography>
-      <Typography variant="subtitle2">created on {formatDateString(prediction.created)}</Typography>
-      <Typography variant="body1" style={{ marginTop: '40px' }}>
-        {prediction.body}
-      </Typography>
-      <Typography
-        variant="body1"
-        style={{ marginTop: '60px', borderTop: '1px solid gray', paddingTop: '10px' }}
-      >
+      <h1 className={styles.title}>{prediction.title}</h1>
+      <p className={styles.created}>created on {formatDateString(prediction.created)}</p>
+      <p className={styles.body}>{prediction.body}</p>
+      <p className={styles.finish}>
         The predictions finishes on {formatDateString(prediction.finish_date)}
-      </Typography>
-      <div>
-        <Typography variant="h6" style={{ marginTop: '20px' }}>
-          Participants
-        </Typography>
+      </p>
+      <h2 className={styles.participantsHeading}>Participants</h2>
+      <ul className={styles.participantList}>
         <ParticipantRow
           accepted={prediction.creater.accepted}
           name={prediction.creater.mail}
@@ -51,8 +32,8 @@ export default function Prediction({
         {prediction.participants.map((p) => (
           <ParticipantRow key={p.mail} accepted={p.accepted} name={p.mail} />
         ))}
-      </div>
-    </div>
+      </ul>
+    </section>
   )
 }
 
@@ -62,46 +43,43 @@ interface ParticipantRowProps {
   extraText?: string
 }
 
-const ParticipantRow = ({ accepted, name, extraText }: ParticipantRowProps) => {
+function ParticipantRow({ accepted, name, extraText }: ParticipantRowProps) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <div style={{ position: 'relative' }}>
-        {accepted === true && (
-          <CheckIcon
-            style={{
-              position: 'absolute',
-              top: '7px',
-              left: '6px',
-              fontSize: '1.2em',
-              color: 'green',
-            }}
-          />
-        )}
-        {accepted === false && (
-          <ClearIcon
-            style={{
-              position: 'absolute',
-              top: '7px',
-              left: '6px',
-              fontSize: '1.2em',
-              color: 'red',
-            }}
-          />
-        )}
-        <CropSquareIcon style={{ fontSize: '2em' }} />
-      </div>
-
+    <li className={styles.participant}>
+      <StatusBox accepted={accepted} />
       <span>{name}</span>
-      {extraText !== undefined && (
-        <Typography variant="caption" style={{ marginLeft: '10px' }}>
-          {extraText}
-        </Typography>
-      )}
-      {accepted === undefined && (
-        <Typography variant="caption" style={{ marginLeft: '10px' }}>
-          (waiting for confirmation)
-        </Typography>
-      )}
-    </div>
+      {extraText !== undefined && <span className={styles.note}>{extraText}</span>}
+      {accepted === undefined && <span className={styles.note}>(waiting for confirmation)</span>}
+    </li>
+  )
+}
+
+function StatusBox({ accepted }: { accepted?: boolean }) {
+  const label =
+    accepted === true ? 'Accepted' : accepted === false ? 'Rejected' : 'Awaiting response'
+  const className = [
+    styles.status,
+    accepted === true ? styles.accepted : undefined,
+    accepted === false ? styles.rejected : undefined,
+  ]
+    .filter(Boolean)
+    .join(' ')
+
+  return (
+    <svg
+      className={className}
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      role="img"
+      aria-label={label}
+    >
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      {accepted === true && <polyline points="7.5 12.5 10.5 15.5 16.5 8.5" />}
+      {accepted === false && <path d="M8 8 L16 16 M16 8 L8 16" />}
+    </svg>
   )
 }

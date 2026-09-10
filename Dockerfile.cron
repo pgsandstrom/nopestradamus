@@ -1,35 +1,32 @@
-FROM node:22
-
-# Create app directory
+FROM node:24-slim AS base
+ENV NPM_CONFIG_LOGLEVEL=info
 WORKDIR /app
 
-ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_ENV production
+# ---- dependencies -----------------------------------------------------------
+FROM base AS deps
+COPY package.json package-lock.json ./
+RUN npm ci --omit=optional
 
-RUN apt-get update
-RUN echo "postfix postfix/mailname string nopestradamus.com" | debconf-set-selections
-RUN echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections
-RUN apt-get install --assume-yes postfix
-RUN postconf -e 'myhostname = nopestradamus.com'
+# ---- runtime ----------------------------------------------------------------
+FROM base AS runner
+ENV NODE_ENV=production
+
+RUN echo "postfix postfix/mailname string nopestradamus.com" | debconf-set-selections \
+ && echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections \
+ && apt-get update \
+ && apt-get install --assume-yes --no-install-recommends postfix \
+ && rm -rf /var/lib/apt/lists/* \
+ && postconf -e 'myhostname = nopestradamus.com'
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY package.json ./
+COPY server-cron.ts ./
+COPY server ./server
+COPY shared ./shared
+COPY util ./util
 
 # TODO Is this how we want to handle privkey?
-COPY privkey.pem .
-COPY config.json .
+COPY privkey.pem config.json ./
 
-EXPOSE 80
-
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-COPY package*.json ./
-
-RUN npm install --legacy-peer-deps --omit=optional
-# If you are building your code for production
-# RUN npm ci --omit=dev
-
-# Bundle app source
-COPY . .
-
-
-RUN npm run build-cron
-
-CMD service postfix start && node dist-cron/server-cron.js
+# node runs the TypeScript directly via type stripping, so there is no build step
+CMD service postfix start && node server-cron.ts

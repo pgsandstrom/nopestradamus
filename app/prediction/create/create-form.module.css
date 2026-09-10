@@ -1,0 +1,46 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 400px;
+  width: 100%;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.participants {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: var(--space-3) 0;
+}
+
+.participantRow {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.participantField {
+  flex: 1 0 0;
+}
+
+.deleteButton {
+  margin-top: 1.35rem;
+}
+
+.submit {
+  margin-top: var(--space-4);
+}
+
+.error {
+  color: var(--color-danger);
+}
+
+.notice {
+  margin-top: var(--space-3);
+}

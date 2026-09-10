@@ -1,31 +1,27 @@
-import fs from 'fs'
+import fs from 'node:fs'
 
-const configPath = './config.json'
-
-const privateKeyPath = './privkey.pem'
-
-export const getPrivateKey = () => fs.readFileSync(privateKeyPath, 'utf8')
+const CONFIG_PATH = './config.json'
+const PRIVATE_KEY_PATH = './privkey.pem'
 
 // to find the config file, just check config.json in the project folder on the server
-interface MyConfig {
+export interface AppConfig {
   adminPassword: string
 }
 
-let config: MyConfig
+let cachedConfig: AppConfig | undefined
 
-const loadConfig = (): void => {
-  if (fs.existsSync(configPath)) {
-    config = JSON.parse(fs.readFileSync(configPath, 'utf8')) as MyConfig
-  } else {
-    throw new Error('no config file exists')
+/**
+ * Reads config.json from the working directory. Lazy on purpose: the file only has to exist
+ * when something actually needs it, so `next build` works without secrets present.
+ */
+export function getConfig(): AppConfig {
+  if (cachedConfig === undefined) {
+    if (!fs.existsSync(CONFIG_PATH)) {
+      throw new Error(`No config file exists at ${CONFIG_PATH}`)
+    }
+    cachedConfig = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8')) as AppConfig
   }
+  return cachedConfig
 }
 
-export default () => {
-  // TODO would it be possible to use loadConfig as a type guard to make 'config' variable into defined.
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (config === undefined) {
-    loadConfig()
-  }
-  return config
-}
+export const getPrivateKey = (): string => fs.readFileSync(PRIVATE_KEY_PATH, 'utf8')

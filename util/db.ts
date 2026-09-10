@@ -1,82 +1,76 @@
-import { Pool, PoolClient, QueryConfig, QueryResult, QueryResultRow, types } from 'pg'
-import { nullToUndefined } from '../shared/object-util'
+import { Pool, type QueryConfig, type QueryResult, type QueryResultRow, types } from 'pg'
 
 // Force count-function in database to return number instead of string
 // https://github.com/brianc/node-pg-types#use
-types.setTypeParser(20, (val: string) => {
-  return parseInt(val, 10)
-})
+types.setTypeParser(types.builtins.INT8, (val: string) => parseInt(val, 10))
 
 let dbPool: Pool | undefined
 
 const getDbPool = (): Pool => {
-  if (dbPool === undefined) {
-    const dev = process.env.NODE_ENV !== 'production'
-    console.log(`process.env.NODE_ENV: ${process.env.NODE_ENV}`)
-    if (dev) {
-      dbPool = new Pool({
-        host: 'localhost',
-        database: 'nopestradamus',
-        user: 'postgres',
-        password: 'postgres',
-      })
-    } else {
-      dbPool = new Pool({
-        host: 'db',
-        database: 'nopestradamus',
-        user: 'postgres',
-        password: 'postgres',
-      })
-    }
-  }
+  dbPool ??= new Pool({
+    host: process.env.PGHOST ?? (process.env.NODE_ENV === 'production' ? 'db' : 'localhost'),
+    port: Number(process.env.PGPORT ?? 5432),
+    database: process.env.PGDATABASE ?? 'nopestradamus',
+    user: process.env.PGUSER ?? 'postgres',
+    password: process.env.PGPASSWORD ?? 'postgres',
+  })
   return dbPool
 }
 
-// TODO: in query and queryString we mutate the queryResult. Is that dangerous? Read up on it.
-export const query = async <T extends QueryResultRow = any>(
-  stuff: QueryConfig,
+/**
+ * Recursively replaces null with undefined, so callers can use optional properties
+ * instead of having to handle both null and undefined.
+ */
+function nullToUndefined(item: unknown): unknown {
+  if (Array.isArray(item)) {
+    return item.map(nullToUndefined)
+  }
+  if (item === null) {
+    return undefined
+  }
+  if (typeof item === 'object' && !(item instanceof Date)) {
+    const source = item as Record<string, unknown>
+    const result: Record<string, unknown> = {}
+    for (const key of Object.keys(source)) {
+      result[key] = nullToUndefined(source[key])
+    }
+    return result
+  }
+  return item
+}
+
+export const query = async <T extends QueryResultRow>(
+  config: QueryConfig,
 ): Promise<QueryResult<T>> => {
-  const queryResult = await getDbPool().query<T>(stuff)
+  const queryResult = await getDbPool().query<T>(config)
   queryResult.rows = nullToUndefined(queryResult.rows) as T[]
   return queryResult
 }
 
-export async function queryString<R extends QueryResultRow = any>(stuff: string, values?: any[]) {
-  const queryResult = await getDbPool().query<R>(stuff, values)
-  queryResult.rows = nullToUndefined(queryResult.rows) as R[]
+export const queryString = async <T extends QueryResultRow>(
+  text: string,
+  values?: unknown[],
+): Promise<QueryResult<T>> => {
+  const queryResult = await getDbPool().query<T>(text, values)
+  queryResult.rows = nullToUndefined(queryResult.rows) as T[]
   return queryResult
 }
 
-export const querySingle = async <T extends QueryResultRow = any>(stuff: QueryConfig) => {
-  const result: QueryResult<T> = await getDbPool().query(stuff)
-  return nullToUndefined(getSingle<T>(result)) as T | undefined
-}
-
-export const querySingleString = async <T extends QueryResultRow = any>(
-  stuff: string,
-  values?: any[],
-) => {
-  const result: QueryResult<T> = await getDbPool().query(stuff, values)
-  return nullToUndefined(getSingle<T>(result)) as T
-}
-
-const getSingle = <T extends QueryResultRow>(result: QueryResult<T>): T | undefined => {
+export const querySingle = async <T extends QueryResultRow>(
+  config: QueryConfig,
+): Promise<T | undefined> => {
+  const result = await query<T>(config)
   if (result.rowCount == null || result.rowCount > 1) {
     throw new Error(`Unexpected number of rows: ${result.rowCount}`)
-  } else if (result.rowCount === 0) {
-    return undefined
-  } else {
-    return result.rows[0]
   }
+  return result.rows[0]
 }
 
-// Use this to gain a client for multiple operations, such as transactions
-export const getClient = (): Promise<PoolClient> => {
-  return getDbPool().connect()
-}
-
-export const SQL = (parts: TemplateStringsArray, ...values: any[]): QueryConfig => ({
-  // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-  text: parts.reduce((prev, curr, i) => prev + '$' + i + curr),
+/**
+ * Tagged template that builds a parameterised query, so values are never interpolated
+ * into the SQL string: SQL`SELECT * FROM x WHERE id = ${id}` -> 'SELECT * FROM x WHERE id = $1'.
+ */
+export const SQL = (parts: TemplateStringsArray, ...values: unknown[]): QueryConfig => ({
+  text: parts.reduce((text, part, i) => `${text}$${i}${part}`),
   values,
 })

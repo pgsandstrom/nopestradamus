@@ -1,5 +1,40 @@
-// TODO as soon as nextjs actually supports shared folders in a nice way, move this to outside frontend folder
-// follow discussion at https://github.com/vercel/next.js/discussions/15327
+// Domain types shared by the Next.js app and the standalone cron process.
+
+/** A prediction as stored, including the secret hashes. Never send this to a client. */
+export interface Prediction {
+  created: string
+  creater: Creater
+  title: string
+  body: string
+  hash: string
+  finish_date: string
+  participants: Participant[]
+}
+
+export interface Creater {
+  mail: string
+  hash: string
+  accepted?: boolean
+  accepted_date?: string
+  accepted_mail_sent: boolean
+  end_mail_sent: boolean
+}
+
+export interface Participant {
+  mail: string
+  hash: string
+  accepted?: boolean
+  accepted_date?: string
+  accepted_mail_sent: boolean
+  end_mail_sent: boolean
+}
+
+export const ROLES = ['creater', 'participant'] as const
+export type Role = (typeof ROLES)[number]
+
+export function isRole(value: string): value is Role {
+  return (ROLES as readonly string[]).includes(value)
+}
 
 export interface PredictionShallow {
   title: string
@@ -7,6 +42,7 @@ export interface PredictionShallow {
   hash: string
 }
 
+/** A prediction safe to hand to a client: hashes stripped, mails censored. */
 export interface PredictionCensored {
   created: string
   creater: {
@@ -33,7 +69,3 @@ export interface AppAccount {
   validated: boolean
   blocked: boolean
 }
-
-export type Dictionary<K extends string | number | symbol, V> = { [key in K]: V }
-
-export type PartialDict<K extends string | number | symbol, V> = { [key in K]?: V }

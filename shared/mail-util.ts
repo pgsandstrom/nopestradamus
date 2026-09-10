@@ -1,33 +1,29 @@
+const MAIL_PATTERN =
+  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+export const isMailValid = (rawMail: string): boolean => MAIL_PATTERN.test(rawMail.trim())
+
+/** Obscures roughly a third of the local part (or the domain, if the local part is tiny). */
 export const censorMail = (mail: string): string => {
-  if (isMailValid(mail) === false) {
+  if (!isMailValid(mail)) {
     return mail
   }
-  const [firstPart, secondPart] = mail.split('@')
+  const [firstPart = '', secondPart = ''] = mail.split('@')
   if (firstPart.length > 2) {
     return `${censorString(firstPart)}@${secondPart}`
-  } else if (secondPart.length > 2) {
-    return `${firstPart}@${censorString(secondPart)}`
-  } else {
-    return mail
   }
+  if (secondPart.length > 2) {
+    return `${firstPart}@${censorString(secondPart)}`
+  }
+  return mail
 }
 
-const censorString = (string: string) => {
-  const censorLength = Math.ceil(string.length / 3)
-  const partLength = (string.length - censorLength) / 2
-  const beforeCensorLength = Math.floor(partLength)
+const censorString = (value: string): string => {
+  const censorLength = Math.ceil(value.length / 3)
+  const beforeCensorLength = Math.floor((value.length - censorLength) / 2)
   return (
-    string.substr(0, beforeCensorLength) +
+    value.slice(0, beforeCensorLength) +
     '*'.repeat(censorLength) +
-    string.substr(Math.ceil(beforeCensorLength + censorLength), string.length)
+    value.slice(beforeCensorLength + censorLength)
   )
-}
-
-const re =
-  // eslint-disable-next-line no-useless-escape
-  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-
-export const isMailValid = (rawMail: string) => {
-  const mail = rawMail.trim()
-  return re.test(String(mail).toLowerCase())
 }

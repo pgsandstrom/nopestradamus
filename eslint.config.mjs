@@ -1,78 +1,61 @@
-// TODO add "@ts-check" when we have properly migrated to esm modules
+// @ts-check
 
 import eslint from '@eslint/js'
+import nextPlugin from '@next/eslint-plugin-next'
+import prettierConfig from 'eslint-config-prettier'
+import reactHooks from 'eslint-plugin-react-hooks'
+import globals from 'globals'
 import tseslint from 'typescript-eslint'
-import eslintPluginReactHooks from 'eslint-plugin-react-hooks'
-import reactRecommended from 'eslint-plugin-react/configs/recommended.js'
-
-import noOnlyTests from 'eslint-plugin-no-only-tests'
-import { fixupPluginRules } from '@eslint/compat'
 
 export default tseslint.config(
-  eslint.configs.recommended,
-  ...tseslint.configs.strictTypeChecked,
-  // TODO in the future, revisit using next eslint plugin when it supports v9
-  reactRecommended,
   {
-    // TODO someday I should make a simpler type-less linting for all config files
-    ignores: ['jest.config.js', 'next.config.js', 'prettier.config.js', '.next/*', 'dist-cron/*'],
+    ignores: ['.next/**', 'dist*/**', 'next-env.d.ts'],
+  },
+  eslint.configs.recommended,
+  tseslint.configs.strictTypeChecked,
+  reactHooks.configs.flat['recommended-latest'],
+  {
+    plugins: { '@next/next': nextPlugin },
+    rules: {
+      ...nextPlugin.configs.recommended.rules,
+      ...nextPlugin.configs['core-web-vitals'].rules,
+    },
   },
   {
-    settings: {
-      react: {
-        version: 'detect',
-      },
-    },
     languageOptions: {
+      globals: { ...globals.browser, ...globals.node },
       parserOptions: {
-        project: true,
+        projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
     },
-    plugins: {
-      'react-hooks': fixupPluginRules(eslintPluginReactHooks),
-      'no-only-tests': fixupPluginRules(noOnlyTests),
-    },
     rules: {
-      ...eslintPluginReactHooks.configs.recommended.rules,
-
       // turn off unwanted rules:
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
-      'react/react-in-jsx-scope': 'off',
-      'react/prop-types': 'off', // unnecessary with typescript
       '@typescript-eslint/restrict-template-expressions': 'off', // this feels too verbose
       '@typescript-eslint/no-inferrable-types': 'off', // this brings very little value
       '@typescript-eslint/no-unsafe-enum-comparison': 'off',
       '@typescript-eslint/no-redundant-type-constituents': 'off', // complains when we have type unknown
-
-      // these are turned off, but differs from other projects
       '@typescript-eslint/only-throw-error': 'off', // needlessly strict
       '@typescript-eslint/prefer-promise-reject-errors': 'off', // extension of 'only-throw-error' rule
-      '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'off', // this is just stylistic and unnecessary
+      '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'off', // this is just stylistic
 
       // activate extra rules:
-      'no-only-tests/no-only-tests': 'error',
       eqeqeq: ['error', 'smart'],
       curly: ['error'],
-      // 'no-console': ['error', { allow: ['warn', 'error'] }], // special for this project, allow console
-      '@typescript-eslint/strict-boolean-expressions': [
-        'error',
-        {
-          allowNullableBoolean: true,
-        },
-      ],
       'no-restricted-imports': [
         'error',
         {
           paths: [
             {
-              name: 'react-router',
-              message: 'Please import from react-router-dom',
+              name: 'next/router',
+              message: 'This project uses the app router. Import from next/navigation.',
             },
           ],
         },
       ],
+      '@typescript-eslint/strict-boolean-expressions': ['error', { allowNullableBoolean: true }],
       '@typescript-eslint/prefer-enum-initializers': ['error'],
       'sort-imports': [
         'error',
@@ -81,41 +64,23 @@ export default tseslint.config(
           ignoreDeclarationSort: true, // disabled since it does not have a '--fix' option
         },
       ],
-      'react/jsx-curly-brace-presence': [
-        'error',
-        {
-          propElementValues: 'always',
-        },
-      ],
 
       // change config of activated rules
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        {
-          vars: 'all',
-          args: 'none',
-        },
-      ],
+      '@typescript-eslint/no-unused-vars': ['error', { vars: 'all', args: 'none' }],
       '@typescript-eslint/no-confusing-void-expression': [
         'error',
-        {
-          // having this active is too verbose
-          ignoreArrowShorthand: true,
-        },
+        { ignoreArrowShorthand: true }, // having this active is too verbose
       ],
       '@typescript-eslint/no-misused-promises': [
         'error',
-        {
-          checksVoidReturn: {
-            attributes: false,
-          },
-        },
+        { checksVoidReturn: { attributes: false } },
       ],
-
-      // this rule would be awesome if it worked properly
-      // re-evaluate when this issue has been settled:
-      // https://github.com/typescript-eslint/typescript-eslint/issues/8113
-      '@typescript-eslint/no-invalid-void-type': ['off'],
     },
   },
+  {
+    // config files are not part of the typechecked project
+    files: ['*.mjs', '*.config.ts'],
+    extends: [tseslint.configs.disableTypeChecked],
+  },
+  prettierConfig,
 )

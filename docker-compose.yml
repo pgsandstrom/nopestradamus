@@ -4,10 +4,20 @@ services:
       dockerfile: ./Dockerfile.frontend
     ports:
       - '8300:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - PGHOST=db
     restart: always
   cron:
     build:
       dockerfile: ./Dockerfile.cron
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - PGHOST=db
     restart: always
   db:
     image: postgres:16
@@ -16,6 +26,11 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=nopestradamus
       - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d nopestradamus']
+      interval: 5s
+      timeout: 5s
+      retries: 10
     volumes:
       - db:/var/lib/postgresql/data
       - ./db/:/docker-entrypoint-initdb.d/
