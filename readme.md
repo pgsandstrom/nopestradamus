@@ -32,9 +32,10 @@ clients POST to it directly for RFC 8058 List-Unsubscribe one-click. It is refer
 ## Development
 
 ```sh
-npm install
-npm run dev-database   # postgres in docker, exposed on 5432
-npm run dev
+corepack enable          # once per node install, puts pnpm on PATH
+pnpm install
+pnpm dev-database        # postgres in docker, exposed on 5432
+pnpm dev
 ```
 
 You need a `config.json` (see `config.example.json`) and a `privkey.pem` (see
@@ -48,10 +49,10 @@ Database connection details can be overridden with the standard `PGHOST`, `PGPOR
 `PGUSER` and `PGPASSWORD` environment variables.
 
 ```sh
-npm run lint
-npm run typecheck
-npm run test
-npm run cron        # run the cron process locally
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm cron           # run the cron process locally
 ```
 
 ### Developing on Windows: do it inside WSL
@@ -71,14 +72,15 @@ git clone <this repo> ~/code/nopestradamus
 cd ~/code/nopestradamus
 ```
 
-**Install node inside the distro.** WSL inherits the Windows PATH, so a bare `npm` may well
-resolve to `/mnt/c/Program Files/nodejs/npm` while no linux node exists at all. Installing with
+**Install node inside the distro.** WSL inherits the Windows PATH, so a bare `node` may well
+resolve to `/mnt/c/Program Files/nodejs/node` while no linux node exists at all. Installing with
 that would put Windows binaries in a linux `node_modules` and the failures are baffling. Use nvm
 (grab the current install line from https://github.com/nvm-sh/nvm), then:
 
 ```sh
 nvm install --lts       # needs to be node 24 or newer, see "engines" in package.json
 nvm alias default lts/*
+corepack enable         # pnpm is the package manager, see "packageManager" in package.json
 which node               # MUST NOT be under /mnt/c
 ```
 
@@ -98,9 +100,9 @@ repo may not have your release codename yet.
 Now the normal flow works:
 
 ```sh
-npm ci
-npm run dev-database
-npm run dev
+pnpm install --frozen-lockfile
+pnpm dev-database
+pnpm dev
 ```
 
 Do not copy `node_modules` over from the Windows checkout, it has platform-specific binaries in
