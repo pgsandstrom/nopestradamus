@@ -80,12 +80,6 @@ pnpm clone-prod-db --restore-only --file <path>     # restore one specific dump
 The clone carries real subscriber email addresses, so don't point `pnpm cron` at it casually —
 the scheduler mails whatever it finds.
 
-## Deploy
-
-```sh
-docker compose up -d --build
-```
-
 The compose file pins `postgres:16`. Bumping that major needs a dump/restore of the `db` volume.
 
 ## Mail setup

@@ -26,6 +26,7 @@
     "pre-commit": "lint-staged",
     "pre-push": "pnpm validate && pnpm format:check",
     "prepare": "husky || true",
+    "release": "docker compose up -d --build",
     "start": "next start -p 3000",
     "test": "vitest run",
     "test-watch": "vitest",
