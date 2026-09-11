@@ -130,9 +130,4 @@ When running locally you will most likely get `connection refused` errors. I bel
 Deliberately left alone during the modernization, since they are behaviour changes rather than
 cleanups:
 
-- `handleUnsentAcceptEmail` in `server/scheduler.ts` sends participant accept mails with a
-  `forEach(async ...)`, so it returns before the mails are sent and a failure surfaces as an
-  unhandled rejection instead of reaching the caller.
-- `deletePrediction` issues three separate `DELETE`s with no transaction, so a failure part way
-  through leaves orphaned `creater`/`participant` rows.
 - `db/database.sql` has no index on the `prediction_hash` columns that every lookup joins on.

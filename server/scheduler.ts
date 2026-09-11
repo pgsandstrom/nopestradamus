@@ -92,24 +92,22 @@ export const handleUnsentAcceptEmail = async (predictionHash: string): Promise<v
     (participant) => participant.accepted_mail_sent === false,
   )
 
-  // NOTE: these are deliberately not awaited, which is how this has always behaved.
-  // It means the caller returns before the mails are actually sent, and a failure here
-  // surfaces as an unhandled rejection rather than an error the caller can see.
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  participantNeedingMailList.forEach(async (participant) => {
-    try {
-      if (isMailValid(participant.mail)) {
-        console.log(`sending accept mail to ${participant.mail}`)
-        await sendMail(participant.mail, getParticipantAcceptMail(prediction, participant))
-      } else {
-        console.log(`participant skipping invalid mail: ${participant.mail}`)
+  await Promise.all(
+    participantNeedingMailList.map(async (participant) => {
+      try {
+        if (isMailValid(participant.mail)) {
+          console.log(`sending accept mail to ${participant.mail}`)
+          await sendMail(participant.mail, getParticipantAcceptMail(prediction, participant))
+        } else {
+          console.log(`participant skipping invalid mail: ${participant.mail}`)
+        }
+        await setParticipantAcceptMailSent(participant.hash)
+      } catch (e) {
+        console.error(`failed sending accept mail to ${participant.mail}`)
+        throw e
       }
-      await setParticipantAcceptMailSent(participant.hash)
-    } catch (e) {
-      console.error(`failed sending accept mail to ${participant.mail}`)
-      throw e
-    }
-  })
+    }),
+  )
 }
 
 const handleUnsentEndEmail = async (predictionHash: string): Promise<void> => {

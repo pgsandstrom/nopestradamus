@@ -74,3 +74,31 @@ export const SQL = (parts: TemplateStringsArray, ...values: unknown[]): QueryCon
   text: parts.reduce((text, part, i) => `${text}$${i}${part}`),
   values,
 })
+
+/**
+ * Runs `run` inside a single BEGIN/COMMIT on one pooled client, rolling back if it throws.
+ * The `tx` handed to the callback is the same shape as `query`, so statements that must
+ * succeed or fail together can use the `SQL` tagged template as usual.
+ */
+export const transaction = async <T>(
+  run: (
+    tx: <R extends QueryResultRow>(config: QueryConfig) => Promise<QueryResult<R>>,
+  ) => Promise<T>,
+): Promise<T> => {
+  const client = await getDbPool().connect()
+  try {
+    await client.query('BEGIN')
+    const result = await run(async (config) => {
+      const queryResult = await client.query(config)
+      queryResult.rows = nullToUndefined(queryResult.rows) as typeof queryResult.rows
+      return queryResult
+    })
+    await client.query('COMMIT')
+    return result
+  } catch (e) {
+    await client.query('ROLLBACK')
+    throw e
+  } finally {
+    client.release()
+  }
+}

@@ -19,7 +19,7 @@ import {
   validateParticipant,
   validateTitle,
 } from '../shared/validate-prediction.ts'
-import { query, querySingle, queryString, SQL } from '../util/db.ts'
+import { query, querySingle, queryString, SQL, transaction } from '../util/db.ts'
 import { adminGetAccounts, confirmAccountExistance, validateAccount } from './account.ts'
 import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './scheduler.ts'
 
@@ -207,17 +207,19 @@ const createParticipant = async (predictionHash: string, mail: string): Promise<
   )
 }
 
-export const deletePrediction = async (hash: string) => {
-  const prediction = await query(SQL`DELETE FROM prediction WHERE hash = ${hash}`)
-  const creater = await query(SQL`DELETE FROM creater WHERE prediction_hash = ${hash}`)
-  const participant = await query(SQL`DELETE FROM participant WHERE prediction_hash = ${hash}`)
+export const deletePrediction = async (hash: string) =>
+  // One transaction, so a failure part way through cannot leave orphaned creater/participant rows.
+  transaction(async (tx) => {
+    const prediction = await tx(SQL`DELETE FROM prediction WHERE hash = ${hash}`)
+    const creater = await tx(SQL`DELETE FROM creater WHERE prediction_hash = ${hash}`)
+    const participant = await tx(SQL`DELETE FROM participant WHERE prediction_hash = ${hash}`)
 
-  return {
-    predictionDeleted: prediction.rowCount,
-    createrDeleted: creater.rowCount,
-    participantDeleted: participant.rowCount,
-  }
-}
+    return {
+      predictionDeleted: prediction.rowCount,
+      createrDeleted: creater.rowCount,
+      participantDeleted: participant.rowCount,
+    }
+  })
 
 export const setCreaterAcceptMailSent = async (hash: string): Promise<void> => {
   const result = await query(SQL`UPDATE creater SET accepted_mail_sent = true WHERE hash = ${hash}`)
