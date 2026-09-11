@@ -38,12 +38,22 @@ behaviour changes rather than cleanups.
 
 ## Dead code the linters miss
 
-- [ ] **5. Unused exports** — `validateDate` (`shared/validate-prediction.ts:10`) is only imported
-      by its own test. `isProd` (`util/env.ts:1`) and `formatDate` (`shared/date-util.ts:18`) are
-      only used inside their own file.
-      Knip cannot catch these as configured: `knip:production` runs with `--files`, which reports
-      unused _files_ and never unused exports, and `ignoreExportsUsedInFile: true` hides the other
-      two. Dropping `--files` from the production run would surface this class permanently.
+- [x] **5. Unused exports** — `validateDate` (`shared/validate-prediction.ts:10`) was only
+      imported by its own test, where it duplicated the `isValidDate` cases in
+      `shared/date-util.test.ts`. It was a one-line alias of `isValidDate` and production code
+      validates through `validateDateString`, so it and its test block are gone. `isProd`
+      (`util/env.ts:1`) is no longer exported, since `isDev` is its only caller and nothing tests
+      it. `formatDate` (`shared/date-util.ts:18`) stays exported: the entry had it as in-file
+      only, but `shared/date-util.test.ts` imports it directly, and un-exporting the primitive the
+      rest of the module formats through would mean dropping those cases or rerouting them through
+      `formatDateString`, which has its own. On the tooling: `--files` is dropped from
+      `knip:production`, so that run reports unused exports as well. It is a strict superset —
+      checked with a throwaway orphan file and a throwaway test-only file, both still listed under
+      "Unused files" — and adds no noise here beyond `validateDate`; `--include files,exports,types`
+      narrows it again if that changes. `ignoreExportsUsedInFile: true` is deliberately kept:
+      dropping it would also have caught `isProd`, but it flags `formatDate` and `ROLES`
+      (`shared/index.ts:32`) too, which are exported on purpose, so the in-file class stays a
+      manual read rather than a check.
 
 - [ ] **6. `creator_validated` is never read or written** — `db/database.sql:20`
       Also spelled `creator` while the rest of the schema and the code say `creater`.

@@ -7,8 +7,6 @@ export const validateTitle = (title?: string): title is string =>
 export const validateDescription = (description?: string): description is string =>
   description !== undefined && description.trim().length > 0
 
-export const validateDate = (date?: Date | null): date is Date => isValidDate(date)
-
 export const validateDateString = (date?: string): date is string =>
   date !== undefined && isValidDate(new Date(date))
 

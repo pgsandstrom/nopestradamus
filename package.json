@@ -19,7 +19,7 @@
     "format:check": "prettier --log-level warn --check .",
     "knip": "pnpm knip:production && pnpm knip:default",
     "knip:default": "knip --no-progress --no-config-hints",
-    "knip:production": "knip --production --files --no-progress",
+    "knip:production": "knip --production --no-progress",
     "lint": "eslint --max-warnings 0",
     "pre-commit": "lint-staged",
     "pre-push": "pnpm validate && pnpm format:check",

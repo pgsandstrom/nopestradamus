@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 
 import {
   validateCreaterMail,
-  validateDate,
   validateDateString,
   validateDescription,
   validateParticipant,
@@ -19,15 +18,6 @@ describe('validateTitle / validateDescription', () => {
     expect(validateDescription('because reasons')).toBe(true)
     expect(validateDescription('  ')).toBe(false)
     expect(validateDescription(undefined)).toBe(false)
-  })
-})
-
-describe('validateDate', () => {
-  it('accepts real dates only', () => {
-    expect(validateDate(new Date(2031, 11, 1))).toBe(true)
-    expect(validateDate(new Date('nonsense'))).toBe(false)
-    expect(validateDate(null)).toBe(false)
-    expect(validateDate(undefined)).toBe(false)
   })
 })
 
