@@ -19,6 +19,14 @@ import type { ActionResult } from '../action-result.ts'
 
 const TEST_PREDICTION_OWNERS = ['hello@persandstrom.com', 'pg.sandstrom@gmail.com']
 
+/** mail-tester.com hands out a throwaway address per run, on a rotating subdomain. */
+const MAIL_TESTER_PATTERN = /@([a-z0-9-]+\.)*mail-tester\.com$/
+
+const isTestPredictionOwner = (mail: string): boolean => {
+  const normalized = mail.trim().toLowerCase()
+  return TEST_PREDICTION_OWNERS.includes(normalized) || MAIL_TESTER_PATTERN.test(normalized)
+}
+
 type AdminResult<T> = ActionResult & { data?: T }
 
 /** Runs `action` only for a logged-in admin, turning any throw into an ActionResult. */
@@ -82,7 +90,7 @@ export async function deleteTestPredictionsAction() {
       if (prediction === undefined) {
         throw new Error(`Prediction not found: ${shallow.hash}`)
       }
-      if (TEST_PREDICTION_OWNERS.includes(prediction.creater.mail)) {
+      if (isTestPredictionOwner(prediction.creater.mail)) {
         await deletePrediction(prediction.hash)
         deleted += 1
       }
