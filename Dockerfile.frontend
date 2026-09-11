@@ -34,7 +34,8 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-# TODO Is this how we want to handle privkey?
+# Baked into the image on purpose: the images are built on the deploy host and never
+# pushed to a registry, so this is one less moving part. Both files are gitignored.
 COPY privkey.pem config.json ./
 
 EXPOSE 3000

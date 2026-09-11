@@ -89,5 +89,9 @@ behaviour changes rather than cleanups.
 
 - **`privkey.pem` and `config.json` are `COPY`d into both images** — `Dockerfile.frontend`,
   `Dockerfile.cron`
-  The `TODO Is this how we want to handle privkey?` in both files is asking the right question.
-  Secrets baked into image layers.
+  Secrets end up in image layers. Decided to keep it: the images are built on the deploy host
+  and never pushed anywhere, so anyone who could pull them out of a layer could read the files
+  off the host anyway. The `TODO` in both files is replaced by a comment saying so.
+  What would change the answer: pushing to a registry, a second deploy host, or CI building the
+  images. Then bind mount the two files from the host in `docker-compose.yml` (and add them to
+  `.dockerignore`), which also makes rotating a key a restart rather than a rebuild.
