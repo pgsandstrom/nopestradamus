@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { ReactNode } from 'react'
 
 import GoBackWrapper from '../../components/go-back-wrapper.tsx'
@@ -29,6 +30,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           <Button type="submit">Log out</Button>
         </form>
       </header>
+      <nav className={styles.nav}>
+        <Link href="/admin">Console</Link>
+        <Link href="/admin/predictions">Predictions</Link>
+      </nav>
       {children}
     </GoBackWrapper>
   )

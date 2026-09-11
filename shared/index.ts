@@ -69,3 +69,71 @@ export interface AppAccount {
   validated: boolean
   blocked: boolean
 }
+
+/** A prediction row exactly as stored, including the columns no public view shows. */
+export interface PredictionRow {
+  created: string
+  title: string
+  body: string
+  hash: string
+  finish_date: string
+  public: boolean
+  creator_validated: boolean
+}
+
+/** One row of the admin prediction list: the prediction, its creater and a participant tally. */
+export interface PredictionAdminListItem {
+  created: string
+  title: string
+  hash: string
+  finish_date: string
+  public: boolean
+  creater_mail?: string
+  creater_accepted?: boolean
+  creater_accept_mail_sent?: boolean
+  creater_end_mail_sent?: boolean
+  participant_count: number
+  participant_accepted_count: number
+  participant_rejected_count: number
+}
+
+/** A row of the mail table, hash included, so the admin can follow the block link. */
+export interface AdminAccount extends AppAccount {
+  hash: string
+}
+
+/**
+ * Everything stored about one prediction. The creater is optional on purpose: a delete that
+ * fails part way through can leave a prediction without one, and this view has to show that
+ * rather than blow up on it.
+ */
+export interface PredictionAdmin {
+  prediction: PredictionRow
+  creater?: Creater
+  participants: Participant[]
+  accounts: AdminAccount[]
+}
+
+/** A creater or participant row pointing at a prediction that no longer exists. */
+export interface OrphanedRow {
+  role: Role
+  hash: string
+  prediction_hash: string
+  mail: string
+}
+
+export type PredictionStatus = 'awaiting creater' | 'rejected' | 'running' | 'finished'
+
+/** Where a prediction is in its life: waiting on the creater, running, or over. */
+export function getPredictionStatus(
+  createrAccepted: boolean | undefined,
+  finishDate: string,
+): PredictionStatus {
+  if (createrAccepted === false) {
+    return 'rejected'
+  }
+  if (createrAccepted !== true) {
+    return 'awaiting creater'
+  }
+  return new Date(finishDate).getTime() <= Date.now() ? 'finished' : 'running'
+}

@@ -51,6 +51,9 @@ config.json
 # just to avoid accidentally commit some super important secret key
 private.ppk
 
+# local admin session cookie jar (scripts/dev-session.ts)
+/.dev-session
+
 # prod access + database clones (scripts/clone-prod-db.sh)
 /id_rsa
 /id_rsa.pub

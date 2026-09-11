@@ -27,6 +27,10 @@ export function formatDateString(date?: string): string {
   return formatDate(date !== undefined ? new Date(date) : undefined)
 }
 
+export function formatDateTimeString(date?: string): string {
+  return formatDateTime(date !== undefined ? new Date(date) : undefined)
+}
+
 export function isValidDate(date?: Date | null): date is Date {
   return date != null && !Number.isNaN(date.getTime())
 }

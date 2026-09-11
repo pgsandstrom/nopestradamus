@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import { LinkButton } from '../components/ui/button.tsx'
 import { getLatestPredictions } from '../server/prediction.ts'
+import { isDev } from '../util/env.ts'
 import styles from './page.module.css'
 
 export const dynamic = 'force-dynamic'
@@ -12,6 +13,12 @@ export default async function Home() {
 
   return (
     <div className={styles.page}>
+      {/* the admin console is not linked from anywhere in prod, on purpose */}
+      {isDev() && (
+        <Link className={styles.devAdmin} href="/admin">
+          admin
+        </Link>
+      )}
       <main className={styles.main}>
         <Image
           className={styles.logo}

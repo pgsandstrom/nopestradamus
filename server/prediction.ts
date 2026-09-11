@@ -2,9 +2,13 @@ import { randomUUID } from 'node:crypto'
 
 import type {
   Creater,
+  OrphanedRow,
   Participant,
   Prediction,
+  PredictionAdmin,
+  PredictionAdminListItem,
   PredictionCensored,
+  PredictionRow,
   PredictionShallow,
 } from '../shared/index.ts'
 import { censorMail, isMailValid } from '../shared/mail-util.ts'
@@ -16,7 +20,7 @@ import {
   validateTitle,
 } from '../shared/validate-prediction.ts'
 import { query, querySingle, queryString, SQL } from '../util/db.ts'
-import { confirmAccountExistance, validateAccount } from './account.ts'
+import { adminGetAccounts, confirmAccountExistance, validateAccount } from './account.ts'
 import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './scheduler.ts'
 
 /**
@@ -276,4 +280,81 @@ export const updateParticipantAcceptStatus = async (
     throw new Error(`Participant not found: ${hash}`)
   }
   await validateAccount(participant.mail)
+}
+
+/**
+ * Every prediction, newest first, with its creater and a tally of its participants.
+ * Both joins are LEFT joins, so a prediction with a missing creater row still shows up —
+ * the admin list is the one place such a broken row has to be visible.
+ */
+export const adminGetAllPredictions = async (): Promise<PredictionAdminListItem[]> => {
+  const cursor = await queryString<PredictionAdminListItem>(
+    `SELECT prediction.created, prediction.title, prediction.hash, prediction.finish_date, prediction.public,
+  creater.mail AS creater_mail,
+  creater.accepted AS creater_accepted,
+  creater.accepted_mail_sent AS creater_accept_mail_sent,
+  creater.end_mail_sent AS creater_end_mail_sent,
+  COALESCE(stats.participant_count, 0) AS participant_count,
+  COALESCE(stats.participant_accepted_count, 0) AS participant_accepted_count,
+  COALESCE(stats.participant_rejected_count, 0) AS participant_rejected_count
+FROM prediction
+LEFT JOIN creater ON prediction.hash = creater.prediction_hash
+LEFT JOIN (
+  SELECT prediction_hash,
+    count(*) AS participant_count,
+    count(*) FILTER (WHERE accepted IS true) AS participant_accepted_count,
+    count(*) FILTER (WHERE accepted IS false) AS participant_rejected_count
+  FROM participant
+  GROUP BY prediction_hash
+) stats ON prediction.hash = stats.prediction_hash
+ORDER BY prediction.created DESC`,
+  )
+  return cursor.rows
+}
+
+/**
+ * Everything stored about one prediction: every column, every creater/participant row and the
+ * mail account behind each address. Unlike getPrediction this tolerates a missing creater.
+ */
+export const adminGetPrediction = async (hash: string): Promise<PredictionAdmin | undefined> => {
+  const prediction = await querySingle<PredictionRow>(
+    SQL`SELECT created, title, body, hash, finish_date, public, creator_validated FROM prediction WHERE hash = ${hash}`,
+  )
+  if (prediction === undefined) {
+    return undefined
+  }
+
+  const [createrResult, participantResult] = await Promise.all([
+    query<Creater>(
+      SQL`SELECT hash, mail, accepted, accepted_date, accepted_mail_sent, end_mail_sent FROM creater WHERE prediction_hash = ${hash}`,
+    ),
+    query<Participant>(
+      SQL`SELECT hash, mail, accepted, accepted_date, accepted_mail_sent, end_mail_sent FROM participant WHERE prediction_hash = ${hash} ORDER BY mail`,
+    ),
+  ])
+  const creater = createrResult.rows[0]
+  const participants = participantResult.rows
+
+  const mails = [creater?.mail, ...participants.map((participant) => participant.mail)].filter(
+    (mail) => mail !== undefined,
+  )
+  const accounts = await adminGetAccounts([...new Set(mails)])
+
+  return { prediction, creater, participants, accounts }
+}
+
+/**
+ * Creater and participant rows whose prediction is gone, which is what a delete that fails
+ * part way through leaves behind. Nothing else in the app can see them.
+ */
+export const adminGetOrphanedRows = async (): Promise<OrphanedRow[]> => {
+  const cursor = await queryString<OrphanedRow>(
+    `SELECT 'creater' AS role, hash, prediction_hash, mail FROM creater
+WHERE NOT EXISTS (SELECT 1 FROM prediction WHERE prediction.hash = creater.prediction_hash)
+UNION ALL
+SELECT 'participant' AS role, hash, prediction_hash, mail FROM participant
+WHERE NOT EXISTS (SELECT 1 FROM prediction WHERE prediction.hash = participant.prediction_hash)
+ORDER BY prediction_hash, role, mail`,
+  )
+  return cursor.rows
 }

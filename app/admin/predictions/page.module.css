@@ -1,0 +1,68 @@
+.heading {
+  margin: var(--space-5) 0 var(--space-1);
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.heading:first-child {
+  margin-top: 0;
+}
+
+.summary {
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.empty {
+  color: var(--color-text-muted);
+}
+
+.tableScroll {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.table th {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+.table tbody tr:hover {
+  background: var(--color-surface);
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.missing {
+  color: var(--color-danger);
+}
+
+.hash {
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+}
+
+.orphans {
+  margin-top: var(--space-6);
+}

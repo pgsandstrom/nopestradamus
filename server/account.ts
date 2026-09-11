@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
 
-import type { AppAccount } from '../shared/index.ts'
+import type { AdminAccount, AppAccount } from '../shared/index.ts'
 import { isMailValid } from '../shared/mail-util.ts'
 import { query, querySingle, SQL } from '../util/db.ts'
 
@@ -34,4 +34,15 @@ export const getAccountHashByMail = async (mail: string): Promise<string> => {
 export const setAccountBlocked = async (hash: string, blocked: boolean): Promise<boolean> => {
   const result = await query(SQL`UPDATE mail SET blocked = ${blocked} WHERE hash = ${hash}`)
   return (result.rowCount ?? 0) > 0
+}
+
+/** The mail rows behind a set of addresses, for the admin view. */
+export const adminGetAccounts = async (mails: string[]): Promise<AdminAccount[]> => {
+  if (mails.length === 0) {
+    return []
+  }
+  const cursor = await query<AdminAccount>(
+    SQL`SELECT mail, hash, validated, blocked FROM mail WHERE mail = ANY(${mails})`,
+  )
+  return cursor.rows
 }

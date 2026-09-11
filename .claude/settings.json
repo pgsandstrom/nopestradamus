@@ -1,5 +1,10 @@
 {
   "permissions": {
-    "allow": ["Bash(pnpm clone-prod-db)", "Bash(pnpm clone-prod-db:*)"]
+    "allow": [
+      "Bash(pnpm clone-prod-db)",
+      "Bash(pnpm clone-prod-db:*)",
+      "Bash(pnpm dev-session)",
+      "Bash(pnpm dev-session:*)"
+    ]
   }
 }

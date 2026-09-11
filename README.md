@@ -22,7 +22,7 @@ A `config.json` (see `config.example.json`) is needed for the admin console and 
 (see `privkey.example.pem`) for sending mail. Neither is needed to build.
 
 Scripts: `validate` (typecheck + lint + test, same as pre-push), `lint`, `typecheck`, `test`,
-`format`, `knip`, `cron`.
+`format`, `knip`, `cron`, `dev-session`.
 
 ### On Windows, develop inside WSL2
 
@@ -42,6 +42,13 @@ for a week — nothing is reachable there without it. The cookie is signed with 
 itself, so changing it in `config.json` logs out every session that was signed with the old one.
 Wrong guesses lock the login form for up to five minutes, and since there is only the one
 password that lockout is for everybody, you included.
+
+`/admin/predictions` lists every prediction, private and unaccepted ones included, and each row
+opens everything stored about that bet.
+
+`pnpm dev-session` writes a gitignored `.dev-session` cookie jar holding a week-long admin
+session, so `curl -b .dev-session localhost:3000/admin` reads those pages without a browser. It
+is signed with `adminPassword` just like a login, so treat it like `config.json`.
 
 ## Cloning the prod database
 

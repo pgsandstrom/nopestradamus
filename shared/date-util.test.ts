@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
-import { formatDate, formatDateString, formatDateTime, isValidDate } from './date-util.ts'
+import {
+  formatDate,
+  formatDateString,
+  formatDateTime,
+  formatDateTimeString,
+  isValidDate,
+} from './date-util.ts'
 
 describe('formatDate', () => {
   it('formats as yyyy-MM-dd', () => {
@@ -31,6 +37,19 @@ describe('formatDateString', () => {
   it('reports unparseable strings', () => {
     expect(formatDateString('nonsense')).toBe('[MISSING DATE]')
     expect(formatDateString(undefined)).toBe('[MISSING DATE]')
+  })
+})
+
+describe('formatDateTimeString', () => {
+  it('parses an ISO string', () => {
+    expect(formatDateTimeString(new Date(2031, 11, 1, 14, 30).toISOString())).toBe(
+      '2031-12-01 14:30',
+    )
+  })
+
+  it('reports unparseable strings', () => {
+    expect(formatDateTimeString('nonsense')).toBe('[MISSING DATE]')
+    expect(formatDateTimeString(undefined)).toBe('[MISSING DATE]')
   })
 })
 
