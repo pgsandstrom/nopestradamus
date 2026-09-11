@@ -43,6 +43,36 @@ itself, so changing it in `config.json` logs out every session that was signed w
 Wrong guesses lock the login form for up to five minutes, and since there is only the one
 password that lockout is for everybody, you included.
 
+## Cloning the prod database
+
+To debug against real data:
+
+```sh
+pnpm clone-prod-db
+```
+
+It SSHes to the prod host, runs `pg_dump` inside the postgres container there, and restores the
+result into the local dev postgres — dropping and recreating the local `nopestradamus` database
+so nothing from the old contents survives. Nothing on the prod side is written to.
+
+Requires the prod private key at `./id_rsa` (gitignored, and in `.dockerignore` so it never
+reaches an image layer). Host, user and key path default to `root@nopestradamus.com` and
+`./id_rsa`, and are overridable per-machine in `scripts/prod.env` (gitignored, template at
+`scripts/prod.env.example`).
+
+Dumps are kept in `.prod-dumps/` (gitignored), newest five. The local database is dumped to
+`.prod-dumps/local-before-clone-*.sql.gz` before it is dropped, so an unwanted clone is
+recoverable:
+
+```sh
+pnpm clone-prod-db --dump-only                      # fetch a dump, leave local alone
+pnpm clone-prod-db --restore-only                   # restore the newest dump on disk
+pnpm clone-prod-db --restore-only --file <path>     # restore one specific dump
+```
+
+The clone carries real subscriber email addresses, so don't point `pnpm cron` at it casually —
+the scheduler mails whatever it finds.
+
 ## Deploy
 
 ```sh

@@ -15,6 +15,7 @@ The package manager is **pnpm**, not npm.
 - `pnpm dev-database` — postgres in docker. Everything except `/prediction/create` reads from the
   database, so without it the app answers 500.
 - `pnpm knip` — unused files, exports and dependencies.
+- `pnpm clone-prod-db` — clone the prod database into the local dev postgres (needs `./id_rsa`).
 
 ## Layout
 
