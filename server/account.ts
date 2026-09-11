@@ -8,14 +8,10 @@ export const confirmAccountExistance = async (mail: string, validated = false): 
   if (!isMailValid(mail)) {
     throw new Error(`Confirm account failure. Mail is invalid: ${mail}`)
   }
-  const existing = await querySingle<{ count: number }>(
-    SQL`SELECT count(*) FROM mail WHERE mail = ${mail}`,
+  await query(
+    SQL`INSERT INTO mail (mail, hash, validated) VALUES(${mail}, ${randomUUID()}, ${validated})
+ON CONFLICT (mail) DO NOTHING`,
   )
-  if (existing?.count === 0) {
-    await query(
-      SQL`INSERT INTO mail (mail, hash, validated) VALUES(${mail}, ${randomUUID()}, ${validated})`,
-    )
-  }
 }
 
 export const validateAccount = async (mail: string): Promise<void> => {
