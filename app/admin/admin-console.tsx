@@ -14,7 +14,6 @@ import {
 import styles from './page.module.css'
 
 export default function AdminConsole() {
-  const [password, setPassword] = useState('')
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
   const [mail, setMail] = useState('')
@@ -31,18 +30,11 @@ export default function AdminConsole() {
 
   return (
     <div className={styles.console}>
-      <p>This is the admin console. You need the admin password to actually do anything</p>
-
-      <TextField
-        label="password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+      <p>This is the admin console.</p>
 
       <fieldset className={styles.section} disabled={isRunning}>
         <legend>Cron</legend>
-        <Button onClick={() => run(() => triggerCronAction(password))}>Trigger cron job</Button>
+        <Button onClick={() => run(() => triggerCronAction())}>Trigger cron job</Button>
       </fieldset>
 
       <fieldset className={styles.section} disabled={isRunning}>
@@ -55,22 +47,20 @@ export default function AdminConsole() {
           value={mail}
           onChange={(e) => setMail(e.target.value)}
         />
-        <Button onClick={() => run(() => sendMailAction(password, mail, { title, body }))}>
-          send mail
-        </Button>
+        <Button onClick={() => run(() => sendMailAction(mail, { title, body }))}>send mail</Button>
       </fieldset>
 
       <fieldset className={styles.section} disabled={isRunning}>
         <legend>Delete a prediction</legend>
         <TextField label="prediction hash" value={hash} onChange={(e) => setHash(e.target.value)} />
-        <Button variant="danger" onClick={() => run(() => deletePredictionAction(password, hash))}>
+        <Button variant="danger" onClick={() => run(() => deletePredictionAction(hash))}>
           delete prediction
         </Button>
       </fieldset>
 
       <fieldset className={styles.section} disabled={isRunning}>
         <legend>Clean up</legend>
-        <Button variant="danger" onClick={() => run(() => deleteTestPredictionsAction(password))}>
+        <Button variant="danger" onClick={() => run(() => deleteTestPredictionsAction())}>
           delete predictions named &quot;test&quot; created by your mail, you know.
         </Button>
       </fieldset>

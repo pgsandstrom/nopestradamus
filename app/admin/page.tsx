@@ -1,5 +1,4 @@
-import GoBackWrapper from '../../components/go-back-wrapper.tsx'
-import { isAdminPassword } from '../../server/admin-auth.ts'
+import { isAdminAuthenticated } from '../../server/admin-session.ts'
 import { getCreaterAcceptMail, type Mail } from '../../server/mailer.ts'
 import { getCreaterNotAcceptedPredictions, getPrediction } from '../../server/prediction.ts'
 import AdminConsole from './admin-console.tsx'
@@ -7,19 +6,18 @@ import styles from './page.module.css'
 
 export const dynamic = 'force-dynamic'
 
-interface AdminPageProps {
-  searchParams: Promise<{ password?: string }>
-}
-
-export default async function AdminPage({ searchParams }: AdminPageProps) {
-  const { password } = await searchParams
-  const passwordValid = password !== undefined && isAdminPassword(password)
+export default async function AdminPage() {
+  // the layout renders the login form instead of this page, but it does not re-render on a
+  // client-side navigation, so the page checks for itself rather than inheriting the answer
+  if (!(await isAdminAuthenticated())) {
+    return null
+  }
 
   return (
-    <GoBackWrapper>
+    <>
       <AdminConsole />
-      {passwordValid && <PendingAcceptMails />}
-    </GoBackWrapper>
+      <PendingAcceptMails />
+    </>
   )
 }
 

@@ -83,9 +83,23 @@ behaviour changes rather than cleanups.
 
 ## Noted, but not low-hanging
 
-- **Admin auth is a URL query param** — `app/admin/page.tsx:14`
-  `?password=` lands in browser history, referrers and any access log. Needs a cookie or session
-  to fix properly, but worth doing before the modernization is called done.
+- **Admin auth was a URL query param** — done: `app/admin/layout.tsx`, `server/admin-session.ts`
+  `?password=` landed in browser history, referrers and any access log, and every admin action
+  took the password as its first argument, so it travelled with every call from the console.
+  Replaced with a login form and a session cookie:
+  - `app/admin/layout.tsx` gates everything under `/admin`, so a second admin screen is a
+    `page.tsx` and nothing else.
+  - The cookie holds `<expiry>.<nonce>.<HMAC>`, signed with the admin password itself. Changing
+    the password in `config.json` therefore logs out the sessions minted under the old one, and
+    there is no second secret to deploy. `httpOnly`, `sameSite=strict`, `secure` outside dev,
+    seven days.
+  - The password is checked in exactly one place now, `attemptAdminLogin`, and that one place is
+    throttled: three attempts free, then a lockout doubling from 5s up to a 5 minute cap, reset
+    on success. One bucket for the whole process rather than one per caller — with a single
+    password, per-caller buckets are just something to rotate around. The cost is that someone
+    hammering the form keeps the real admin waiting too.
+  - Pages and actions ask `isAdminAuthenticated()` for themselves instead of trusting the layout,
+    which is not re-rendered when the visitor moves between the pages under it.
 
 - **`privkey.pem` and `config.json` are `COPY`d into both images** — `Dockerfile.frontend`,
   `Dockerfile.cron`

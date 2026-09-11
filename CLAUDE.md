@@ -37,6 +37,10 @@ The package manager is **pnpm**, not npm.
 - Styling is plain CSS Modules with design tokens in `app/globals.css`. No UI framework.
 - Database access goes through `util/db.ts`. Use the `SQL` tagged template so values are
   parameterised rather than interpolated into the query string.
+- Everything under `/admin` is behind a session cookie. `app/admin/layout.tsx` renders the login
+  form, but it is not the gate: each admin page and each action in `app/admin/actions.ts` asks
+  `isAdminAuthenticated()` for itself, because a layout is not re-rendered when the visitor moves
+  between the pages under it.
 - Imports are sorted by `simple-import-sort` and it autofixes, so never hand-sort them.
 
 ## The one URL that must not move

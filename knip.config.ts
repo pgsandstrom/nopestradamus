@@ -6,7 +6,7 @@ import type { KnipConfig } from 'knip'
 // Tests are entries in default mode only, so --production flags source files that are
 // only reachable through tests.
 const config: KnipConfig = {
-  entry: ['server-cron.ts!', 'shared/**/*.test.ts'],
+  entry: ['server-cron.ts!', '**/*.test.ts'],
   project: ['**/*.{ts,tsx}!'],
   // husky lives in optionalDependencies so the docker images can skip it with --no-optional
   ignoreBinaries: ['husky'],

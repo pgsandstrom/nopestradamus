@@ -35,6 +35,14 @@ into the distro (`docker.io` + `docker-compose-v2`), not Docker Desktop. Two tra
   resolve to `/mnt/c/Program Files/nodejs/node` and put Windows binaries in a Linux
   `node_modules`. Check `which node` is not under `/mnt/c`. Don't copy `node_modules` over either.
 
+## Admin console
+
+`/admin` asks for the `adminPassword` from `config.json` and then keeps a signed session cookie
+for a week — nothing is reachable there without it. The cookie is signed with the password
+itself, so changing it in `config.json` logs out every session that was signed with the old one.
+Wrong guesses lock the login form for up to five minutes, and since there is only the one
+password that lockout is for everybody, you included.
+
 ## Deploy
 
 ```sh
