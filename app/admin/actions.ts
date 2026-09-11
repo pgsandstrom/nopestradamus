@@ -2,7 +2,11 @@
 
 import { isAdminPassword } from '../../server/admin-auth.ts'
 import { type Mail, sendMail } from '../../server/mailer.ts'
-import { deletePrediction, getPrediction, getPredictions } from '../../server/prediction.ts'
+import {
+  adminGetPredictionsByTitle,
+  deletePrediction,
+  getPrediction,
+} from '../../server/prediction.ts'
 import { handleAllUnsentMails } from '../../server/scheduler.ts'
 import type { ActionResult } from '../action-result.ts'
 
@@ -45,7 +49,7 @@ export async function deletePredictionAction(password: string, hash: string) {
 export async function deleteTestPredictionsAction(password: string) {
   return asAdmin(password, async () => {
     let deleted = 0
-    for (const shallow of await getPredictions('test')) {
+    for (const shallow of await adminGetPredictionsByTitle('test')) {
       const prediction = await getPrediction(shallow.hash)
       if (prediction === undefined) {
         throw new Error(`Prediction not found: ${shallow.hash}`)

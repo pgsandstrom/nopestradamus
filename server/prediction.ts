@@ -53,13 +53,15 @@ LIMIT 20`,
   return cursor.rows
 }
 
-export const getPredictions = async (title: string): Promise<PredictionShallow[]> => {
+/**
+ * Searches predictions by title, private ones included.
+ */
+export const adminGetPredictionsByTitle = async (title: string): Promise<PredictionShallow[]> => {
   const likeTitle = `%${title}%`
   const cursor = await query<PredictionShallow>(
     SQL`SELECT title, body, prediction.hash FROM prediction
 JOIN creater on prediction.hash = creater.prediction_hash
-WHERE public IS true
-AND prediction.title LIKE ${likeTitle}
+WHERE prediction.title ILIKE ${likeTitle}
 ORDER BY created DESC`,
   )
   return cursor.rows
