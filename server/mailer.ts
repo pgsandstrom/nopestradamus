@@ -156,5 +156,5 @@ ${prediction.participants.map((p) => p.mail).join('\n')}`
 
 const getBlockMeFooter = (accountHash: string): string => `---
 
-Dont want to receive these mails? Block yourself here:
+Don't want to receive these mails? Block yourself here:
 ${SITE_URL}/blockme/${accountHash}`

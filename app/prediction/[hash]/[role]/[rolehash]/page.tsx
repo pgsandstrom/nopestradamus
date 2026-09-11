@@ -9,16 +9,24 @@ interface AnswerPageProps {
   params: Promise<{ hash: string; role: string; rolehash: string }>
 }
 
+function NotFound() {
+  return (
+    <GoBackWrapper>
+      <p>Prediction not found</p>
+    </GoBackWrapper>
+  )
+}
+
 export default async function AnswerPredictionPage({ params }: AnswerPageProps) {
   const { hash: predictionHash, role, rolehash: roleHash } = await params
 
-  const prediction = isRole(role) ? await getPrediction(predictionHash) : undefined
-  if (prediction === undefined || !isRole(role)) {
-    return (
-      <GoBackWrapper>
-        <p>Prediction not found</p>
-      </GoBackWrapper>
-    )
+  if (!isRole(role)) {
+    return <NotFound />
+  }
+
+  const prediction = await getPrediction(predictionHash)
+  if (prediction === undefined) {
+    return <NotFound />
   }
 
   const predictionCensored = getCensoredPrediction(

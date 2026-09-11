@@ -17,7 +17,7 @@ CREATE TABLE prediction (
 	body              TEXT      NOT NULL,
 	finish_date       TIMESTAMP NOT NULL,
 	public            BOOLEAN   NOT NULL,
-	creator_validated BOOLEAN   NOT NULL DEFAULT FALSE
+	creator_validated BOOLEAN   NOT NULL DEFAULT FALSE -- not used???
 );
 
 CREATE TABLE creater (

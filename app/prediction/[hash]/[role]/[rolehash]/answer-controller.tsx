@@ -48,7 +48,7 @@ export default function AnswerController({
         {prediction.participants.length > 0 && role === 'creater' && (
           <div className={styles.block}>
             <p>
-              Please ask you participants to check their spam folders! They should receive a mail
+              Please ask your participants to check their spam folders! They should receive a mail
               any second now:
             </p>
             <ul className={styles.mailList}>
@@ -94,7 +94,7 @@ function AnswerPrompt({ prediction, role, isAnswering, doAnswer }: AnswerPromptP
   if (role === 'creater' && prediction.creater.accepted !== undefined) {
     return (
       <p>
-        You own this prediction and has {prediction.creater.accepted ? 'accepted' : 'rejected'} it.
+        You own this prediction and have {prediction.creater.accepted ? 'accepted' : 'rejected'} it.
       </p>
     )
   }
@@ -103,7 +103,7 @@ function AnswerPrompt({ prediction, role, isAnswering, doAnswer }: AnswerPromptP
   if (role === 'participant' && participantAccepted !== undefined) {
     return (
       <p>
-        You are a participant in this prediction and has{' '}
+        You are a participant in this prediction and have{' '}
         {participantAccepted ? 'accepted' : 'rejected'} it.
       </p>
     )

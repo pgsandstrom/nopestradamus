@@ -20,7 +20,7 @@ export default function Prediction({ prediction, suppressNotAcceptedWarning }: P
       <p className={styles.created}>created on {formatDateString(prediction.created)}</p>
       <p className={styles.body}>{prediction.body}</p>
       <p className={styles.finish}>
-        The predictions finishes on {formatDateString(prediction.finish_date)}
+        The prediction finishes on {formatDateString(prediction.finish_date)}
       </p>
       <h2 className={styles.participantsHeading}>Participants</h2>
       <ul className={styles.participantList}>

@@ -60,21 +60,26 @@ behaviour changes rather than cleanups.
 
 ## Polish
 
-- [ ] **7. Double `isRole` check** — `app/prediction/[hash]/[role]/[rolehash]/page.tsx:15`
-      The ternary followed by a recheck exists only to satisfy narrowing. An early
-      `if (!isRole(role))` return reads better and drops a branch.
+- [x] **7. Double `isRole` check** — `app/prediction/[hash]/[role]/[rolehash]/page.tsx:15`
+      The ternary followed by a recheck existed only to satisfy narrowing. Replaced with an early
+      `if (!isRole(role))` return, then a plain `await getPrediction(...)` and an
+      `if (prediction === undefined)` return. Both returns render the same not-found markup, so it
+      moved into a local `NotFound` component rather than being written out twice.
 
 - [ ] **8. Per-mail transport and disk read** — `server/mailer.ts:111`
       A nodemailer transport is constructed and `privkey.pem` re-read from disk on every send.
       `getConfig` already caches; `getPrivateKey` does not.
 
-- [ ] **9. User-visible grammar** — five one-word fixes:
-  - `app/page.tsx:38` — "So whats the point?"
-  - `components/prediction.tsx:23` — "The predictions finishes on"
-  - `app/prediction/[hash]/[role]/[rolehash]/answer-controller.tsx:51` — "ask you participants"
+- [x] **9. User-visible grammar** — five one-word fixes, all applied:
+  - `app/page.tsx:38` — "So whats the point?" → "So what&apos;s the point?" (the escape matches
+    the `that&apos;s` two paragraphs up)
+  - `components/prediction.tsx:23` — "The predictions finishes on" → "The prediction finishes on"
+  - `app/prediction/[hash]/[role]/[rolehash]/answer-controller.tsx:51` — "ask you participants" →
+    "ask your participants"
   - `app/prediction/[hash]/[role]/[rolehash]/answer-controller.tsx:97` and `:104` — "and has
-    accepted it"
-  - `server/mailer.ts:159` — "Dont want to receive these mails?", which goes out in every mail
+    accepted it" → "and have accepted it", agreeing with the "You" that starts both sentences
+  - `server/mailer.ts:159` — "Dont want to receive these mails?" → "Don't want ...", which goes
+    out in every mail
 
 ## Noted, but not low-hanging
 

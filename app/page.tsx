@@ -35,8 +35,8 @@ export default async function Home() {
               create an account or stuff like that.
             </p>
             <p>
-              So whats the point? Well, sometimes people are very confident when they predict the
-              future. I hope being reminded of these long term predictions will humble people.
+              So what&apos;s the point? Well, sometimes people are very confident when they predict
+              the future. I hope being reminded of these long term predictions will humble people.
               Predicting the future is hard.
             </p>
             <p>You can also just use it as a bet tracker.</p>
