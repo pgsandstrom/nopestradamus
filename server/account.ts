@@ -30,6 +30,8 @@ export const getAccountHashByMail = async (mail: string): Promise<string> => {
   return entry.hash
 }
 
-export const setAccountBlocked = async (hash: string, blocked: boolean): Promise<void> => {
-  await query(SQL`UPDATE mail SET blocked = ${blocked} WHERE hash = ${hash}`)
+// returns false if no account was found
+export const setAccountBlocked = async (hash: string, blocked: boolean): Promise<boolean> => {
+  const result = await query(SQL`UPDATE mail SET blocked = ${blocked} WHERE hash = ${hash}`)
+  return (result.rowCount ?? 0) > 0
 }

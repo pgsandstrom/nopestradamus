@@ -23,7 +23,10 @@ export async function POST(request: Request, { params }: RouteContext) {
     // Default to blocking (e.g. List-Unsubscribe one-click POST)
   }
 
-  await setAccountBlocked(hash, blocked)
+  const updated = await setAccountBlocked(hash, blocked)
+  if (!updated) {
+    return NextResponse.json({ status: 'error', error: 'Account not found.' }, { status: 404 })
+  }
 
   return NextResponse.json({ status: 'ok' })
 }

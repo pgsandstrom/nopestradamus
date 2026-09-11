@@ -26,11 +26,15 @@ behaviour changes rather than cleanups.
       promised something it no longer did. It had no other caller. The title match is `ILIKE`,
       so it is case-insensitive.
 
-- [ ] **4. The block route reports success for unknown hashes** —
+- [x] **4. The block route reports success for unknown hashes** —
       `app/api/account/[hash]/block/route.ts`
-      `setAccountBlocked` on a hash with no matching row updates nothing and the handler still
-      returns `{status:'ok'}`. Worth a 404 — but check the RFC 8058 side first, mail clients may
-      prefer the 200.
+      `setAccountBlocked` on a hash with no matching row updated nothing and the handler still
+      returned `{status:'ok'}`. RFC 8058 turned out not to argue for the 200: it says nothing
+      at all about status codes, and section 3.1 says the server "SHOULD verify that the opaque
+      or hard-to-forge component is valid", which points the other way. `setAccountBlocked` now
+      returns whether a row matched and the handler answers 404 for hashes that match no account.
+      Blocking an already-blocked account is still a 200 — the update is idempotent, and nothing
+      deletes rows from `mail`, so a hash that was ever mailed out keeps working.
 
 ## Dead code the linters miss
 
