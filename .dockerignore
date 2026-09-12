@@ -7,5 +7,8 @@ npm-debug.log
 **/*.test.ts
 id_rsa
 id_rsa.pub
-scripts
+# send-health-mail.ts has to be triggerable inside the cron container. The rest of scripts/ is
+# dev-only and holds the prod access secrets.
+scripts/*
+!scripts/send-health-mail.ts
 .prod-dumps
