@@ -36,6 +36,14 @@ export const setAccountBlocked = async (hash: string, blocked: boolean): Promise
   return (result.rowCount ?? 0) > 0
 }
 
+/** Every account that has unsubscribed, for the admin view. */
+export const adminGetBlockedAccounts = async (): Promise<AdminAccount[]> => {
+  const cursor = await query<AdminAccount>(
+    SQL`SELECT mail, hash, validated, blocked FROM mail WHERE blocked IS true ORDER BY mail`,
+  )
+  return cursor.rows
+}
+
 /** The mail rows behind a set of addresses, for the admin view. */
 export const adminGetAccounts = async (mails: string[]): Promise<AdminAccount[]> => {
   if (mails.length === 0) {
