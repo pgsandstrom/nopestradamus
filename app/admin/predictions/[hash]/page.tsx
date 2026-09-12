@@ -21,6 +21,7 @@ import {
   type Role,
 } from '../../../../shared/index.ts'
 import { StatusBadge } from '../status-badge.tsx'
+import DeletePrediction from './delete-prediction.tsx'
 import styles from './page.module.css'
 
 export const dynamic = 'force-dynamic'
@@ -115,6 +116,13 @@ function PredictionDetail({ detail }: { detail: PredictionAdmin }) {
       ) : (
         <PredictionMails prediction={toPrediction(detail, creater)} creater={creater} />
       )}
+
+      <h3 className={styles.sectionHeading}>Danger zone</h3>
+      <DeletePrediction
+        hash={prediction.hash}
+        title={prediction.title}
+        participantCount={participants.length}
+      />
     </>
   )
 }
