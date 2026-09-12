@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 import { isAdminAuthenticated } from '../../../server/admin-session.ts'
 import { getCreaterAcceptMail, type Mail } from '../../../server/mailer.ts'
-import { getCreaterNotAcceptedPredictions, getPrediction } from '../../../server/prediction.ts'
+import { getPrediction, getPredictionsAwaitingCreater } from '../../../server/prediction.ts'
 import { formatDateString, formatDateTimeString } from '../../../shared/date-util.ts'
 import type { Prediction } from '../../../shared/index.ts'
 import styles from './page.module.css'
@@ -25,9 +25,9 @@ export default async function AdminMailsPage() {
 
   return (
     <section>
-      <h2 className={styles.heading}>Pending creater accept mails ({pending.length})</h2>
+      <h2 className={styles.heading}>Awaiting creater ({pending.length})</h2>
       <p className={styles.summary}>
-        The accept mail of every prediction whose creater has not answered yet, as the mailer
+        Every prediction whose creater has not answered yet, with its accept mail as the mailer
         renders it right now. The unsubscribe footer is added when a mail is actually sent.
       </p>
 
@@ -83,7 +83,7 @@ function PendingMailRow({ pending: { prediction, mail } }: { pending: PendingMai
 }
 
 async function getPendingMails(): Promise<PendingMail[]> {
-  const hashes = await getCreaterNotAcceptedPredictions()
+  const hashes = await getPredictionsAwaitingCreater()
   const predictions = await Promise.all(hashes.map((hash) => getPrediction(hash)))
 
   return predictions

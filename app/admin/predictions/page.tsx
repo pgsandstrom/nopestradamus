@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import { isAdminAuthenticated } from '../../../server/admin-session.ts'
-import { adminGetAllPredictions, adminGetOrphanedRows } from '../../../server/prediction.ts'
+import { adminGetAnsweredPredictions, adminGetOrphanedRows } from '../../../server/prediction.ts'
 import { formatDateString, formatDateTimeString } from '../../../shared/date-util.ts'
 import {
   getPredictionStatus,
@@ -22,17 +22,17 @@ export default async function AdminPredictionsPage() {
   }
 
   const [predictions, orphanedRows] = await Promise.all([
-    adminGetAllPredictions(),
+    adminGetAnsweredPredictions(),
     adminGetOrphanedRows(),
   ])
 
   return (
     <section>
-      <h2 className={styles.heading}>All predictions ({predictions.length})</h2>
+      <h2 className={styles.heading}>Answered predictions ({predictions.length})</h2>
       <Summary predictions={predictions} />
 
       {predictions.length === 0 ? (
-        <p className={styles.empty}>There are no predictions.</p>
+        <p className={styles.empty}>No creater has answered yet.</p>
       ) : (
         <div className={styles.tableScroll}>
           <table className={styles.table}>
@@ -65,11 +65,15 @@ function Summary({ predictions }: { predictions: PredictionAdminListItem[] }) {
   const count = (status: PredictionStatus) =>
     predictions.filter((p) => statusOf(p) === status).length
   const privateCount = predictions.filter((p) => !p.public).length
+  // the predictions awaiting an answer live on /admin/mails, so a row left without one here is a
+  // broken one with no creater row at all
+  const missingCreaterCount = count('awaiting creater')
 
   return (
     <p className={styles.summary}>
-      {count('running')} running · {count('finished')} finished · {count('awaiting creater')}{' '}
-      awaiting creater · {count('rejected')} rejected · {privateCount} private
+      {count('running')} running · {count('finished')} finished · {count('rejected')} rejected ·{' '}
+      {privateCount} private
+      {missingCreaterCount > 0 && ` · ${missingCreaterCount} with no creater row`}
     </p>
   )
 }

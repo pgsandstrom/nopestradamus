@@ -107,12 +107,16 @@ JOIN creater on prediction.hash = creater.prediction_hash
 WHERE creater.accepted_mail_sent = false
 `)
 
-/** Newest first, like the admin list. DISTINCT is why `created` has to be selected as well. */
-export const getCreaterNotAcceptedPredictions = (): Promise<string[]> =>
+/**
+ * The predictions whose creater has not answered at all, newest first. A rejected creater has
+ * answered, so those belong to `adminGetAnsweredPredictions` instead — between them the two
+ * lists cover every prediction exactly once. DISTINCT is why `created` has to be selected too.
+ */
+export const getPredictionsAwaitingCreater = (): Promise<string[]> =>
   selectPredictionHashes(`
 SELECT DISTINCT prediction.hash, prediction.created FROM prediction
 JOIN creater on prediction.hash = creater.prediction_hash
-WHERE creater.accepted IS NOT true
+WHERE creater.accepted IS NULL
 ORDER BY prediction.created DESC
 `)
 
@@ -288,11 +292,13 @@ export const updateParticipantAcceptStatus = async (
 }
 
 /**
- * Every prediction, newest first, with its creater and a tally of its participants.
- * Both joins are LEFT joins, so a prediction with a missing creater row still shows up —
- * the admin list is the one place such a broken row has to be visible.
+ * Every prediction whose creater has answered — accepted or rejected — newest first, with its
+ * creater and a tally of its participants. The ones still waiting on that answer are the
+ * `getPredictionsAwaitingCreater` list behind /admin/mails, so the two do not overlap.
+ * Both joins are LEFT joins, and a prediction with no creater row at all is kept here rather
+ * than dropped from both lists — the admin list is the one place such a broken row is visible.
  */
-export const adminGetAllPredictions = async (): Promise<PredictionAdminListItem[]> => {
+export const adminGetAnsweredPredictions = async (): Promise<PredictionAdminListItem[]> => {
   const cursor = await queryString<PredictionAdminListItem>(
     `SELECT prediction.created, prediction.title, prediction.hash, prediction.finish_date, prediction.public,
   creater.mail AS creater_mail,
@@ -312,6 +318,7 @@ LEFT JOIN (
   FROM participant
   GROUP BY prediction_hash
 ) stats ON prediction.hash = stats.prediction_hash
+WHERE creater.accepted IS NOT NULL OR creater.hash IS NULL
 ORDER BY prediction.created DESC`,
   )
   return cursor.rows

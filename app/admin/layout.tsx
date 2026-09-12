@@ -32,8 +32,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       </header>
       <nav className={styles.nav}>
         <Link href="/admin">Console</Link>
-        <Link href="/admin/predictions">Predictions</Link>
-        <Link href="/admin/mails">Pending mails</Link>
+        <Link href="/admin/predictions">Answered predictions</Link>
+        <Link href="/admin/mails">Awaiting creater</Link>
       </nav>
       {children}
     </GoBackWrapper>
