@@ -8,6 +8,7 @@ import type {
   PredictionAdmin,
   PredictionAdminListItem,
   PredictionCensored,
+  PredictionHealth,
   PredictionRow,
   PredictionShallow,
 } from '../shared/index.ts'
@@ -361,4 +362,32 @@ WHERE NOT EXISTS (SELECT 1 FROM prediction WHERE prediction.hash = participant.p
 ORDER BY prediction_hash, role, mail`,
   )
   return cursor.rows
+}
+
+/**
+ * One row of counts for the monthly health mail. An aggregate always returns a row, so an empty
+ * database reports zeroes rather than nothing. The LEFT JOIN keeps predictions whose creater row
+ * is gone, which is what a half finished delete leaves behind.
+ */
+export const getPredictionHealth = async (): Promise<PredictionHealth> => {
+  const row = await querySingle<PredictionHealth>(
+    SQL`SELECT
+  count(DISTINCT prediction.hash) AS total,
+  count(DISTINCT prediction.hash) FILTER (WHERE creater.accepted IS NOT true) AS awaiting_creater,
+  count(DISTINCT prediction.hash) FILTER (
+    WHERE creater.accepted = true AND prediction.finish_date > now()
+  ) AS running,
+  count(DISTINCT prediction.hash) FILTER (
+    WHERE creater.accepted = true AND prediction.finish_date <= now()
+  ) AS finished,
+  min(prediction.finish_date) FILTER (
+    WHERE creater.accepted = true AND prediction.finish_date > now()
+  ) AS next_finish_date
+FROM prediction
+LEFT JOIN creater ON prediction.hash = creater.prediction_hash`,
+  )
+  if (row === undefined) {
+    throw new Error('health query returned no row')
+  }
+  return row
 }

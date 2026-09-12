@@ -70,6 +70,15 @@ export interface AppAccount {
   blocked: boolean
 }
 
+/** The numbers behind the monthly health mail. Snake case because they come straight from SQL. */
+export interface PredictionHealth {
+  total: number
+  awaiting_creater: number
+  running: number
+  finished: number
+  next_finish_date?: string
+}
+
 /** A prediction row exactly as stored, including the columns no public view shows. */
 export interface PredictionRow {
   created: string

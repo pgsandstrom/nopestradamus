@@ -14,6 +14,7 @@
     "dev": "next dev",
     "dev-session": "node scripts/dev-session.ts",
     "dev-database": "docker compose -f docker-compose-dev.yml up -d",
+    "health-mail": "node scripts/send-health-mail.ts",
     "dev-database-build": "docker compose -f docker-compose-dev.yml build",
     "docker-build": "docker compose build --no-cache",
     "docker-up": "docker compose up",

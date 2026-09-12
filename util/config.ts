@@ -6,6 +6,8 @@ const PRIVATE_KEY_PATH = './privkey.pem'
 // to find the config file, just check config.json in the project folder on the server
 export interface AppConfig {
   adminPassword: string
+  /** Where the monthly health mail goes. Optional: without it the health job does nothing. */
+  healthMailReceiver?: string
 }
 
 let cachedConfig: AppConfig | undefined

@@ -1,8 +1,11 @@
 import { formatDateTime } from '../shared/date-util.ts'
 import { isMailValid } from '../shared/mail-util.ts'
+import { getConfig } from '../util/config.ts'
+import { confirmAccountExistance } from './account.ts'
 import {
   getCreaterAcceptMail,
   getCreaterEndMail,
+  getHealthMail,
   getParticipantAcceptMail,
   getParticipantEndMail,
   sendMail,
@@ -13,6 +16,7 @@ import {
   getOldBetWithUnsentParticipantsAcceptMails,
   getOldBetWithUnsentParticipantsEndMails,
   getPrediction,
+  getPredictionHealth,
   setCreaterAcceptMailSent,
   setCreaterEndMailSent,
   setParticipantAcceptMailSent,
@@ -26,6 +30,40 @@ export const handleAllUnsentMails = async (): Promise<void> => {
   await handleAll(getOldBetWithUnsentCreaterEndMails, handleUnsentCreaterEndEmail)
   await handleAll(getOldBetWithUnsentParticipantsEndMails, handleUnsentEndEmail)
   console.log('completed handle all unsent mails')
+}
+
+/**
+ * Proof that mail still works, sent monthly so a broken mail path is noticed before a prediction
+ * comes due rather than at the moment it matters.
+ * The account row is ensured first because sendMail looks the address up and throws when it has never been seen.
+ */
+export const sendHealthMail = async (): Promise<void> => {
+  const receiver = getConfig().healthMailReceiver
+  if (receiver === undefined) {
+    console.log('no healthMailReceiver in config.json, skipping health mail')
+    return
+  }
+  const [health, predictionsWithUnsentMail] = await Promise.all([
+    getPredictionHealth(),
+    countPredictionsWithUnsentMail(),
+  ])
+  await confirmAccountExistance(receiver)
+  console.log(`sending health mail to ${receiver}`)
+  await sendMail(receiver, getHealthMail(health, predictionsWithUnsentMail), true)
+}
+
+/**
+ * Reuses the same queries the hourly job acts on, so the reported number is exactly the backlog
+ * that job would work through. A prediction can appear in several of them, hence the Set.
+ */
+const countPredictionsWithUnsentMail = async (): Promise<number> => {
+  const hashLists = await Promise.all([
+    getOldBetWithUnsentCreaterAcceptMails(),
+    getOldBetWithUnsentParticipantsAcceptMails(),
+    getOldBetWithUnsentCreaterEndMails(),
+    getOldBetWithUnsentParticipantsEndMails(),
+  ])
+  return new Set(hashLists.flat()).size
 }
 
 const handleAll = async (

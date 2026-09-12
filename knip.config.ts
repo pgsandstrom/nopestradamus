@@ -7,7 +7,12 @@ import type { KnipConfig } from 'knip'
 // only reachable through tests. scripts/dev-session.ts is listed the same way: it hangs off
 // the `dev-session` script, which --production ignores too.
 const config: KnipConfig = {
-  entry: ['server-cron.ts!', 'scripts/dev-session.ts', '**/*.test.ts'],
+  entry: [
+    'server-cron.ts!',
+    'scripts/dev-session.ts',
+    'scripts/send-health-mail.ts',
+    '**/*.test.ts',
+  ],
   project: ['**/*.{ts,tsx}!'],
   // husky lives in optionalDependencies so the docker images can skip it with --no-optional
   ignoreBinaries: ['husky'],

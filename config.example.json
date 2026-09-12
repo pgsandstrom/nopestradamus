@@ -1,3 +1,4 @@
 {
-  "adminPassword": "abc"
+  "adminPassword": "abc",
+  "healthMailReceiver": "you@example.com"
 }

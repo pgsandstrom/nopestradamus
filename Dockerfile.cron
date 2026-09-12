@@ -22,6 +22,7 @@ RUN echo "postfix postfix/mailname string nopestradamus.com" | debconf-set-selec
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json ./
 COPY server-cron.ts ./
+COPY scripts ./scripts
 COPY server ./server
 COPY shared ./shared
 COPY util ./util

@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer'
 
 import { formatDateString } from '../shared/date-util.ts'
-import type { Participant, Prediction } from '../shared/index.ts'
+import type { Participant, Prediction, PredictionHealth } from '../shared/index.ts'
 import { getPrivateKey } from '../util/config.ts'
 import { isDev } from '../util/env.ts'
 import { getAccountByHash, getAccountHashByMail } from './account.ts'
@@ -86,6 +86,36 @@ To get an overview of the bet visit this link:
 ${SITE_URL}/prediction/${prediction.hash}
 
 Now you must discuss who won the bet!`,
+})
+
+/**
+ * The monthly proof of life. Deliberately reports numbers rather than just "it works": generating
+ * them exercises the database, and a figure that looks wrong says more than a cheerful constant.
+ */
+export const getHealthMail = (
+  health: PredictionHealth,
+  predictionsWithUnsentMail: number,
+): Mail => ({
+  title: 'Nopestradamus is working',
+  body: `The cron process is alive and sent this on the first of the month. If it ever stops
+arriving, something is broken: the cron process, postfix, or the mail setup described in the
+README.
+
+Predictions: ${health.total}
+  awaiting creater: ${health.awaiting_creater}
+  running: ${health.running}
+  finished: ${health.finished}
+
+Next prediction to finish: ${
+    health.next_finish_date !== undefined ? formatDateString(health.next_finish_date) : 'none'
+  }
+
+Predictions with mail still unsent: ${predictionsWithUnsentMail}
+
+That last number is normally 0. The hourly job sends whatever it finds, so anything stuck there
+means sending is failing.
+
+${SITE_URL}/admin`,
 })
 
 export const sendMail = async (receiver: string, mail: Mail, overrideBlock = false) => {

@@ -178,6 +178,30 @@ Every run needs a fresh test address, so grab a new one instead of reloading an 
 
 You need to install postfix. Check out the docker files for that stuff.
 
+### Monthly health mail
+
+Mail here is cron-driven and mostly idle — a prediction's end mail can be years away — so a broken
+mail path would otherwise go unnoticed until the moment it matters most. The cron process sends a
+health mail at 05:00 on the first of every month, pinned to `Europe/Stockholm` because the
+container runs UTC. It goes to `healthMailReceiver` in `config.json`; leave that key out and the
+job quietly does nothing.
+
+It reports prediction counts and how many predictions still have mail unsent, so a stuck queue
+shows up as a number rather than staying invisible. Generating those numbers hits the database, so
+a broken database means no mail rather than a cheerful lie.
+
+The _absence_ of the mail is the actual signal, and nothing alerts you to that, so pair it with a
+calendar reminder at the same time.
+
+To send one without waiting for the first of the month:
+
+```sh
+docker compose exec cron node scripts/send-health-mail.ts
+```
+
+`pnpm health-mail` runs the same thing locally, but `sendMail` only logs outside production, so it
+proves the queries and the body without posting anything.
+
 ### Mail troubleshooting
 
 `postqueue -j` is a nice command to check if the mails are not being sent.
