@@ -21,9 +21,6 @@ Connection details can be overridden with `PGHOST`, `PGPORT`, `PGDATABASE`, `PGU
 A `config.json` (see `config.example.json`) is needed for the admin console and a `privkey.pem`
 (see `privkey.example.pem`) for sending mail. Neither is needed to build.
 
-Scripts: `validate` (typecheck + lint + test, same as pre-push), `lint`, `typecheck`, `test`,
-`format`, `knip`, `cron`, `dev-session`.
-
 ### On Windows, develop inside WSL2
 
 Prod is Linux containers, so WSL keeps local and prod the same shape. Install the docker engine

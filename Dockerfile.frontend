@@ -13,6 +13,10 @@ FROM base AS builder
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# config.json is hand-edited on the deploy host, so a release is where a typo in it should stop.
+# Reading it is lazy at runtime, and the first read is the login action — an unparseable file
+# would otherwise reach the admin as an error digest in the browser and nothing else.
+RUN pnpm check-config
 RUN pnpm build
 
 # ---- runtime ----------------------------------------------------------------

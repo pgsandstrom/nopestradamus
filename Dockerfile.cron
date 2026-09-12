@@ -31,5 +31,8 @@ COPY util ./util
 # pushed to a registry, so this is one less moving part. Both files are gitignored.
 COPY privkey.pem config.json ./
 
+# same reason as in Dockerfile.frontend: fail the release, not the monthly health mail
+RUN pnpm check-config
+
 # node runs the TypeScript directly via type stripping, so there is no build step
 CMD service postfix start && node server-cron.ts
