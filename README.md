@@ -43,9 +43,6 @@ itself, so changing it in `config.json` logs out every session that was signed w
 Wrong guesses lock the login form for up to five minutes, and since there is only the one
 password that lockout is for everybody, you included.
 
-`/admin/predictions` lists every prediction, private and unaccepted ones included, and each row
-opens everything stored about that bet.
-
 `pnpm dev-session` writes a gitignored `.dev-session` cookie jar holding a week-long admin
 session, so `curl -b .dev-session localhost:3000/admin` reads those pages without a browser. It
 is signed with `adminPassword` just like a login, so treat it like `config.json`.

@@ -106,11 +106,13 @@ JOIN creater on prediction.hash = creater.prediction_hash
 WHERE creater.accepted_mail_sent = false
 `)
 
+/** Newest first, like the admin list. DISTINCT is why `created` has to be selected as well. */
 export const getCreaterNotAcceptedPredictions = (): Promise<string[]> =>
   selectPredictionHashes(`
-SELECT DISTINCT prediction.hash FROM prediction
+SELECT DISTINCT prediction.hash, prediction.created FROM prediction
 JOIN creater on prediction.hash = creater.prediction_hash
 WHERE creater.accepted IS NOT true
+ORDER BY prediction.created DESC
 `)
 
 export const getOldBetWithUnsentCreaterEndMails = (): Promise<string[]> =>
