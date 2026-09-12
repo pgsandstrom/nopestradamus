@@ -89,6 +89,10 @@ A lookup that returns an answer is not proof your record saved — compare it ag
 like `probe-xyz.nopestradamus.com` and see if you get the same thing. An explicit record does
 override the wildcard.
 
+Loopia also pushes zone changes to its two nameservers on a lag, so `ns2.loopia.se` can already
+serve a new record while `ns1.loopia.se` still returns nothing. Ask both before concluding that a
+record did not save.
+
 ### SPF
 
 SPF is some ancient security thing. It can be setup simply by adding stuff to the dns record.
@@ -113,6 +117,27 @@ Then I added the following to a DNS record:
 v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDOSKvTJpIe52Ow3ytinX5W1Mg7S10va8QY3wIhV5IY1x1woRbH+wM2Oa++3Cl60GPni7GJkIjnrusbgWTeEB3oy2q9bVbHqWfaDKsmrrdWr9QDAI+zJR1J2gwh9zowXYVC2yQFXW9UIjkB2oguFB2ZZ9c3jbbcz11//15tdqTRawIDAQAB
 
 There is some weirdness about adding this DNS record. It belongs to the subdomain hej.\_domainkey.nopestradamus.com and when I send the mails I specify the keySelector 'hej'. I dont fully understand that. But whatever.
+
+### DMARC
+
+DMARC ties SPF and DKIM to the `From:` header the recipient actually sees. It passes only if one
+of them passes _and_ its domain matches the From: domain. It is a TXT record on the subdomain
+`_dmarc` — not on the apex, which is the easy mistake:
+
+"v=DMARC1; p=reject"
+
+`p=reject` tells receivers to refuse mail claiming to be this domain that does not authenticate.
+That is safe here because the app is the only sender and it aligns on both counts: it signs with
+`d=nopestradamus.com` and sends `From: no-reply@nopestradamus.com`.
+
+There is deliberately no `rua=` reporting address. Aggregate reports are only worth having if
+somebody reads them. The tradeoff is that there is no warning if a sender ever breaks alignment —
+its mail is rejected outright rather than landing in spam. So if mail mysteriously stops arriving,
+suspect this record.
+
+In Loopia's editor this is the same two-step flow as any subdomain: create `_dmarc` (just that, it
+appends the domain), then add a record under it. The type dropdown defaults to `A` and must be
+changed to `TXT`.
 
 ### Reverse DNS
 
