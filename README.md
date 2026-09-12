@@ -83,11 +83,26 @@ The compose file pins `postgres:16`. Bumping that major needs a dump/restore of 
 
 Here I describe how to fix so the mail the program sends are not always marked as spam.
 
+One Loopia gotcha that applies to everything below: `*.nopestradamus.com` is wildcarded to Loopia's
+mail cluster (194.9.94.85 and .86), so _every_ subdomain resolves whether or not a record exists.
+A lookup that returns an answer is not proof your record saved — compare it against a made-up name
+like `probe-xyz.nopestradamus.com` and see if you get the same thing. An explicit record does
+override the wildcard.
+
 ### SPF
 
 SPF is some ancient security thing. It can be setup simply by adding stuff to the dns record.
-For nopestradamus I added this to my DNS record, to allow mail from these IPs:
-"v=spf1 ip4:138.197.184.62 ip4:93.188.3.35 include:nopestradamus.com -all"
+It lists the IPs allowed to send mail for the domain. For nopestradamus it is a TXT record on the
+apex:
+
+"v=spf1 ip4:167.99.242.238 include:spf.loopia.se -all"
+
+167.99.242.238 is the droplet running postfix, which is what actually sends. The include covers
+Loopia's outgoing servers, for anything sent by hand from webmail as @nopestradamus.com. Use the
+include rather than listing those IPs — `smtp.outgoing.loopia.se` is 21 different addresses and
+pinning one of them means the other 20 fail.
+
+There must be exactly one `v=spf1` record on the apex. Two is a permerror for everything.
 
 ### DKIM
 
@@ -99,13 +114,40 @@ v=DKIM1;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDOSKvTJpIe52Ow3ytinX5W1Mg7S10va8
 
 There is some weirdness about adding this DNS record. It belongs to the subdomain hej.\_domainkey.nopestradamus.com and when I send the mails I specify the keySelector 'hej'. I dont fully understand that. But whatever.
 
+### Reverse DNS
+
+Receivers do a PTR lookup on the IP that connects to them. With no PTR, mail-tester reports
+"Delivered to internal network by a host with no rDNS", which was the single biggest deduction
+here.
+
+The confusing part is that this record is **not** set at Loopia. Loopia is the registrar and hosts
+the inbound mail, but the sending IP belongs to DigitalOcean, and reverse DNS is controlled by
+whoever owns the IP block — `ns1.digitalocean.com` is authoritative for it. No record you add in
+Loopia's editor can fix it.
+
+DigitalOcean derives the PTR from the droplet's _name_, so the fix was renaming the droplet to
+`nopestradamus.com`. The apex A record already points back at that droplet, so forward and reverse
+agree, which is what receivers check. postfix already uses `myhostname = nopestradamus.com` (see
+the docker files), so the HELO matches as well — no redeploy was needed.
+
+Check it with:
+
+```sh
+python3 -c "import socket;print(socket.gethostbyaddr('167.99.242.238'))"
+```
+
+Negative DNS answers are cached for 30 minutes, so after the rename this keeps failing for a while
+before it suddenly works. Don't spend mail-tester runs during that window.
+
+If it ever comes back, check whether the droplet has IPv6 enabled: postfix will happily send over
+IPv6, and that address needs its own PTR. There is no AAAA record today, so this is not currently
+a problem.
+
 ### validate mail setup
 
 Finally, when you receive a mail in for example gmail you can click 'show origin' to see if SPF and DKIM was accepted.
-This tool can be used to debug DKIM: https://www.dmarcanalyzer.com/dkim/dkim-check
-
-This tool is even better, just use this: https://www.mail-tester.com
-Use mail-tester and you can see that there is still some issue with reverse DNS lookup. Fix that someday, TODO.
+This tool is great for testing how correct the mail is: https://www.mail-tester.com
+Every run needs a fresh test address, so grab a new one instead of reloading an old result.
 
 ### Program to send the mails
 
