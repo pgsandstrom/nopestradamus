@@ -23,6 +23,7 @@ export default function AnswerController({
   roleHash,
 }: AnswerControllerProps) {
   const [answer, setAnswer] = useState<boolean>()
+  const [participantMails, setParticipantMails] = useState<string[]>([])
   const [error, setError] = useState<string>()
   const [isAnswering, startAnswering] = useTransition()
 
@@ -31,6 +32,7 @@ export default function AnswerController({
       const result = await answerPredictionAction(predictionHash, role, roleHash, accept)
       if (result.ok) {
         setAnswer(accept)
+        setParticipantMails(result.participantMails ?? [])
       } else {
         setError(result.error)
       }
@@ -45,15 +47,15 @@ export default function AnswerController({
     return (
       <div>
         <p>Thank you!</p>
-        {prediction.participants.length > 0 && role === 'creater' && (
+        {participantMails.length > 0 && (
           <div className={styles.block}>
             <p>
               Please ask your participants to check their spam folders! They should receive a mail
               any second now:
             </p>
             <ul className={styles.mailList}>
-              {prediction.participants.map((p) => (
-                <li key={p.mail}>{p.mail}</li>
+              {participantMails.map((mail) => (
+                <li key={mail}>{mail}</li>
               ))}
             </ul>
           </div>

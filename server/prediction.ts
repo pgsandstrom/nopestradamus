@@ -250,11 +250,15 @@ export const setParticipantEndMailSent = async (hash: string): Promise<void> => 
   await query(SQL`UPDATE participant SET end_mail_sent = true WHERE hash = ${hash}`)
 }
 
+/**
+ * Returns the participants' uncensored mails. Safe to hand back to the caller: the update only
+ * succeeds for whoever holds the creater hash, and those are the addresses they typed themselves.
+ */
 export const updateCreaterAcceptStatus = async (
   predictionHash: string,
   hash: string,
   accepted: boolean,
-): Promise<void> => {
+): Promise<string[]> => {
   const result = await query(
     SQL`UPDATE creater SET accepted = ${accepted}, accepted_date = now() WHERE prediction_hash = ${predictionHash} AND hash = ${hash}`,
   )
@@ -267,6 +271,7 @@ export const updateCreaterAcceptStatus = async (
   }
   await validateAccount(prediction.creater.mail)
   await handleUnsentAcceptEmail(predictionHash)
+  return prediction.participants.map((participant) => participant.mail)
 }
 
 export const updateParticipantAcceptStatus = async (

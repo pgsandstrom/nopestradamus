@@ -23,29 +23,43 @@ export async function createPredictionAction(input: CreatePredictionInput): Prom
   return OK
 }
 
+export interface AnswerResult extends ActionResult {
+  /** The participants' uncensored mails, so the creater can see who is about to be mailed. */
+  participantMails?: string[]
+}
+
 export async function answerPredictionAction(
   predictionHash: string,
   role: string,
   roleHash: string,
   accept: boolean,
-): Promise<ActionResult> {
+): Promise<AnswerResult> {
   if (!isRole(role)) {
     return { ok: false, error: `Unknown role: "${role}"` }
   }
+  let participantMails: string[]
   try {
-    await answerAs(role, predictionHash, roleHash, accept)
+    participantMails = await answerAs(role, predictionHash, roleHash, accept)
   } catch (e) {
     return failed(e, 'Could not register your answer.')
   }
   revalidatePath('/')
   revalidatePath(`/prediction/${predictionHash}`)
-  return OK
+  return { ...OK, participantMails }
 }
 
-const answerAs = (role: Role, predictionHash: string, roleHash: string, accept: boolean) =>
-  role === 'creater'
-    ? updateCreaterAcceptStatus(predictionHash, roleHash, accept)
-    : updateParticipantAcceptStatus(predictionHash, roleHash, accept)
+const answerAs = async (
+  role: Role,
+  predictionHash: string,
+  roleHash: string,
+  accept: boolean,
+): Promise<string[]> => {
+  if (role === 'participant') {
+    await updateParticipantAcceptStatus(predictionHash, roleHash, accept)
+    return []
+  }
+  return updateCreaterAcceptStatus(predictionHash, roleHash, accept)
+}
 
 export async function setBlockedAction(
   hash: string,
