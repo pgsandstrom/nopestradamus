@@ -1,15 +1,14 @@
-import { randomUUID } from 'node:crypto'
-
 import type { AdminAccount, AppAccount } from '../shared/index.ts'
 import { isMailValid } from '../shared/mail-util.ts'
 import { query, querySingle, SQL } from '../util/db.ts'
+import { randomHash } from './hash.ts'
 
 export const confirmAccountExistance = async (mail: string, validated = false): Promise<void> => {
   if (!isMailValid(mail)) {
     throw new Error(`Confirm account failure. Mail is invalid: ${mail}`)
   }
   await query(
-    SQL`INSERT INTO mail (mail, hash, validated) VALUES(${mail}, ${randomUUID()}, ${validated})
+    SQL`INSERT INTO mail (mail, hash, validated) VALUES(${mail}, ${randomHash()}, ${validated})
 ON CONFLICT (mail) DO NOTHING`,
   )
 }

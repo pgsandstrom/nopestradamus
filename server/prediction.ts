@@ -1,5 +1,3 @@
-import { randomUUID } from 'node:crypto'
-
 import type {
   Creater,
   OrphanedRow,
@@ -22,6 +20,7 @@ import {
 } from '../shared/validate-prediction.ts'
 import { query, querySingle, queryString, SQL, transaction } from '../util/db.ts'
 import { adminGetAccounts, confirmAccountExistance, validateAccount } from './account.ts'
+import { randomHash } from './hash.ts'
 import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './scheduler.ts'
 
 /**
@@ -185,7 +184,7 @@ export const createPrediction = async (input: CreatePredictionInput): Promise<vo
     throw new Error('Invalid participantList')
   }
 
-  const hash = randomUUID()
+  const hash = randomHash()
   await query(
     SQL`INSERT INTO prediction (title, body, hash, finish_date, public) VALUES(${title}, ${body}, ${hash}, ${finishDate}, ${isPublic})`,
   )
@@ -200,7 +199,7 @@ const createCreater = async (predictionHash: string, mail: string): Promise<void
   }
   await confirmAccountExistance(mail)
   await query(
-    SQL`INSERT INTO creater (hash, prediction_hash, mail) VALUES (${randomUUID()}, ${predictionHash}, ${mail})`,
+    SQL`INSERT INTO creater (hash, prediction_hash, mail) VALUES (${randomHash()}, ${predictionHash}, ${mail})`,
   )
 }
 
@@ -210,7 +209,7 @@ const createParticipant = async (predictionHash: string, mail: string): Promise<
   }
   await confirmAccountExistance(mail)
   await query(
-    SQL`INSERT INTO participant (hash, prediction_hash, mail) VALUES (${randomUUID()}, ${predictionHash}, ${mail})`,
+    SQL`INSERT INTO participant (hash, prediction_hash, mail) VALUES (${randomHash()}, ${predictionHash}, ${mail})`,
   )
 }
 
