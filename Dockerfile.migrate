@@ -16,9 +16,9 @@ ENV NODE_ENV=production
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json ./
+# db/ holds both the .sql files and the runner that reads them; .dockerignore drops the test.
 COPY db ./db
 COPY util ./util
-COPY server/migrate.ts ./server/migrate.ts
 COPY scripts/migrate.ts ./scripts/migrate.ts
 
 # No config.json or privkey.pem here: this image talks to the database and nothing else, and it

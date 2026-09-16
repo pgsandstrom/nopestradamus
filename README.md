@@ -14,7 +14,7 @@ pnpm dev-database        # postgres in docker on 5432, then applies the migratio
 pnpm dev
 ```
 
-Needs node 24+ and pnpm. Everything except `/prediction/create` reads from the database, so
+Everything except `/prediction/create` reads from the database, so
 without a running postgres the app answers 500 — check that first if `localhost:3000` is dead.
 Connection details can be overridden with `PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`, `PGPASSWORD`.
 
@@ -34,7 +34,7 @@ into the distro (`docker.io` + `docker-compose-v2`), not Docker Desktop. Two tra
 
 ## Database migrations
 
-The schema lives in `db/migrations/*.sql` and is applied by `server/migrate.ts`. It is a small
+The schema lives in `db/migrations/*.sql` and is applied by `db/migrate.ts` beside them. It is a small
 Flyway: a `schema_migration` table records every file that has run together with a checksum of
 its contents, and only the files missing from that table are applied.
 

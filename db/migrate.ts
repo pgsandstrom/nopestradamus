@@ -1,8 +1,10 @@
 /**
- * Applies the SQL files in db/migrations that this database has not seen yet.
+ * Applies the SQL files in migrations/ that this database has not seen yet.
  *
- * Run through scripts/migrate.ts, which is the `migrate` compose service in production and
- * `pnpm migrate` locally.
+ * It lives beside them rather than in server/ because it belongs to neither runtime process:
+ * it runs as its own container, ahead of both, and it is the only code that reads those files.
+ * Run through scripts/migrate.ts — the `migrate` compose service in production, `pnpm migrate`
+ * locally.
  *
  * Rules, for whoever adds the next one:
  *
@@ -20,7 +22,7 @@ import path from 'node:path'
 
 import { SQL, transaction } from '../util/db.ts'
 
-const MIGRATIONS_DIR = path.join(import.meta.dirname, '..', 'db', 'migrations')
+const MIGRATIONS_DIR = path.join(import.meta.dirname, 'migrations')
 
 // Arbitrary but fixed: two runs agreeing on the same number is the whole point.
 const LOCK_KEY = 8074312

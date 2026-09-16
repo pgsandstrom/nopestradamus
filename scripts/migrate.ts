@@ -6,7 +6,7 @@
  * the new schema. Locally `pnpm migrate` runs the same thing against the dev database, and
  * `pnpm dev-database` runs it for you once postgres is healthy.
  */
-import { migrate } from '../server/migrate.ts'
+import { migrate } from '../db/migrate.ts'
 
 try {
   await migrate()

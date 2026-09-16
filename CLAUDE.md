@@ -24,7 +24,7 @@ The package manager is **pnpm**, not npm.
   `app/admin/actions.ts`.
 - Styling is plain CSS Modules with design tokens in `app/globals.css`. No UI framework.
 - Schema changes are migrations: a new `db/migrations/NNN-what-it-does.sql`, never an edit to an
-  existing one. `server/migrate.ts` checksums applied files and refuses a changed one, and the
+  existing one. `db/migrate.ts` checksums applied files and refuses a changed one, and the
   `migrate` compose service runs them before the app containers start. See the README section
   before adding one.
 - Database access goes through `util/db.ts`. Use the `SQL` tagged template so values are
