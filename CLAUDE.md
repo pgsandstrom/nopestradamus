@@ -10,8 +10,9 @@ Node process holding a cron job.
 The package manager is **pnpm**, not npm.
 
 - `pnpm validate` — typecheck + lint + test. Run this before calling work done.
-- `pnpm dev-database` — postgres in docker. Everything except `/prediction/create` reads from the
-  database, so without it the app answers 500.
+- `pnpm dev-database` — postgres in docker, then applies the migrations. Everything except
+  `/prediction/create` reads from the database, so without it the app answers 500.
+- `pnpm migrate` — apply pending `db/migrations/*.sql` to the dev database.
 
 ## Code patterns
 
@@ -22,6 +23,10 @@ The package manager is **pnpm**, not npm.
 - Pages are server components; mutations go through server actions in `app/actions.ts` and
   `app/admin/actions.ts`.
 - Styling is plain CSS Modules with design tokens in `app/globals.css`. No UI framework.
+- Schema changes are migrations: a new `db/migrations/NNN-what-it-does.sql`, never an edit to an
+  existing one. `server/migrate.ts` checksums applied files and refuses a changed one, and the
+  `migrate` compose service runs them before the app containers start. See the README section
+  before adding one.
 - Database access goes through `util/db.ts`. Use the `SQL` tagged template so values are
   parameterised rather than interpolated into the query string.
 - Everything under `/admin` is behind a session cookie. `app/admin/layout.tsx` renders the login

@@ -5,8 +5,8 @@ services:
     ports:
       - '8300:3000'
     depends_on:
-      db:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     environment:
       - PGHOST=db
     restart: always
@@ -14,11 +14,24 @@ services:
     build:
       dockerfile: ./Dockerfile.cron
     depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      - PGHOST=db
+    restart: always
+  # Runs the pending migrations and exits, before frontend and cron are allowed to start, so a
+  # release that cannot migrate fails instead of putting app code on a schema it does not know.
+  # `restart: no` keeps it a one-shot: after a host reboot the daemon brings the two `always`
+  # services back on its own and this stays exited, which is right — the schema is already there.
+  migrate:
+    build:
+      dockerfile: ./Dockerfile.migrate
+    depends_on:
       db:
         condition: service_healthy
     environment:
       - PGHOST=db
-    restart: always
+    restart: 'no'
   db:
     image: postgres:16
     restart: always
@@ -31,8 +44,9 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    # No /docker-entrypoint-initdb.d mount: that only ever runs on an empty data directory, so
+    # it could not touch a database that already exists. The migrate service owns the schema.
     volumes:
       - db:/var/lib/postgresql/data
-      - ./db/:/docker-entrypoint-initdb.d/
 volumes:
   db:

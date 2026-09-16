@@ -10,7 +10,7 @@ Code layout and conventions are documented in `CLAUDE.md`.
 ```sh
 corepack enable          # once per node install, puts pnpm on PATH
 pnpm install
-pnpm dev-database        # postgres in docker, exposed on 5432
+pnpm dev-database        # postgres in docker on 5432, then applies the migrations
 pnpm dev
 ```
 
@@ -31,6 +31,41 @@ into the distro (`docker.io` + `docker-compose-v2`), not Docker Desktop. Two tra
 - **Install node inside the distro** (nvm). WSL inherits the Windows PATH, so a bare `node` may
   resolve to `/mnt/c/Program Files/nodejs/node` and put Windows binaries in a Linux
   `node_modules`. Check `which node` is not under `/mnt/c`. Don't copy `node_modules` over either.
+
+## Database migrations
+
+The schema lives in `db/migrations/*.sql` and is applied by `server/migrate.ts`. It is a small
+Flyway: a `schema_migration` table records every file that has run together with a checksum of
+its contents, and only the files missing from that table are applied.
+
+```sh
+pnpm migrate             # apply anything pending to the dev database
+```
+
+In production it is the one-shot `migrate` compose service. The frontend and cron services wait
+for it with `service_completed_successfully`, so `pnpm release` stops on a failed migration
+instead of starting app code against a schema it does not know.
+
+To add one, drop a `NNN-what-it-does.sql` next to the others and run `pnpm migrate`. A few things
+are worth knowing before you do:
+
+- **An applied migration is frozen.** Editing one changes its checksum, and the next run refuses
+  rather than leaving this machine and production quietly disagreeing about what ran. Add another
+  file instead.
+- **The whole run is one transaction.** Postgres can roll back DDL, so a failure anywhere undoes
+  every pending file and leaves the database on the last version that worked completely — there
+  is no half-migrated state to repair by hand. The cost is that a statement which cannot run
+  inside a transaction (`CREATE INDEX CONCURRENTLY`, say) needs its own arrangement.
+- **`001-initial-schema.sql` uses `CREATE TABLE IF NOT EXISTS` and later ones should not.** It has
+  to agree with a production database that already had those tables before any of this existed,
+  so it is written to no-op there and to build the schema on an empty database. Everywhere else a
+  migration that silently does nothing is a bug.
+- Deleting a migration that has already run is an error, not an undo. There are no down
+  migrations: reversing something is a new migration.
+
+Before this, `db/database.sql` was mounted into the postgres container's
+`/docker-entrypoint-initdb.d`. That only ever runs against an empty data directory, so it could
+not touch the live database — the mount is gone and that file is now `001-initial-schema.sql`.
 
 ## Admin console
 
@@ -73,6 +108,11 @@ pnpm clone-prod-db --restore-only --file <path>     # restore one specific dump
 
 The clone carries real subscriber email addresses, so don't point `pnpm cron` at it casually —
 the scheduler mails whatever it finds.
+
+A clone brings prod's `schema_migration` table with it, so the local database arrives on
+whatever version prod is on. If your checkout has migrations prod has not seen yet, run
+`pnpm migrate` afterwards; if prod is _ahead_ of your checkout, `pnpm migrate` will say so
+rather than guess.
 
 The compose file pins `postgres:16`. Bumping that major needs a dump/restore of the `db` volume.
 
@@ -203,10 +243,3 @@ proves the queries and the body without posting anything.
 
 `postqueue -j` is a nice command to check if the mails are not being sent.
 When running locally you will most likely get `connection refused` errors. I believe this is ISPs blocking outgoing mails.
-
-## Known issues
-
-Deliberately left alone during the modernization, since they are behaviour changes rather than
-cleanups:
-
-- `db/database.sql` has no index on the `prediction_hash` columns that every lookup joins on.

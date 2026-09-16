@@ -1,0 +1,28 @@
+FROM node:24-slim AS base
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+RUN corepack enable
+WORKDIR /app
+
+# ---- dependencies -----------------------------------------------------------
+# Same three lines as the other two images on purpose, so this shares their cached layer
+# instead of resolving the lockfile a third time.
+FROM base AS deps
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --no-optional
+
+# ---- runtime ----------------------------------------------------------------
+FROM base AS runner
+ENV NODE_ENV=production
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY package.json ./
+COPY db ./db
+COPY util ./util
+COPY server/migrate.ts ./server/migrate.ts
+COPY scripts/migrate.ts ./scripts/migrate.ts
+
+# No config.json or privkey.pem here: this image talks to the database and nothing else, and it
+# has no postfix, so it cannot mail even if something later tried to.
+
+# node runs the TypeScript directly via type stripping, so there is no build step
+CMD ["node", "scripts/migrate.ts"]

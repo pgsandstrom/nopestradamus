@@ -4,3 +4,5 @@
 4. Maybe emphasize how long nopestradamus has been hosted on the front page? Make it more selly? Shorter text? Stuff like that!
 5. When you accept a bet it stops showing and you just see a "success" screen. Thats stupid
 6. Do not censor mails at all if you are a participant or creator.
+7. Fix "login" through fragments like claude.ai does it. Fix "logged in" page where you can see all your bets
+8. The schema has no index on the `prediction_hash` columns that every lookup joins on.
