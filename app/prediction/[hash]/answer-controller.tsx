@@ -2,25 +2,24 @@
 
 import { useState, useTransition } from 'react'
 
-import Prediction from '../../../../../components/prediction.tsx'
-import { Button } from '../../../../../components/ui/button.tsx'
-import { formatDateString } from '../../../../../shared/date-util.ts'
-import type { PredictionCensored, Role } from '../../../../../shared/index.ts'
-import { answerPredictionAction } from '../../../../actions.ts'
+import Prediction from '../../../components/prediction.tsx'
+import { Button } from '../../../components/ui/button.tsx'
+import { formatDateString } from '../../../shared/date-util.ts'
+import type { PredictionCensored, Role } from '../../../shared/index.ts'
+import { answerPredictionAction } from '../../actions.ts'
 import styles from './answer-controller.module.css'
 
 interface AnswerControllerProps {
   prediction: PredictionCensored
   predictionHash: string
+  /** The role the session holds on this prediction. The server decides it again when answering. */
   role: Role
-  roleHash: string
 }
 
 export default function AnswerController({
   prediction,
   predictionHash,
   role,
-  roleHash,
 }: AnswerControllerProps) {
   const [answer, setAnswer] = useState<boolean>()
   const [participantMails, setParticipantMails] = useState<string[]>([])
@@ -29,7 +28,7 @@ export default function AnswerController({
 
   const doAnswer = (accept: boolean) => {
     startAnswering(async () => {
-      const result = await answerPredictionAction(predictionHash, role, roleHash, accept)
+      const result = await answerPredictionAction(predictionHash, accept)
       if (result.ok) {
         setAnswer(accept)
         setParticipantMails(result.participantMails ?? [])

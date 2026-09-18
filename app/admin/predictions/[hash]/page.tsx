@@ -160,9 +160,9 @@ function PersonCard({ predictionHash, role, person, account }: PersonCardProps) 
         <Field label="hash">
           <span className={styles.hash}>{person.hash}</span>
         </Field>
-        <Field label="answer page">
-          <Link href={`/prediction/${predictionHash}/${role}/${person.hash}`}>
-            /prediction/{predictionHash}/{role}/{person.hash}
+        <Field label="login link">
+          <Link href={`/prediction/${predictionHash}#${person.hash}`}>
+            /prediction/{predictionHash}#{person.hash}
           </Link>
         </Field>
         <Field label="account">

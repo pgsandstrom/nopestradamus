@@ -40,6 +40,9 @@ body {
 }
 
 body {
+  /* column so the header sits above a child that can still fill the rest of the viewport */
+  display: flex;
+  flex-direction: column;
   background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);

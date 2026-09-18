@@ -8,6 +8,15 @@ import { getAccountByHash, getAccountHashByMail } from './account.ts'
 
 const SITE_URL = 'https://nopestradamus.com'
 
+/**
+ * The recipient's own link to a prediction. The role hash rides in the fragment, which browsers
+ * never send to a server: the secret stays out of access logs, out of the Referer header and out
+ * of whatever scanner the recipient's mail provider points at the link. The page trades it for a
+ * session cookie and then wipes it from the address bar.
+ */
+const predictionUrl = (predictionHash: string, roleHash: string): string =>
+  `${SITE_URL}/prediction/${predictionHash}#${roleHash}`
+
 export interface Mail {
   title: string
   body: string
@@ -26,7 +35,7 @@ ${getParticipantList(prediction)}
 ---
 
 To start the prediction you must visit the following link and accept it:
-${SITE_URL}/prediction/${prediction.hash}/creater/${prediction.creater.hash}
+${predictionUrl(prediction.hash, prediction.creater.hash)}
 `,
 })
 
@@ -48,7 +57,7 @@ ${getParticipantList(prediction)}
 The prediction ends at ${formatDateString(prediction.finish_date)}. At the given date, you will all receive a mail and be confronted with your predictions!
 
 Click here to view the prediction and decide if you want to accept or reject it:
-${SITE_URL}/prediction/${prediction.hash}/participant/${participant.hash}
+${predictionUrl(prediction.hash, participant.hash)}
 `,
 })
 
@@ -65,7 +74,7 @@ ${getParticipantList(prediction)}
 ---
 
 To get an overview of the bet visit this link:
-${SITE_URL}/prediction/${prediction.hash}
+${predictionUrl(prediction.hash, prediction.creater.hash)}
 
 Hope you had fun!`,
 })
@@ -83,7 +92,7 @@ ${getParticipantList(prediction)}
 ---
 
 To get an overview of the bet visit this link:
-${SITE_URL}/prediction/${prediction.hash}
+${predictionUrl(prediction.hash, participant.hash)}
 
 Now you must discuss who won the bet!`,
 })

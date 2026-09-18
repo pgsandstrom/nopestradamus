@@ -32,8 +32,35 @@ export interface Participant {
 export const ROLES = ['creater', 'participant'] as const
 export type Role = (typeof ROLES)[number]
 
-export function isRole(value: string): value is Role {
-  return (ROLES as readonly string[]).includes(value)
+/**
+ * What a mail address is to one prediction, or undefined when it is nothing to it. A mail can be
+ * both: nothing stops a creater from also listing their own address as a participant. Creater
+ * wins, because that is the role with the answer that gates the whole prediction.
+ */
+export function getRoleForMail(
+  prediction: Pick<Prediction, 'creater' | 'participants'>,
+  mail: string,
+): Role | undefined {
+  if (prediction.creater.mail === mail) {
+    return 'creater'
+  }
+  return prediction.participants.some((p) => p.mail === mail) ? 'participant' : undefined
+}
+
+/**
+ * A creater hash (15 Crockford symbols) or a participant hash, which on rows created before
+ * `randomHash` existed is a UUID instead. Exported because the inline script in `<head>` has to
+ * make the same judgement before React exists — see `components/login-cover-script.ts`.
+ */
+export const ROLE_HASH =
+  /^(?:[0-9a-z]{15}|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/
+
+/**
+ * Whether a URL fragment is worth offering to the server as a login. Anything else is an
+ * ordinary anchor, so a plain `#section` link never turns into a login attempt.
+ */
+export function isRoleHashFragment(fragment: string): boolean {
+  return ROLE_HASH.test(fragment)
 }
 
 export interface PredictionShallow {

@@ -1,6 +1,7 @@
 import { CronJob } from 'cron'
 
 import { handleAllUnsentMails, sendHealthMail } from './scheduler.ts'
+import { deleteExpiredSessions } from './session.ts'
 
 const EVERY_HOUR = '0 0 * * * *'
 // six fields, seconds first, like EVERY_HOUR: 05:00 on the first of every month
@@ -16,6 +17,15 @@ export const startCronStuff = (): void => {
         await handleAllUnsentMails()
       } catch (e) {
         console.error(`Cron job threw error: ${String(e)}`)
+      }
+      // housekeeping, not part of the gate: an expired session is already refused on read
+      try {
+        const removed = await deleteExpiredSessions()
+        if (removed > 0) {
+          console.log(`removed ${removed} expired sessions`)
+        }
+      } catch (e) {
+        console.error(`Session sweep threw error: ${String(e)}`)
       }
     },
     start: true,

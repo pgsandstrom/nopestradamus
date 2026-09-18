@@ -25,11 +25,11 @@ import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './sched
 
 /**
  * Removes all private hashes from the prediction. Also censors the mails!
- * @param currentUserHash the participant hash of the viewer, so we can flag their own row
+ * @param currentUserMail the logged-in viewer's address, so we can flag their own row
  */
 export const getCensoredPrediction = (
   prediction: Prediction,
-  currentUserHash?: string,
+  currentUserMail?: string,
 ): PredictionCensored => ({
   ...prediction,
   creater: {
@@ -40,10 +40,27 @@ export const getCensoredPrediction = (
   participants: prediction.participants.map((participant) => ({
     ...participant,
     hash: undefined,
-    isCurrentUser: currentUserHash === participant.hash,
+    isCurrentUser: currentUserMail === participant.mail,
     mail: censorMail(participant.mail),
   })),
 })
+
+/**
+ * The address behind a creater or participant hash. That hash was only ever sent to that
+ * address, so holding it is what the login in `logInWithHashAction` takes as proof of identity.
+ *
+ * The two tables are searched together because the fragment of a secret URL does not say which
+ * one it came from. Both columns are primary keys, so a hash in both tables would be a collision
+ * between two 75-bit random values — `querySingle` throws rather than pick a side.
+ */
+export const getMailByRoleHash = async (roleHash: string): Promise<string | undefined> => {
+  const row = await querySingle<{ mail: string }>(
+    SQL`SELECT mail FROM creater WHERE hash = ${roleHash}
+UNION ALL
+SELECT mail FROM participant WHERE hash = ${roleHash}`,
+  )
+  return row?.mail
+}
 
 export const getLatestPredictions = async (): Promise<PredictionShallow[]> => {
   const cursor = await queryString<PredictionShallow>(
@@ -255,14 +272,14 @@ export const setParticipantEndMailSent = async (hash: string): Promise<void> => 
  */
 export const updateCreaterAcceptStatus = async (
   predictionHash: string,
-  hash: string,
+  mail: string,
   accepted: boolean,
 ): Promise<string[]> => {
   const result = await query(
-    SQL`UPDATE creater SET accepted = ${accepted}, accepted_date = now() WHERE prediction_hash = ${predictionHash} AND hash = ${hash}`,
+    SQL`UPDATE creater SET accepted = ${accepted}, accepted_date = now() WHERE prediction_hash = ${predictionHash} AND mail = ${mail}`,
   )
   if (result.rowCount === 0) {
-    throw new Error(`Failed to update with prediction ${predictionHash} and hash ${hash}`)
+    throw new Error(`Failed to update with prediction ${predictionHash} and mail ${mail}`)
   }
   const prediction = await getPrediction(predictionHash)
   if (prediction === undefined) {
@@ -275,24 +292,16 @@ export const updateCreaterAcceptStatus = async (
 
 export const updateParticipantAcceptStatus = async (
   predictionHash: string,
-  hash: string,
+  mail: string,
   accepted: boolean,
 ): Promise<void> => {
   const result = await query(
-    SQL`UPDATE participant SET accepted = ${accepted}, accepted_date = now() WHERE prediction_hash = ${predictionHash} AND hash = ${hash}`,
+    SQL`UPDATE participant SET accepted = ${accepted}, accepted_date = now() WHERE prediction_hash = ${predictionHash} AND mail = ${mail}`,
   )
   if (result.rowCount === 0) {
-    throw new Error(`Failed to update with prediction ${predictionHash} and hash ${hash}`)
+    throw new Error(`Failed to update with prediction ${predictionHash} and mail ${mail}`)
   }
-  const prediction = await getPrediction(predictionHash)
-  if (prediction === undefined) {
-    throw new Error(`Prediction not found: ${predictionHash}`)
-  }
-  const participant = prediction.participants.find((p) => p.hash === hash)
-  if (participant === undefined) {
-    throw new Error(`Participant not found: ${hash}`)
-  }
-  await validateAccount(participant.mail)
+  await validateAccount(mail)
 }
 
 /**

@@ -10,8 +10,9 @@ Node process holding a cron job.
 The package manager is **pnpm**, not npm.
 
 - `pnpm validate` — typecheck + lint + test. Run this before calling work done.
-- `pnpm dev-database` — postgres in docker, then applies the migrations. Everything except
-  `/prediction/create` reads from the database, so without it the app answers 500.
+- `pnpm dev-database` — postgres in docker, then applies the migrations. Every page reads from
+  the database, so without it the app answers 500. `/prediction/create` is the one exception,
+  and only for a visitor with no session cookie — the header looks one up when there is one.
 - `pnpm migrate` — apply pending `db/migrations/*.sql` to the dev database.
 
 ## Code patterns
@@ -29,7 +30,25 @@ The package manager is **pnpm**, not npm.
   before adding one.
 - Database access goes through `util/db.ts`. Use the `SQL` tagged template so values are
   parameterised rather than interpolated into the query string.
-- Everything under `/admin` is behind a session cookie. `app/admin/layout.tsx` renders the login
+- **A visitor is an email address and nothing more.** The session cookie holds the hash of a
+  `session` row, and that row's `mail` is the whole identity — there are no per-prediction
+  permissions stored anywhere. `server/session.ts` is the database half (the cron process reaches
+  it to sweep expired rows), `server/session-cookie.ts` the Next half, and `getCurrentUserMail()`
+  is the only way to ask who is here. What that address may do on a prediction is `getRoleForMail`,
+  computed from the prediction already in hand rather than queried for.
+- **A secret link is `/prediction/PREDICTION-HASH#ROLE-HASH`.** The fragment is never sent to the
+  server by the browser, so `components/session-negotiator.tsx` — mounted in the header, which is
+  on every route — trades it for a session and then wipes it out of the address bar. The old
+  `/prediction/HASH/ROLE/ROLEHASH` route is now nothing but a redirect to that shape and has to
+  stay: mails sent years ago still carry it and cannot be recalled.
+- **The login cover is CSS driven by an attribute, not React state.** The server cannot see the
+  fragment, so the first paint of a secret link would show the prediction as a stranger sees it.
+  The inline script in `app/layout.tsx` puts `data-logging-in` on `<html>` before that paint;
+  `components/login-cover.module.css` keys off it; `session-negotiator.tsx` removes it only once
+  the login has really answered, and on success holds it through a full `location.reload()`
+  rather than a `router.refresh()`. The attribute name is spelled out in all three places — grep
+  for `LOGIN_COVER_ATTRIBUTE` before renaming it.
+- Everything under `/admin` is behind a separate session cookie of its own. `app/admin/layout.tsx` renders the login
   form, but it is not the gate: each admin page and each action in `app/admin/actions.ts` asks
   `isAdminAuthenticated()` for itself, because a layout is not re-rendered when the visitor moves
   between the pages under it.

@@ -3,6 +3,10 @@ import './globals.css'
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 
+import Header from '../components/header.tsx'
+import LoginCover from '../components/login-cover.tsx'
+import { loginCoverScript } from '../components/login-cover-script.ts'
+
 export const metadata: Metadata = {
   title: 'Nopestradamus',
   description: 'Service for long term predictions.',
@@ -28,8 +32,17 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    // suppressHydrationWarning because the script below writes an attribute onto this element
+    // before React ever sees it
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: loginCoverScript }} />
+      </head>
+      <body>
+        <LoginCover />
+        <Header />
+        {children}
+      </body>
     </html>
   )
 }
