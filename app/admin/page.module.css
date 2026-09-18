@@ -27,11 +27,16 @@
   width: 100%;
 }
 
-.loginLink {
+/* a link with a line of explanation under it */
+.linkNote {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
   overflow-wrap: anywhere;
+}
+
+.loginLink {
+  composes: linkNote;
 }
 
 .ok {

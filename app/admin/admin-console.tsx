@@ -1,9 +1,11 @@
 'use client'
 
+import Link from 'next/link'
 import { useState, useTransition } from 'react'
 
 import { Button } from '../../components/ui/button.tsx'
 import { TextAreaField, TextField } from '../../components/ui/text-field.tsx'
+import { isDev } from '../../util/env.ts'
 import type { ActionResult } from '../action-result.ts'
 import {
   createLoginLinkAction,
@@ -53,6 +55,23 @@ export default function AdminConsole() {
         <Button onClick={() => run(() => triggerCronAction())}>Trigger cron job</Button>
       </fieldset>
 
+      {/*
+        Only in dev, because /dev/mails does not exist in production — NODE_ENV is inlined into
+        the client bundle, so this agrees with what the route itself decides.
+      */}
+      {isDev() && (
+        <fieldset className={styles.section}>
+          <legend>Mail previews</legend>
+          <div className={styles.linkNote}>
+            <Link href="/dev/mails">/dev/mails</Link>
+            <span className={styles.muted}>
+              every mail the service sends, rendered from the same templates the mailer uses,
+              against fixtures rather than real rows.
+            </span>
+          </div>
+        </fieldset>
+      )}
+
       <fieldset className={styles.section} disabled={isRunning}>
         <legend>Test send mail</legend>
         <TextField label="title" value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -63,7 +82,7 @@ export default function AdminConsole() {
           value={mail}
           onChange={(e) => setMail(e.target.value)}
         />
-        <Button onClick={() => run(() => sendMailAction(mail, { title, body }))}>send mail</Button>
+        <Button onClick={() => run(() => sendMailAction(mail, title, body))}>send mail</Button>
       </fieldset>
 
       <fieldset className={styles.section} disabled={isRunning}>

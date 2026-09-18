@@ -10,7 +10,8 @@ import {
   startAdminSession,
 } from '../../server/admin-session.ts'
 import { createLoginToken } from '../../server/login-token.ts'
-import { type Mail, sendMail } from '../../server/mailer.ts'
+import { textDocument } from '../../server/mail/blocks.ts'
+import { sendMail } from '../../server/mailer.ts'
 import {
   adminGetPredictionsByTitle,
   deletePrediction,
@@ -110,10 +111,14 @@ export async function triggerCronAction(): Promise<AdminResult<void>> {
   return asAdmin(handleAllUnsentMails)
 }
 
-export async function sendMailAction(receiver: string, mail: Mail): Promise<AdminResult<void>> {
+export async function sendMailAction(
+  receiver: string,
+  title: string,
+  body: string,
+): Promise<AdminResult<void>> {
   return asAdmin(async () => {
     // the nodemailer result is not serializable across the server-action boundary
-    await sendMail(receiver, mail, true)
+    await sendMail(receiver, textDocument(title, body), true)
   })
 }
 

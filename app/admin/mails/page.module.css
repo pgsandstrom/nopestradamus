@@ -58,19 +58,23 @@
   color: var(--color-text-muted);
 }
 
-.mail {
-  min-width: 20ch;
+.preview {
+  margin-top: var(--space-5);
+  scroll-margin-top: var(--space-4);
 }
 
-.mailSummary {
-  cursor: pointer;
+.previewHeading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: baseline;
+  margin: 0 0 var(--space-2);
+  font-size: 1rem;
+  font-weight: 500;
 }
 
-.mailBody {
-  max-width: 70ch;
-  margin: var(--space-2) 0 0;
-  padding: var(--space-3);
-  border-radius: var(--radius);
-  background: var(--color-surface);
-  white-space: pre-wrap;
+.previewTo {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  font-weight: 400;
 }

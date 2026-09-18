@@ -8,8 +8,8 @@ import {
   getHealthMail,
   getParticipantAcceptMail,
   getParticipantEndMail,
-  sendMail,
-} from './mailer.ts'
+} from './mail/templates.ts'
+import { sendMail } from './mailer.ts'
 import {
   getOldBetWithUnsentCreaterAcceptMails,
   getOldBetWithUnsentCreaterEndMails,

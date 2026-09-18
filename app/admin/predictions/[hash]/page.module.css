@@ -99,14 +99,8 @@
   cursor: pointer;
 }
 
-.mailTitle {
-  margin-bottom: 0;
-  font-weight: 500;
-}
-
-.mailBody {
-  margin-top: var(--space-2);
-  white-space: pre-wrap;
+.mailPreview {
+  margin-top: var(--space-3);
 }
 
 @media (max-width: 600px) {

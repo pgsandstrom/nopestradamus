@@ -1,15 +1,17 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
+import MailPreview from '../../../../components/mail-preview.tsx'
 import { StatusBadge } from '../../../../components/status-badge.tsx'
 import { isAdminAuthenticated } from '../../../../server/admin-session.ts'
+import type { MailDocument } from '../../../../server/mail/blocks.ts'
+import { renderMail } from '../../../../server/mail/render.ts'
 import {
   getCreaterAcceptMail,
   getCreaterEndMail,
   getParticipantAcceptMail,
   getParticipantEndMail,
-  type Mail,
-} from '../../../../server/mailer.ts'
+} from '../../../../server/mail/templates.ts'
 import { adminGetPrediction } from '../../../../server/prediction.ts'
 import { formatDateString, formatDateTimeString } from '../../../../shared/date-util.ts'
 import {
@@ -220,15 +222,26 @@ function PredictionMails({ prediction, creater }: { prediction: Prediction; crea
   )
 }
 
-function MailBlock({ heading, mail, sent }: { heading: string; mail: Mail; sent: boolean }) {
+function MailBlock({
+  heading,
+  mail,
+  sent,
+}: {
+  heading: string
+  mail: MailDocument
+  sent: boolean
+}) {
   return (
     <details className={styles.mail}>
       <summary className={styles.mailSummary}>
         <span>{heading}</span>
         <Sent value={sent} />
       </summary>
-      <p className={styles.mailTitle}>{mail.title}</p>
-      <p className={styles.mailBody}>{mail.body}</p>
+      {/* rendered only once opened: a prediction with many participants has a mail each, and
+          every one of them is a full document */}
+      <div className={styles.mailPreview}>
+        <MailPreview mail={renderMail(mail)} />
+      </div>
     </details>
   )
 }

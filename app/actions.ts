@@ -4,7 +4,8 @@ import { revalidatePath } from 'next/cache'
 
 import { getAccountByHash, getAccountByMail, setAccountBlocked } from '../server/account.ts'
 import { consumeLoginToken, createLoginToken } from '../server/login-token.ts'
-import { getLoginMail, sendMail } from '../server/mailer.ts'
+import { getLoginMail } from '../server/mail/templates.ts'
+import { sendMail } from '../server/mailer.ts'
 import {
   createPrediction,
   type CreatePredictionInput,
