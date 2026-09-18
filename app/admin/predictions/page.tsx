@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { StatusBadge } from '../../../components/status-badge.tsx'
 import { isAdminAuthenticated } from '../../../server/admin-session.ts'
 import { adminGetAnsweredPredictions, adminGetOrphanedRows } from '../../../server/prediction.ts'
 import { formatDateString, formatDateTimeString } from '../../../shared/date-util.ts'
@@ -10,7 +11,6 @@ import {
   type PredictionStatus,
 } from '../../../shared/index.ts'
 import styles from './page.module.css'
-import { StatusBadge } from './status-badge.tsx'
 
 export const dynamic = 'force-dynamic'
 

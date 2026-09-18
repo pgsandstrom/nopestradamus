@@ -64,6 +64,36 @@ export function isLoginFragment(fragment: string): boolean {
   return LOGIN_FRAGMENT.test(fragment)
 }
 
+/**
+ * One line of a visitor's own list of bets. Sibling of {@link PredictionAdminListItem}: the same
+ * idea, but scoped to one person and carrying their own answer rather than a tally of everyone's.
+ */
+export interface PredictionListItem {
+  hash: string
+  title: string
+  created: string
+  finish_date: string
+  /** What the viewer is to this prediction. */
+  role: Role
+  /** The creater's answer, which is what decides the prediction's own status. */
+  creater_accepted?: boolean
+  /** The viewer's own answer, undefined until they give one. */
+  own_answer?: boolean
+}
+
+/**
+ * Whether a bet is actually sitting on the viewer, which is not the same as their not having
+ * answered it. A participant is not asked anything until the creater has accepted — that is when
+ * their mail goes out — so a prediction whose creater has not answered is waiting on the creater
+ * even though every participant's answer is missing too.
+ */
+export function isAwaitingAnswerFrom(prediction: PredictionListItem): boolean {
+  if (prediction.own_answer !== undefined) {
+    return false
+  }
+  return prediction.role === 'creater' || prediction.creater_accepted === true
+}
+
 export interface PredictionShallow {
   title: string
   body: string

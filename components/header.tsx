@@ -30,7 +30,10 @@ export default async function Header() {
           ) : (
             <>
               <span className={styles.status}>
-                Logged in as <strong className={styles.mail}>{mail}</strong>
+                Logged in as{' '}
+                <Link className={styles.mail} href="/me">
+                  {mail}
+                </Link>
               </span>
               <form action={logOutAction}>
                 <Button type="submit" className={styles.logout}>

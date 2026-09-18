@@ -23,13 +23,20 @@ const RESEND_COOLDOWN_SECONDS = 60
  * in flight. The caller must tell the visitor the same thing either way — which of the two
  * happened is only interesting to somebody probing the form.
  */
-export const createLoginToken = async (mail: string): Promise<string | undefined> => {
-  const recent = await querySingle<{ hash: string }>(
-    SQL`SELECT hash FROM login_token
+export const createLoginToken = async (
+  mail: string,
+  // the cooldown exists to stop the form being pointed at somebody as a mail bomb, so it has
+  // nothing to say about a link the admin console mints and shows on screen
+  { ignoreCooldown = false }: { ignoreCooldown?: boolean } = {},
+): Promise<string | undefined> => {
+  const recent = ignoreCooldown
+    ? undefined
+    : await querySingle<{ hash: string }>(
+        SQL`SELECT hash FROM login_token
 WHERE mail = ${mail} AND created > now() - make_interval(secs => ${RESEND_COOLDOWN_SECONDS})
 ORDER BY created DESC
 LIMIT 1`,
-  )
+      )
   if (recent !== undefined) {
     return undefined
   }

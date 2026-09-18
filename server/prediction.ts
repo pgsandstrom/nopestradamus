@@ -7,6 +7,7 @@ import type {
   PredictionAdminListItem,
   PredictionCensored,
   PredictionHealth,
+  PredictionListItem,
   PredictionRow,
   PredictionShallow,
 } from '../shared/index.ts'
@@ -72,6 +73,41 @@ ORDER BY created DESC
 LIMIT 20`,
   )
   return cursor.rows
+}
+
+/**
+ * Every prediction the address is part of, newest first, private ones included — they are the
+ * visitor's own. Two queries in one because a mail reaches a prediction down either of two
+ * unrelated tables; the LEFT JOIN in the second keeps a prediction whose creater row is missing,
+ * which is what a half finished delete leaves behind.
+ */
+export const getPredictionsForMail = async (mail: string): Promise<PredictionListItem[]> => {
+  const cursor = await query<PredictionListItem>(
+    SQL`SELECT prediction.hash, prediction.title, prediction.created, prediction.finish_date,
+  'creater' AS role, creater.accepted AS creater_accepted, creater.accepted AS own_answer
+FROM prediction
+JOIN creater ON prediction.hash = creater.prediction_hash
+WHERE creater.mail = ${mail}
+UNION ALL
+SELECT prediction.hash, prediction.title, prediction.created, prediction.finish_date,
+  'participant' AS role, creater.accepted AS creater_accepted, participant.accepted AS own_answer
+FROM prediction
+JOIN participant ON prediction.hash = participant.prediction_hash
+LEFT JOIN creater ON prediction.hash = creater.prediction_hash
+WHERE participant.mail = ${mail}
+ORDER BY created DESC`,
+  )
+
+  // Nothing stops a creater from also listing their own address as a participant, which puts the
+  // same prediction in both halves of that union. Creater wins, exactly as getRoleForMail has it.
+  // Replacing a Map value keeps its original position, so the newest-first order survives.
+  const byHash = new Map<string, PredictionListItem>()
+  for (const row of cursor.rows) {
+    if (!byHash.has(row.hash) || row.role === 'creater') {
+      byHash.set(row.hash, row)
+    }
+  }
+  return [...byHash.values()]
 }
 
 /**

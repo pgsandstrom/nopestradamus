@@ -6,8 +6,10 @@ import { Button } from '../../components/ui/button.tsx'
 import { TextAreaField, TextField } from '../../components/ui/text-field.tsx'
 import type { ActionResult } from '../action-result.ts'
 import {
+  createLoginLinkAction,
   deletePredictionAction,
   deleteTestPredictionsAction,
+  type LoginLink,
   sendMailAction,
   triggerCronAction,
 } from './actions.ts'
@@ -19,8 +21,22 @@ export default function AdminConsole() {
   const [mail, setMail] = useState('')
   const [hash, setHash] = useState('')
 
+  const [loginMail, setLoginMail] = useState('')
+  // its own state rather than the shared `result` below: this one is a link to click, not a line
+  // of JSON to read
+  const [loginLink, setLoginLink] = useState<LoginLink>()
+  const [loginError, setLoginError] = useState<string>()
+
   const [result, setResult] = useState<ActionResult & { data?: unknown }>()
   const [isRunning, startRunning] = useTransition()
+
+  const makeLoginLink = () => {
+    startRunning(async () => {
+      const outcome = await createLoginLinkAction(loginMail)
+      setLoginLink(outcome.data)
+      setLoginError(outcome.ok ? undefined : outcome.error)
+    })
+  }
 
   const run = (action: () => Promise<ActionResult & { data?: unknown }>) => {
     startRunning(async () => {
@@ -48,6 +64,31 @@ export default function AdminConsole() {
           onChange={(e) => setMail(e.target.value)}
         />
         <Button onClick={() => run(() => sendMailAction(mail, { title, body }))}>send mail</Button>
+      </fieldset>
+
+      <fieldset className={styles.section} disabled={isRunning}>
+        <legend>Log in as somebody</legend>
+        <TextField
+          label="mail"
+          type="email"
+          value={loginMail}
+          onChange={(e) => setLoginMail(e.target.value)}
+        />
+        <Button onClick={makeLoginLink}>make a login link</Button>
+        {loginLink !== undefined && (
+          <div className={styles.loginLink}>
+            {/*
+              A plain anchor, not next/link. A client-side navigation sets the URL with
+              pushState, which fires no event the session negotiator can hear; a real one loads
+              the document, so the inline script raises the login cover before anything paints.
+            */}
+            <a href={loginLink.path}>{loginLink.path}</a>
+            <span className={styles.muted}>
+              logs you in as {loginLink.mail}. Works once, then expires within the half hour.
+            </span>
+          </div>
+        )}
+        {loginError !== undefined && <span className={styles.error}>{loginError}</span>}
       </fieldset>
 
       <fieldset className={styles.section} disabled={isRunning}>

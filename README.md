@@ -82,7 +82,7 @@ logs, out of `Referer` headers and out of whatever scanner the recipient's mail 
 at the link. The page trades it for a session cookie and wipes it from the address bar.
 
 **A session is a mail address, not a prediction.** One link logs you in everywhere that address
-appears — which is what the eventual "your bets" page needs, and which means a leaked link
+appears — which is what `/me` lists, and which means a leaked link
 exposes every prediction that address is part of, not only the one it points at. Worth knowing
 before forwarding one. Sessions last a month; logging out deletes the row, so a copied cookie
 stops working too.

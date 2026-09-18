@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
+import { StatusBadge } from '../../../../components/status-badge.tsx'
 import { isAdminAuthenticated } from '../../../../server/admin-session.ts'
 import {
   getCreaterAcceptMail,
@@ -20,7 +21,6 @@ import {
   type PredictionAdmin,
   type Role,
 } from '../../../../shared/index.ts'
-import { StatusBadge } from '../status-badge.tsx'
 import DeletePrediction from './delete-prediction.tsx'
 import styles from './page.module.css'
 
@@ -161,9 +161,10 @@ function PersonCard({ predictionHash, role, person, account }: PersonCardProps) 
           <span className={styles.hash}>{person.hash}</span>
         </Field>
         <Field label="login link">
-          <Link href={`/prediction/${predictionHash}#${person.hash}`}>
+          {/* a plain anchor for the same reason as the console's, in admin-console.tsx */}
+          <a href={`/prediction/${predictionHash}#${person.hash}`}>
             /prediction/{predictionHash}#{person.hash}
-          </Link>
+          </a>
         </Field>
         <Field label="account">
           {account === undefined ? (

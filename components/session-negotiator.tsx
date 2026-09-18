@@ -1,5 +1,6 @@
 'use client'
 
+import { usePathname } from 'next/navigation'
 import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import { logInWithHashAction } from '../app/actions.ts'
@@ -44,6 +45,14 @@ export default function SessionNegotiator({ children }: { children: ReactNode })
     }
   }, [status])
 
+  // This component lives in the root layout, so it is mounted once and never again. A fragment
+  // can still arrive later in two ways, and neither of them is a remount: a link to the same page
+  // with a different fragment, which is the `hashchange` below, and a client-side navigation to
+  // another route, which changes the pathname and fires no event at all — `pushState` raises
+  // neither `hashchange` nor `popstate`. Without the pathname in here, an in-app link to a secret
+  // URL would quietly land on the page without logging anybody in.
+  const pathname = usePathname()
+
   useEffect(() => {
     const negotiate = () => {
       const fragment = window.location.hash.slice(1)
@@ -73,7 +82,7 @@ export default function SessionNegotiator({ children }: { children: ReactNode })
     return () => {
       window.removeEventListener('hashchange', negotiate)
     }
-  }, [])
+  }, [pathname])
 
   if (status === 'failed') {
     return <span className={styles.error}>That link did not log you in.</span>

@@ -1,4 +1,4 @@
-import type { PredictionStatus } from '../../../shared/index.ts'
+import type { PredictionStatus } from '../shared/index.ts'
 import styles from './status-badge.module.css'
 
 const STATUS_STYLE: Record<PredictionStatus, string | undefined> = {

@@ -2,12 +2,14 @@
 
 import { redirect } from 'next/navigation'
 
+import { getAccountByMail } from '../../server/account.ts'
 import { attemptAdminLogin } from '../../server/admin-auth.ts'
 import {
   endAdminSession,
   isAdminAuthenticated,
   startAdminSession,
 } from '../../server/admin-session.ts'
+import { createLoginToken } from '../../server/login-token.ts'
 import { type Mail, sendMail } from '../../server/mailer.ts'
 import {
   adminGetPredictionsByTitle,
@@ -65,6 +67,43 @@ export async function logInAction(
 export async function logOutAction(): Promise<void> {
   await endAdminSession()
   redirect('/admin')
+}
+
+export interface LoginLink {
+  /** Relative on purpose — see the note on {@link createLoginLinkAction}. */
+  path: string
+  /** The address as stored, which may differ in case from what the admin typed. */
+  mail: string
+}
+
+/**
+ * A login link for any address, handed to the admin instead of mailed. Meant for looking at the
+ * site as somebody who has written in about it, without asking them to forward their own link.
+ *
+ * Not a new power: every creater and participant hash is already printed on the prediction pages
+ * under here, and each of those is a permanent login link for its owner. This one is for an
+ * address on its own rather than one seat at one prediction, and unlike those it expires.
+ *
+ * The path is relative, and has to be. `SITE_URL` points at production, so an absolute link would
+ * send an admin working on localhost to the live site carrying a token only the local database
+ * has ever heard of.
+ */
+export async function createLoginLinkAction(mail: string): Promise<AdminResult<LoginLink>> {
+  return asAdmin(async () => {
+    const typed = mail.trim()
+    // An unknown address would mint a session belonging to nobody: logged in, with no creater or
+    // participant row anywhere to match it. The admin is not a stranger, so say so plainly rather
+    // than going quiet the way the public form has to.
+    const account = await getAccountByMail(typed)
+    if (account === undefined) {
+      throw new Error(`No account in the mail table for "${typed}"`)
+    }
+    const token = await createLoginToken(account.mail, { ignoreCooldown: true })
+    if (token === undefined) {
+      throw new Error('Could not mint a login token')
+    }
+    return { path: `/#${token}`, mail: account.mail }
+  })
 }
 
 export async function triggerCronAction(): Promise<AdminResult<void>> {

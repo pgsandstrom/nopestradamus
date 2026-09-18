@@ -27,6 +27,13 @@
   width: 100%;
 }
 
+.loginLink {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  overflow-wrap: anywhere;
+}
+
 .ok {
   color: var(--color-success);
 }

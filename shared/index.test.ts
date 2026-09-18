@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
 import type { Prediction } from './index.ts'
-import { getPredictionStatus, getRoleForMail, isLoginFragment } from './index.ts'
+import {
+  getPredictionStatus,
+  getRoleForMail,
+  isAwaitingAnswerFrom,
+  isLoginFragment,
+  type PredictionListItem,
+} from './index.ts'
 
 const inTheFuture = new Date(Date.now() + 1000 * 60 * 60).toISOString()
 const inThePast = new Date(Date.now() - 1000 * 60 * 60).toISOString()
@@ -72,5 +78,34 @@ describe('isLoginFragment', () => {
     expect(isLoginFragment('0123456789abcdef')).toBe(false)
     expect(isLoginFragment('0123456789ABCDF')).toBe(false)
     expect(isLoginFragment('f81d4fae7dec11d0a76500a0c91e6bf6')).toBe(false)
+  })
+})
+
+const listItem = (over: Partial<PredictionListItem>): PredictionListItem => ({
+  hash: 'h',
+  title: 't',
+  created: '2026-01-01',
+  finish_date: '2030-01-01',
+  role: 'participant',
+  ...over,
+})
+
+describe('isAwaitingAnswerFrom', () => {
+  it('is done with anyone who has answered, either way', () => {
+    expect(isAwaitingAnswerFrom(listItem({ role: 'creater', own_answer: true }))).toBe(false)
+    expect(isAwaitingAnswerFrom(listItem({ own_answer: false, creater_accepted: true }))).toBe(
+      false,
+    )
+  })
+
+  it('waits on a creater who has not answered', () => {
+    expect(isAwaitingAnswerFrom(listItem({ role: 'creater' }))).toBe(true)
+  })
+
+  it('does not chase a participant before the creater has accepted', () => {
+    // the participant has not been asked yet: their mail only goes out once the creater accepts
+    expect(isAwaitingAnswerFrom(listItem({}))).toBe(false)
+    expect(isAwaitingAnswerFrom(listItem({ creater_accepted: false }))).toBe(false)
+    expect(isAwaitingAnswerFrom(listItem({ creater_accepted: true }))).toBe(true)
   })
 })
