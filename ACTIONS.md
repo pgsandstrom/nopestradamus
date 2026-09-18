@@ -3,4 +3,3 @@
 4. Maybe emphasize how long nopestradamus has been hosted on the front page? Make it more selly? Shorter text? Stuff like that!
 5. When you accept a bet it stops showing and you just see a "success" screen. Thats stupid
 6. Do not censor mails at all if you are a participant or creator.
-7. When logged in, your mail should be pre-filled when creating a bet.

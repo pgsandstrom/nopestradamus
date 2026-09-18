@@ -17,13 +17,18 @@ import styles from './create-form.module.css'
 
 type Status = 'editing' | 'posted'
 
-export default function CreateForm() {
+interface CreateFormProps {
+  /** The logged-in visitor's address, when there is one, so they do not type it again. */
+  initialCreaterMail?: string | undefined
+}
+
+export default function CreateForm({ initialCreaterMail }: CreateFormProps) {
   const today = toDateInputValue(new Date())
 
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
   const [date, setDate] = useState(today)
-  const [createrMail, setCreaterMail] = useState('')
+  const [createrMail, setCreaterMail] = useState(initialCreaterMail ?? '')
   const [isPublic, setIsPublic] = useState(true)
   const [participantList, setParticipantList] = useState<string[]>([])
 
