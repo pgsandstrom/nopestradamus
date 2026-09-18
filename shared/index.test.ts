@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import type { Prediction } from './index.ts'
-import { getPredictionStatus, getRoleForMail, isRoleHashFragment } from './index.ts'
+import { getPredictionStatus, getRoleForMail, isLoginFragment } from './index.ts'
 
 const inTheFuture = new Date(Date.now() + 1000 * 60 * 60).toISOString()
 const inThePast = new Date(Date.now() - 1000 * 60 * 60).toISOString()
@@ -58,19 +58,19 @@ describe('getRoleForMail', () => {
   })
 })
 
-describe('isRoleHashFragment', () => {
+describe('isLoginFragment', () => {
   it('accepts a hash of either generation', () => {
-    expect(isRoleHashFragment('0123456789abcdf')).toBe(true)
-    expect(isRoleHashFragment('zzzzzzzzzzzzzzz')).toBe(true)
-    expect(isRoleHashFragment('f81d4fae-7dec-11d0-a765-00a0c91e6bf6')).toBe(true)
+    expect(isLoginFragment('0123456789abcdf')).toBe(true)
+    expect(isLoginFragment('zzzzzzzzzzzzzzz')).toBe(true)
+    expect(isLoginFragment('f81d4fae-7dec-11d0-a765-00a0c91e6bf6')).toBe(true)
   })
 
   it('leaves ordinary anchors alone', () => {
-    expect(isRoleHashFragment('')).toBe(false)
-    expect(isRoleHashFragment('participants')).toBe(false)
-    expect(isRoleHashFragment('0123456789abcd')).toBe(false)
-    expect(isRoleHashFragment('0123456789abcdef')).toBe(false)
-    expect(isRoleHashFragment('0123456789ABCDF')).toBe(false)
-    expect(isRoleHashFragment('f81d4fae7dec11d0a76500a0c91e6bf6')).toBe(false)
+    expect(isLoginFragment('')).toBe(false)
+    expect(isLoginFragment('participants')).toBe(false)
+    expect(isLoginFragment('0123456789abcd')).toBe(false)
+    expect(isLoginFragment('0123456789abcdef')).toBe(false)
+    expect(isLoginFragment('0123456789ABCDF')).toBe(false)
+    expect(isLoginFragment('f81d4fae7dec11d0a76500a0c91e6bf6')).toBe(false)
   })
 })

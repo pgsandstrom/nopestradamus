@@ -1,5 +1,6 @@
 .header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
@@ -22,6 +23,43 @@
   align-items: center;
   gap: var(--space-3);
   min-height: 32px;
+}
+
+.loginForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/*
+ * Not the shared TextField: that one stacks a label above a full-width control, which is the
+ * right shape for a page and the wrong one for a single row in a header.
+ */
+.mailInput {
+  width: 190px;
+  max-width: 100%;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  font-size: 0.85rem;
+  transition: border-color 0.15s ease;
+}
+
+.mailInput:hover {
+  border-color: var(--color-text-muted);
+}
+
+.mailInput:focus {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.loginButton {
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.85rem;
 }
 
 .status {
@@ -47,5 +85,10 @@
 @media (max-width: 600px) {
   .mail {
     word-break: break-all;
+  }
+
+  /* the form gets the second row to itself rather than being squeezed next to the brand */
+  .session {
+    flex: 1 1 100%;
   }
 }

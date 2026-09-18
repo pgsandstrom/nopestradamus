@@ -48,19 +48,20 @@ export function getRoleForMail(
 }
 
 /**
- * A creater hash (15 Crockford symbols) or a participant hash, which on rows created before
- * `randomHash` existed is a UUID instead. Exported because the inline script in `<head>` has to
- * make the same judgement before React exists — see `components/login-cover-script.ts`.
+ * The shape of a secret that logs somebody in: a `randomHash` — a creater hash, a participant
+ * hash or a login token, all 15 Crockford symbols — or the UUID that rows created before
+ * `randomHash` existed still carry. Exported because the inline script in `<head>` has to make
+ * the same judgement before React exists — see `components/login-cover-script.ts`.
  */
-export const ROLE_HASH =
+export const LOGIN_FRAGMENT =
   /^(?:[0-9a-z]{15}|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/
 
 /**
  * Whether a URL fragment is worth offering to the server as a login. Anything else is an
  * ordinary anchor, so a plain `#section` link never turns into a login attempt.
  */
-export function isRoleHashFragment(fragment: string): boolean {
-  return ROLE_HASH.test(fragment)
+export function isLoginFragment(fragment: string): boolean {
+  return LOGIN_FRAGMENT.test(fragment)
 }
 
 export interface PredictionShallow {

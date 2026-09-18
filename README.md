@@ -77,50 +77,30 @@ participants get a link mailed to them holding a secret hash, and that link is t
 https://nopestradamus.com/prediction/PREDICTION-HASH#ROLE-HASH
 ```
 
-The role hash sits in the **fragment**, which browsers never put on the wire. It reaches the
-server exactly once, as the argument of the `logInWithHashAction` server action that
-`components/session-negotiator.tsx` fires on load — so the secret stays out of access logs, out
-of the `Referer` header of every link the page goes on to load, and out of whatever scanner the
-recipient's mail provider points at the link. The action trades it for a row in the `session`
-table, hands back a cookie holding that row's hash, and the fragment is wiped from the address
-bar before the visitor can copy or bookmark it.
+The secret sits in the fragment, which browsers never put on the wire, so it stays out of access
+logs, out of `Referer` headers and out of whatever scanner the recipient's mail provider points
+at the link. The page trades it for a session cookie and wipes it from the address bar.
 
-The identity a session carries is a mail address, not a prediction. What you may do on a given
-prediction is decided by looking that address up against its creater and participant rows, so one
-link logs you in everywhere that address appears — which is what the eventual login form and
-"your bets" page will need. The flip side is worth stating plainly: a leaked link now exposes
-every prediction that address is part of, not just the one it points at. Presenting a second link
-simply replaces the session, so following someone else's link does not need a log out first.
+**A session is a mail address, not a prediction.** One link logs you in everywhere that address
+appears — which is what the eventual "your bets" page needs, and which means a leaked link
+exposes every prediction that address is part of, not only the one it points at. Worth knowing
+before forwarding one. Sessions last a month; logging out deletes the row, so a copied cookie
+stops working too.
 
-Sessions last a month. Expiry is enforced on read, and the hourly cron job deletes the dead rows
-afterwards. Logging out deletes the row, so the cookie cannot be replayed.
+The header also offers "continue with e-mail", which mails a one-time link. There is no sign-up,
+so it only works for an address some prediction already named, and it says the same thing
+whatever happened — sent, unknown, blocked, or asked again within the minute. Anything sharper
+would turn an open form into a way of asking whether a given person uses the site.
 
-### Why there is a cover over the page while that happens
-
-The server cannot see the fragment, so the HTML it sends for a secret link is the prediction as a
-_stranger_ sees it — no accept buttons, "Not logged in" in the header. That is already painted by
-the time React has hydrated and the login has come back, and the creater of a bet should never be
-shown their own bet as an outsider, however briefly.
-
-So `components/login-cover.tsx` covers the whole viewport, and the inline script in the root
-layout raises it from `<head>` — synchronously, while the browser is still parsing, which is the
-only moment early enough to beat the first paint. It is plain CSS keyed off a `data-logging-in`
-attribute on `<html>`, because it has to work in the window before any JavaScript bundle exists.
-
-`session-negotiator.tsx` is what lowers it again, and only on a real answer: a failed login takes
-the cover down and says so in the header, and a successful one keeps it up through
-`window.location.reload()`. The reload is deliberate — `router.refresh()` gives no signal for
-"the right page has painted now", and taking the cover down a moment early is the exact flash all
-of this exists to prevent. The script also lifts the cover itself after ten seconds, so a visitor
-whose JavaScript never arrives is not left staring at it.
+**An address that used the unsubscribe link gets no login mail.** That is deliberate, and it is
+also the one way to lock yourself out of the form — the original prediction links still work.
+Worth remembering if somebody writes in confused about it.
 
 ### The old links still work
 
-Every mail sent before this used `/prediction/HASH/ROLE/ROLEHASH`, with the secret in the path.
-A prediction's end mail can be years away and nothing is recallable, so that route still exists —
-as a 307 to the new shape, nothing else. It drops the role from the URL because the hash alone
-says which table it came from. Don't delete it, and don't make it permanent: a 308 would be
-cached in browsers we cannot reach if this ever has to move again.
+Every mail sent before this used `/prediction/HASH/ROLE/ROLEHASH`, with the secret in the path. A
+prediction's end mail can be years away and nothing is recallable, so that route still exists, as
+a redirect to the new shape. Don't delete it.
 
 ## Admin console
 

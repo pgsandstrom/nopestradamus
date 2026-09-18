@@ -1,4 +1,4 @@
-import { ROLE_HASH } from '../shared/index.ts'
+import { LOGIN_FRAGMENT } from '../shared/index.ts'
 
 /**
  * Set on `<html>` while a secret link is being traded for a session. `login-cover.module.css`
@@ -24,6 +24,6 @@ const GIVE_UP_AFTER_MS = 10_000
  */
 const attribute = JSON.stringify(LOGIN_COVER_ATTRIBUTE)
 export const loginCoverScript = `(function(){try{var r=document.documentElement
-if(!new RegExp(${JSON.stringify(ROLE_HASH.source)}).test(location.hash.slice(1)))return
+if(!new RegExp(${JSON.stringify(LOGIN_FRAGMENT.source)}).test(location.hash.slice(1)))return
 r.setAttribute(${attribute},"")
 setTimeout(function(){r.removeAttribute(${attribute})},${GIVE_UP_AFTER_MS})}catch(e){}})()`

@@ -5,6 +5,7 @@ import type { Participant, Prediction, PredictionHealth } from '../shared/index.
 import { getPrivateKey } from '../util/config.ts'
 import { isDev } from '../util/env.ts'
 import { getAccountByHash, getAccountHashByMail } from './account.ts'
+import { LOGIN_TOKEN_TTL_SECONDS } from './login-token.ts'
 
 const SITE_URL = 'https://nopestradamus.com'
 
@@ -21,6 +22,23 @@ export interface Mail {
   title: string
   body: string
 }
+
+/**
+ * The mail behind the header's "continue with e-mail" form. Same fragment trick as a prediction
+ * link, and here it earns its keep twice over: a link scanner that follows this URL cannot spend
+ * the token, because the part that matters never leaves the recipient's browser.
+ */
+export const getLoginMail = (token: string): Mail => ({
+  title: 'Log in to Nopestradamus',
+  body: `Somebody asked to log in to Nopestradamus as this address. Follow this link and you are in:
+
+${SITE_URL}/#${token}
+
+The link works once, and stops working after ${LOGIN_TOKEN_TTL_SECONDS / 60} minutes.
+
+If that was not you, nothing has happened and nothing needs doing — the link expires on its own,
+and whoever typed your address in cannot see whether it exists.`,
+})
 
 export const getCreaterAcceptMail = (prediction: Prediction): Mail => ({
   title: 'Nopestradamus: Validate your mail for your prediction!',

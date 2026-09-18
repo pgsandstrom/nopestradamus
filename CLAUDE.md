@@ -30,24 +30,16 @@ The package manager is **pnpm**, not npm.
   before adding one.
 - Database access goes through `util/db.ts`. Use the `SQL` tagged template so values are
   parameterised rather than interpolated into the query string.
-- **A visitor is an email address and nothing more.** The session cookie holds the hash of a
-  `session` row, and that row's `mail` is the whole identity — there are no per-prediction
-  permissions stored anywhere. `server/session.ts` is the database half (the cron process reaches
-  it to sweep expired rows), `server/session-cookie.ts` the Next half, and `getCurrentUserMail()`
-  is the only way to ask who is here. What that address may do on a prediction is `getRoleForMail`,
-  computed from the prediction already in hand rather than queried for.
-- **A secret link is `/prediction/PREDICTION-HASH#ROLE-HASH`.** The fragment is never sent to the
-  server by the browser, so `components/session-negotiator.tsx` — mounted in the header, which is
-  on every route — trades it for a session and then wipes it out of the address bar. The old
-  `/prediction/HASH/ROLE/ROLEHASH` route is now nothing but a redirect to that shape and has to
-  stay: mails sent years ago still carry it and cannot be recalled.
-- **The login cover is CSS driven by an attribute, not React state.** The server cannot see the
-  fragment, so the first paint of a secret link would show the prediction as a stranger sees it.
-  The inline script in `app/layout.tsx` puts `data-logging-in` on `<html>` before that paint;
-  `components/login-cover.module.css` keys off it; `session-negotiator.tsx` removes it only once
-  the login has really answered, and on success holds it through a full `location.reload()`
-  rather than a `router.refresh()`. The attribute name is spelled out in all three places — grep
-  for `LOGIN_COVER_ATTRIBUTE` before renaming it.
+- A visitor is a mail address: the session cookie names one, and what it may do on a prediction
+  is derived from that, not stored. Three things about it are not visible from the code:
+  - The legacy `/prediction/HASH/ROLE/ROLEHASH` route is only a redirect now, and has to stay.
+    Mails sent years ago carry it and cannot be recalled — it is not dead code.
+  - `requestLoginMailAction` answers identically whether it sent a mail, found nothing, hit a
+    blocked address or hit the cooldown. Making that message more helpful turns an open form into
+    a way of asking who uses the site.
+  - The login cover is CSS keyed off `data-logging-in` on `<html>`, set by an inline script, and
+    held through a full `location.reload()`. React state cannot beat the first paint and
+    `router.refresh()` gives no signal for "painted"; both look like obvious simplifications.
 - Everything under `/admin` is behind a separate session cookie of its own. `app/admin/layout.tsx` renders the login
   form, but it is not the gate: each admin page and each action in `app/admin/actions.ts` asks
   `isAdminAuthenticated()` for itself, because a layout is not re-rendered when the visitor moves

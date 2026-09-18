@@ -3,7 +3,7 @@
 import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import { logInWithHashAction } from '../app/actions.ts'
-import { isRoleHashFragment } from '../shared/index.ts'
+import { isLoginFragment } from '../shared/index.ts'
 import styles from './header.module.css'
 import { LOGIN_COVER_ATTRIBUTE } from './login-cover-script.ts'
 
@@ -25,7 +25,7 @@ export default function SessionNegotiator({ children }: { children: ReactNode })
   // agrees with the DOM from its very first render. 'idle' and 'working' render the same thing,
   // so reading the fragment here cannot cause a hydration mismatch.
   const [status, setStatus] = useState<Status>(() =>
-    typeof window !== 'undefined' && isRoleHashFragment(window.location.hash.slice(1))
+    typeof window !== 'undefined' && isLoginFragment(window.location.hash.slice(1))
       ? 'working'
       : 'idle',
   )
@@ -47,7 +47,7 @@ export default function SessionNegotiator({ children }: { children: ReactNode })
   useEffect(() => {
     const negotiate = () => {
       const fragment = window.location.hash.slice(1)
-      if (!isRoleHashFragment(fragment) || attempted.current === fragment) {
+      if (!isLoginFragment(fragment) || attempted.current === fragment) {
         return
       }
       attempted.current = fragment

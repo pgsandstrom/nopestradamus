@@ -1,5 +1,6 @@
 import { CronJob } from 'cron'
 
+import { deleteExpiredLoginTokens } from './login-token.ts'
 import { handleAllUnsentMails, sendHealthMail } from './scheduler.ts'
 import { deleteExpiredSessions } from './session.ts'
 
@@ -18,11 +19,14 @@ export const startCronStuff = (): void => {
       } catch (e) {
         console.error(`Cron job threw error: ${String(e)}`)
       }
-      // housekeeping, not part of the gate: an expired session is already refused on read
+      // housekeeping, not part of the gate: expired rows of either kind are refused on read
       try {
-        const removed = await deleteExpiredSessions()
-        if (removed > 0) {
-          console.log(`removed ${removed} expired sessions`)
+        const [sessions, tokens] = await Promise.all([
+          deleteExpiredSessions(),
+          deleteExpiredLoginTokens(),
+        ])
+        if (sessions > 0 || tokens > 0) {
+          console.log(`removed ${sessions} expired sessions and ${tokens} expired login tokens`)
         }
       } catch (e) {
         console.error(`Session sweep threw error: ${String(e)}`)

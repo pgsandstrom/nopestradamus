@@ -21,6 +21,20 @@ export const validateAccount = async (mail: string): Promise<void> => {
 export const getAccountByHash = async (hash: string): Promise<AppAccount | undefined> =>
   querySingle<AppAccount>(SQL`SELECT mail, validated, blocked FROM mail WHERE hash = ${hash}`)
 
+/**
+ * The account for an address a visitor typed, matched without regard to case but returned exactly
+ * as stored — every other comparison in the app is case sensitive, so callers must go on using
+ * the stored spelling or a session would not match its own creater and participant rows.
+ *
+ * `lower()` means no index is used. The table is small, and the alternative is an expression
+ * index for the one query that needs it. If two rows differ only by case the older spelling wins,
+ * arbitrarily but consistently; they are the same person either way.
+ */
+export const getAccountByMail = async (mail: string): Promise<AppAccount | undefined> =>
+  querySingle<AppAccount>(
+    SQL`SELECT mail, validated, blocked FROM mail WHERE lower(mail) = lower(${mail}) ORDER BY mail LIMIT 1`,
+  )
+
 export const getAccountHashByMail = async (mail: string): Promise<string> => {
   const entry = await querySingle<{ hash: string }>(SQL`SELECT hash FROM mail WHERE mail = ${mail}`)
   if (entry === undefined) {
