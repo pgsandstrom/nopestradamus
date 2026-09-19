@@ -162,10 +162,45 @@ export const getCommentMail = (
     },
     {
       kind: 'note',
-      text: 'You get these because you accepted this prediction. Muting its comments stops these mails, and only these: the mail when the prediction finishes still comes.',
+      text: ACTIVITY_NOTE,
     },
   ],
 })
+
+/**
+ * A participant has accepted or rejected, sent to everybody else who has accepted — the same
+ * people a comment goes to. The prediction is not quoted: everybody who gets this has already
+ * read and accepted it, and the title is enough to say which one.
+ */
+export const getAnswerMail = (
+  prediction: Prediction,
+  answererMail: string,
+  accepted: boolean,
+  recipientRoleHash: string,
+): MailDocument => {
+  const answer = accepted ? 'accepted' : 'rejected'
+  return {
+    title: `${answererMail} ${answer}: ${prediction.title}`,
+    preheader: `${answererMail} ${answer} a prediction you accepted.`,
+    blocks: [
+      { kind: 'heading', text: accepted ? 'New participant' : 'A participant said no' },
+      {
+        kind: 'paragraph',
+        text: `${answererMail} has ${answer} the prediction "${prediction.title}".`,
+      },
+      ...predictionFacts(prediction),
+      {
+        kind: 'button',
+        label: 'See the prediction',
+        url: predictionUrl(prediction.hash, recipientRoleHash),
+      },
+      { kind: 'note', text: ACTIVITY_NOTE },
+    ],
+  }
+}
+
+const ACTIVITY_NOTE =
+  'You get these because you accepted this prediction. Muting its activity stops mails about comments and answers, and only those: the mail when the prediction finishes still comes.'
 
 /**
  * The monthly proof of life. Deliberately reports numbers rather than just "it works": generating
@@ -212,34 +247,36 @@ export const getHealthMail = (
  * The line every mail ends with. Added when a mail is sent rather than written into each one,
  * because it needs the account hash, which is a property of the recipient and not of the mail.
  *
- * A comment mail passes `muteCommentsOf` and offers muting that prediction's comment mails
- * first, so getting out of one chatty comment thread does not cost somebody every mail the site
- * will ever send them — the mail when the prediction finishes included.
+ * An activity mail (a comment, an answer) passes `muteActivityOf` and offers muting that
+ * prediction's activity mails first, so getting out of one chatty prediction does not cost
+ * somebody every mail the site will ever send them — the mail when the prediction finishes
+ * included.
  */
 export const withUnsubscribeFooter = (
   mail: MailDocument,
   accountHash: string,
-  muteCommentsOf?: string,
+  muteActivityOf?: string,
 ): MailDocument => ({
   ...mail,
   blocks: [
     ...mail.blocks,
     { kind: 'divider' },
     { kind: 'note', text: "Don't want to receive these mails?" },
-    ...(muteCommentsOf === undefined
+    ...(muteActivityOf === undefined
       ? []
       : [
           {
             kind: 'link' as const,
-            label: 'Mute comments on this prediction',
-            url: muteCommentsPageUrl(accountHash, muteCommentsOf),
+            label: 'Mute activity on this prediction',
+            url: muteActivityPageUrl(accountHash, muteActivityOf),
           },
         ]),
     { kind: 'link', label: 'Block yourself here', url: `${SITE_URL}/blockme/${accountHash}` },
   ],
 })
 
-const muteCommentsPageUrl = (accountHash: string, predictionHash: string): string =>
+// the path predates answer mails and stays, because comment mails already sent carry it
+const muteActivityPageUrl = (accountHash: string, predictionHash: string): string =>
   `${SITE_URL}/mute-comments/${accountHash}/${predictionHash}`
 
 const predictionFacts = (prediction: Prediction): Block[] => [

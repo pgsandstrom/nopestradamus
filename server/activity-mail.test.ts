@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import type { Participant, Prediction } from '../shared/index.ts'
-import { getCommentMailRecipients } from './comment.ts'
+import { getActivityMailRecipients } from './activity-mail.ts'
 
 const person = (mail: string, accepted?: boolean): Participant => ({
   mail,
@@ -18,9 +18,9 @@ const prediction = (
 
 const mailsOf = (recipients: { mail: string }[]) => recipients.map((r) => r.mail)
 
-describe('getCommentMailRecipients', () => {
-  it('mails everybody who accepted, except the author', () => {
-    const recipients = getCommentMailRecipients(
+describe('getActivityMailRecipients', () => {
+  it('mails everybody who accepted, except whoever did it', () => {
+    const recipients = getActivityMailRecipients(
       prediction(person('creater', true), person('a', true), person('b', true)),
       'a',
       new Set(),
@@ -29,7 +29,7 @@ describe('getCommentMailRecipients', () => {
   })
 
   it('leaves out whoever has not answered and whoever rejected', () => {
-    const recipients = getCommentMailRecipients(
+    const recipients = getActivityMailRecipients(
       prediction(person('creater', true), person('unanswered'), person('rejected', false)),
       'creater',
       new Set(),
@@ -38,7 +38,7 @@ describe('getCommentMailRecipients', () => {
   })
 
   it('leaves out a creater who has not accepted yet', () => {
-    const recipients = getCommentMailRecipients(
+    const recipients = getActivityMailRecipients(
       prediction(person('creater'), person('a', true)),
       'a',
       new Set(),
@@ -46,8 +46,8 @@ describe('getCommentMailRecipients', () => {
     expect(recipients).toEqual([])
   })
 
-  it('leaves out whoever muted the comments', () => {
-    const recipients = getCommentMailRecipients(
+  it('leaves out whoever muted the activity', () => {
+    const recipients = getActivityMailRecipients(
       prediction(person('creater', true), person('a', true), person('b', true)),
       'creater',
       new Set(['b']),

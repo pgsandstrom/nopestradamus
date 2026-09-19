@@ -2,9 +2,8 @@ import type { Comment, CommentView, Prediction } from '../shared/index.ts'
 import { getMailFormatter, getRoleForMail } from '../shared/index.ts'
 import { validateComment } from '../shared/validate-comment.ts'
 import { query, SQL } from '../util/db.ts'
-import { getCommentMailMutedMails } from './comment-mute.ts'
+import { sendActivityMails } from './activity-mail.ts'
 import { getCommentMail } from './mail/templates.ts'
-import { sendMail } from './mailer.ts'
 
 /** Oldest first, so the list reads as the conversation it is. `id` breaks ties within a second. */
 export const getComments = async (predictionHash: string): Promise<Comment[]> => {
@@ -53,56 +52,12 @@ export const getCommentViews = (
   }))
 }
 
-interface CommentMailRecipient {
-  mail: string
-  /** Their own creater or participant hash, for the login link in the mail. */
-  roleHash: string
-}
-
-/**
- * Who hears about a new comment: everybody who has accepted the prediction, less its author and
- * less whoever muted its comments. Somebody who has not answered yet has not agreed to be part of anything,
- * and somebody who rejected has said they want out, so neither is mailed.
- */
-export const getCommentMailRecipients = (
-  prediction: Pick<Prediction, 'creater' | 'participants'>,
-  authorMail: string,
-  commentMutedMails: ReadonlySet<string>,
-): CommentMailRecipient[] =>
-  [prediction.creater, ...prediction.participants]
-    .filter(
-      (person) =>
-        person.accepted === true &&
-        person.mail !== authorMail &&
-        !commentMutedMails.has(person.mail),
-    )
-    .map((person) => ({ mail: person.mail, roleHash: person.hash }))
-
-/**
- * Mails a comment that has just been stored. There is no sent flag and no retry: a comment mail
- * that fails is logged and lost, which for a comment is better than the author seeing an error and
- * posting it a second time. One failed address does not stop the others.
- */
-export const sendCommentMails = async (
+/** Mails a comment that has just been stored to everybody else on the prediction. */
+export const sendCommentMails = (
   prediction: Prediction,
   authorMail: string,
   body: string,
-): Promise<void> => {
-  const recipients = getCommentMailRecipients(
-    prediction,
-    authorMail,
-    await getCommentMailMutedMails(prediction.hash),
+): Promise<void> =>
+  sendActivityMails(prediction, authorMail, (roleHash) =>
+    getCommentMail(prediction, authorMail, body.trim(), roleHash),
   )
-  const results = await Promise.allSettled(
-    recipients.map(({ mail, roleHash }) =>
-      sendMail(mail, getCommentMail(prediction, authorMail, body.trim(), roleHash), {
-        muteCommentsOf: prediction.hash,
-      }),
-    ),
-  )
-  results.forEach((result, index) => {
-    if (result.status === 'rejected') {
-      console.error(`failed sending comment mail to ${recipients[index]!.mail}`, result.reason)
-    }
-  })
-}

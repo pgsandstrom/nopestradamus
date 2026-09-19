@@ -4,10 +4,11 @@ import { revalidatePath } from 'next/cache'
 import { after } from 'next/server'
 
 import { getAccountByHash, getAccountByMail, setAccountBlocked } from '../server/account.ts'
+import { sendActivityMails } from '../server/activity-mail.ts'
+import { setActivityMailMuted } from '../server/activity-mute.ts'
 import { createComment, sendCommentMails } from '../server/comment.ts'
-import { setCommentMailMuted } from '../server/comment-mute.ts'
 import { consumeLoginToken, createLoginToken } from '../server/login-token.ts'
-import { getLoginMail } from '../server/mail/templates.ts'
+import { getAnswerMail, getLoginMail } from '../server/mail/templates.ts'
 import { sendMail } from '../server/mailer.ts'
 import {
   createPrediction,
@@ -137,6 +138,17 @@ export async function answerPredictionAction(
       return { ok: false, error: 'You are not part of this prediction.' }
     }
     await answerAs(role, predictionHash, mail, accept)
+    // A creater answering is what sends the invitations, so there is nobody yet to tell. Only a
+    // changed answer is news: the same button pressed twice says nothing new.
+    const previous = prediction.participants.find((p) => p.mail === mail)?.accepted
+    if (role === 'participant' && previous !== accept) {
+      // after the response, so the answerer is not kept waiting on the mail server once per reader
+      after(() =>
+        sendActivityMails(prediction, mail, (roleHash) =>
+          getAnswerMail(prediction, mail, accept, roleHash),
+        ),
+      )
+    }
   } catch (e) {
     return failed(e, 'Could not register your answer.')
   }
@@ -196,11 +208,11 @@ export async function addCommentAction(
 }
 
 /**
- * Mutes or unmutes the comment mails of one prediction for whoever the session says is here — the
- * comment mails only, never the prediction's other mails. As with commenting, only the creater and
- * the participants are offered it, so only they may use it.
+ * Mutes or unmutes the activity mails (comments, answers) of one prediction for whoever the
+ * session says is here — those only, never the prediction's other mails. As with commenting, only
+ * the creater and the participants are offered it, so only they may use it.
  */
-export async function setCommentMailMutedAction(
+export async function setActivityMailMutedAction(
   predictionHash: string,
   muted: boolean,
 ): Promise<ActionResult> {
@@ -216,7 +228,7 @@ export async function setCommentMailMutedAction(
     if (getRoleForMail(prediction, mail) === undefined) {
       return { ok: false, error: 'You are not part of this prediction.' }
     }
-    await setCommentMailMuted(predictionHash, mail, muted)
+    await setActivityMailMuted(predictionHash, mail, muted)
   } catch (e) {
     return failed(e, 'Could not update your mail settings.')
   }
@@ -225,10 +237,10 @@ export async function setCommentMailMutedAction(
 }
 
 /**
- * The same, from the link at the bottom of a comment mail, which knows the account hash rather
+ * The same, from the link at the bottom of an activity mail, which knows the account hash rather
  * than a session — the same key `/blockme` works with, and no more powerful than it.
  */
-export async function setCommentMailMutedByAccountAction(
+export async function setActivityMailMutedByAccountAction(
   accountHash: string,
   predictionHash: string,
   muted: boolean,
@@ -238,7 +250,7 @@ export async function setCommentMailMutedByAccountAction(
     if (account === undefined) {
       return { ok: false, error: 'Account not found.' }
     }
-    await setCommentMailMuted(predictionHash, account.mail, muted)
+    await setActivityMailMuted(predictionHash, account.mail, muted)
   } catch (e) {
     return failed(e, 'Could not update your mail settings.')
   }

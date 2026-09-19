@@ -1,6 +1,7 @@
 import type { Participant, Prediction } from '../../shared/index.ts'
 import type { MailDocument } from './blocks.ts'
 import {
+  getAnswerMail,
   getCommentMail,
   getCreaterAcceptMail,
   getCreaterEndMail,
@@ -84,8 +85,8 @@ inside the body should survive too.`,
 })
 
 interface Sample extends MailSample {
-  /** Set on comment mails, whose footer offers muting their comments, as the mailer is told. */
-  muteCommentsOf?: string
+  /** Set on activity mails, whose footer offers muting their activity, as the mailer is told. */
+  muteActivityOf?: string
 }
 
 const SAMPLES: Sample[] = [
@@ -135,7 +136,7 @@ const SAMPLES: Sample[] = [
     id: 'comment',
     name: 'New comment',
     description:
-      "To everybody who accepted, except the author. The footer offers muting this prediction's comments first.",
+      "To everybody who accepted, except the author. The footer offers muting this prediction's activity first.",
     mail: getCommentMail(
       prediction(),
       'skeptic@example.com',
@@ -144,7 +145,22 @@ const SAMPLES: Sample[] = [
 Dinner is still on.`,
       prediction().creater.hash,
     ),
-    muteCommentsOf: prediction().hash,
+    muteActivityOf: prediction().hash,
+  },
+  {
+    id: 'answer-accepted',
+    name: 'Participant accepted',
+    description:
+      'To everybody else who accepted, when a participant accepts. Muted along with the comments.',
+    mail: getAnswerMail(prediction(), 'the.referee@example.com', true, prediction().creater.hash),
+    muteActivityOf: prediction().hash,
+  },
+  {
+    id: 'answer-rejected',
+    name: 'Participant rejected',
+    description: 'The same, when a participant rejects.',
+    mail: getAnswerMail(prediction(), 'the.referee@example.com', false, prediction().creater.hash),
+    muteActivityOf: prediction().hash,
   },
   {
     id: 'awkward',
@@ -176,7 +192,7 @@ Dinner is still on.`,
   },
 ]
 
-export const MAIL_SAMPLES: MailSample[] = SAMPLES.map(({ muteCommentsOf, ...sample }) => ({
+export const MAIL_SAMPLES: MailSample[] = SAMPLES.map(({ muteActivityOf, ...sample }) => ({
   ...sample,
-  mail: withUnsubscribeFooter(sample.mail, 'a1c3e5g7j9l2n4q', muteCommentsOf),
+  mail: withUnsubscribeFooter(sample.mail, 'a1c3e5g7j9l2n4q', muteActivityOf),
 }))

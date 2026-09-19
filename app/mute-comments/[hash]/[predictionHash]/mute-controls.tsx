@@ -4,10 +4,10 @@ import Link from 'next/link'
 import { useState, useTransition } from 'react'
 
 import { Button } from '../../../../components/ui/button.tsx'
-import { setCommentMailMutedByAccountAction } from '../../../actions.ts'
+import { setActivityMailMutedByAccountAction } from '../../../actions.ts'
 import styles from './mute-controls.module.css'
 
-interface MuteCommentsControlsProps {
+interface MuteActivityControlsProps {
   hash: string
   predictionHash: string
   mail: string
@@ -15,20 +15,20 @@ interface MuteCommentsControlsProps {
   initialMuted: boolean
 }
 
-export default function MuteCommentsControls({
+export default function MuteActivityControls({
   hash,
   predictionHash,
   mail,
   title,
   initialMuted,
-}: MuteCommentsControlsProps) {
+}: MuteActivityControlsProps) {
   const [muted, setMuted] = useState(initialMuted)
   const [error, setError] = useState<string>()
   const [isLoading, startLoading] = useTransition()
 
   const doMute = (nextMuted: boolean) => {
     startLoading(async () => {
-      const result = await setCommentMailMutedByAccountAction(hash, predictionHash, nextMuted)
+      const result = await setActivityMailMutedByAccountAction(hash, predictionHash, nextMuted)
       if (result.ok) {
         setMuted(nextMuted)
         setError(undefined)
@@ -49,23 +49,26 @@ export default function MuteCommentsControls({
       {muted ? (
         <>
           <p>
-            Comments on this prediction are <span className={styles.muted}>MUTED</span>. You get no
-            mail when somebody comments.
+            Activity on this prediction is <span className={styles.muted}>MUTED</span>. You get no
+            mail when somebody comments on it, accepts it or rejects it.
           </p>
           <Button onClick={() => doMute(false)} disabled={isLoading}>
-            Unmute comments
+            Unmute activity
           </Button>
         </>
       ) : (
         <>
-          <p>You get a mail whenever somebody comments on this prediction.</p>
+          <p>
+            You get a mail whenever somebody comments on this prediction, accepts it or rejects it.
+          </p>
           <Button onClick={() => doMute(true)} disabled={isLoading}>
-            Mute comments
+            Mute activity
           </Button>
         </>
       )}
       <p className={styles.other}>
-        This only affects comment mails. You still get the mail when the prediction finishes.
+        This only affects mails about comments and answers. You still get the mail when the
+        prediction finishes.
       </p>
       {error !== undefined && <p className={styles.error}>{error}</p>}
       <p className={styles.other}>

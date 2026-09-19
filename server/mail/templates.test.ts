@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import type { Prediction } from '../../shared/index.ts'
 import { renderMail } from './render.ts'
 import {
+  getAnswerMail,
   getCommentMail,
   getCreaterAcceptMail,
   getLoginMail,
@@ -74,6 +75,24 @@ describe('getCommentMail', () => {
   })
 })
 
+describe('getAnswerMail', () => {
+  it('says who answered what, and links the recipient with their own hash', () => {
+    const accepted = renderMail(
+      getAnswerMail(prediction(), 'participant@example.com', true, 'createrhash1234'),
+    )
+    expect(accepted.title).toContain('participant@example.com accepted')
+    expect(accepted.text).toContain(
+      'https://nopestradamus.com/prediction/predictionhash1#createrhash1234',
+    )
+    expect(accepted.text).not.toContain('participanthash')
+
+    const rejected = renderMail(
+      getAnswerMail(prediction(), 'participant@example.com', false, 'createrhash1234'),
+    )
+    expect(rejected.title).toContain('participant@example.com rejected')
+  })
+})
+
 describe('getLoginMail', () => {
   it('carries the token in the fragment and says it is short lived', () => {
     const { text } = renderMail(getLoginMail('logintoken12345'))
@@ -92,7 +111,7 @@ describe('withUnsubscribeFooter', () => {
     expect(html).toContain('https://nopestradamus.com/blockme/accounthash1234')
   })
 
-  it('offers muting the comments of one prediction when told which it is', () => {
+  it('offers muting the activity of one prediction when told which it is', () => {
     const plain = renderMail(
       withUnsubscribeFooter(getLoginMail('logintoken12345'), 'accounthash1234'),
     )

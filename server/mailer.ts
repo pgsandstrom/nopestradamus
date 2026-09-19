@@ -12,11 +12,11 @@ interface SendMailOptions {
   /** Send even to a blocked address. Only for mails to the operator, never to a visitor. */
   overrideBlock?: boolean
   /**
-   * Set on a comment mail, to the prediction it is about. The footer then offers muting that
-   * prediction's comment mails before blocking everything, and the one-click unsubscribe in the
-   * mail client mutes those comment mails rather than blocking the address outright.
+   * Set on an activity mail (a comment, an answer), to the prediction it is about. The footer then
+   * offers muting that prediction's activity mails before blocking everything, and the one-click
+   * unsubscribe in the mail client mutes those rather than blocking the address outright.
    */
-  muteCommentsOf?: string
+  muteActivityOf?: string
 }
 
 /**
@@ -26,7 +26,7 @@ interface SendMailOptions {
 export const sendMail = async (
   receiver: string,
   mail: MailDocument,
-  { overrideBlock = false, muteCommentsOf }: SendMailOptions = {},
+  { overrideBlock = false, muteActivityOf }: SendMailOptions = {},
 ) => {
   const accountHash = await getAccountHashByMail(receiver)
 
@@ -40,7 +40,7 @@ export const sendMail = async (
 
   // both halves carry the footer: a recipient reading the plain-text part still has to be able to
   // get out
-  const { title, text, html } = renderMail(withUnsubscribeFooter(mail, accountHash, muteCommentsOf))
+  const { title, text, html } = renderMail(withUnsubscribeFooter(mail, accountHash, muteActivityOf))
 
   if (isDev()) {
     console.log('faking sending mail')
@@ -61,9 +61,10 @@ export const sendMail = async (
   })
 
   const unsubscribeUrl =
-    muteCommentsOf === undefined
+    muteActivityOf === undefined
       ? `${SITE_URL}/api/account/${accountHash}/block`
-      : `${SITE_URL}/api/account/${accountHash}/mute-comments/${muteCommentsOf}`
+      : // the path predates answer mails and stays, because comment mails already sent carry it
+        `${SITE_URL}/api/account/${accountHash}/mute-comments/${muteActivityOf}`
 
   try {
     await transporter.verify()

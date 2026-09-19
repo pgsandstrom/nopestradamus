@@ -1,7 +1,7 @@
 import GoBackWrapper from '../../../components/go-back-wrapper.tsx'
 import Prediction from '../../../components/prediction.tsx'
+import { isActivityMailMuted } from '../../../server/activity-mute.ts'
 import { getComments, getCommentViews } from '../../../server/comment.ts'
-import { isCommentMailMuted } from '../../../server/comment-mute.ts'
 import { getPrediction, getPredictionView } from '../../../server/prediction.ts'
 import { getCurrentUserMail } from '../../../server/session-cookie.ts'
 import { canWriteComments, getRoleForMail } from '../../../shared/index.ts'
@@ -38,9 +38,9 @@ export default async function PredictionPage({ params }: PredictionPageProps) {
 
   const role = mail === undefined ? undefined : getRoleForMail(prediction, mail)
   const predictionView = getPredictionView(prediction, mail)
-  // only somebody on the prediction is ever mailed about its comments
-  const commentsMuted =
-    mail === undefined || role === undefined ? undefined : await isCommentMailMuted(hash, mail)
+  // only somebody on the prediction is ever mailed about its activity
+  const activityMuted =
+    mail === undefined || role === undefined ? undefined : await isActivityMailMuted(hash, mail)
 
   return (
     <GoBackWrapper>
@@ -53,7 +53,7 @@ export default async function PredictionPage({ params }: PredictionPageProps) {
         comments={getCommentViews(prediction, comments, mail)}
         predictionHash={hash}
         canWrite={canWriteComments(prediction, mail)}
-        commentsMuted={commentsMuted}
+        activityMuted={activityMuted}
       />
     </GoBackWrapper>
   )
