@@ -90,12 +90,14 @@ export default function CreateForm({ initialCreaterMail }: CreateFormProps) {
     <form className={styles.form} onSubmit={onSubmit} noValidate>
       <TextAreaField
         label="Title"
+        autoGrow
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         error={shown(errors.title, title.trim().length > TITLE_MAX_LENGTH)}
       />
       <TextAreaField
         label="Description"
+        autoGrow
         value={body}
         onChange={(e) => setBody(e.target.value)}
         error={shown(errors.body, body.trim().length > DESCRIPTION_MAX_LENGTH)}

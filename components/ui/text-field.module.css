@@ -34,6 +34,12 @@ textarea.control {
   resize: vertical;
 }
 
+textarea.autoGrow {
+  field-sizing: content;
+  min-height: 10rem;
+  max-height: 60vh;
+}
+
 .invalid,
 .invalid:hover {
   border-color: var(--color-danger);
