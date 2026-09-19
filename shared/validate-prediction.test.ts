@@ -54,6 +54,10 @@ describe('validateParticipant', () => {
     expect(validateParticipant('a@b.com', ['a@b.com', 'a@b.com'], 'x@y.com')).toBe(false)
   })
 
+  it('rejects duplicates that differ only by case', () => {
+    expect(validateParticipant('a@b.com', ['a@b.com', 'A@b.com'], 'x@y.com')).toBe(false)
+  })
+
   it('rejects invalid mails', () => {
     expect(validateParticipant('nope', ['nope'], 'x@y.com')).toBe(false)
   })

@@ -12,7 +12,7 @@ import type {
   PredictionView,
 } from '../shared/index.ts'
 import { getMailFormatter } from '../shared/index.ts'
-import { isMailValid } from '../shared/mail-util.ts'
+import { isMailValid, normalizeMail } from '../shared/mail-util.ts'
 import {
   validateCreaterMail,
   validateDateString,
@@ -208,8 +208,8 @@ export interface CreatePredictionInput {
 
 export const createPrediction = async (input: CreatePredictionInput): Promise<void> => {
   const { title, body, finishDate, isPublic } = input
-  const createrMail = input.createrMail?.trim()
-  const participantList = input.participantList?.map((p) => p.trim())
+  const createrMail = input.createrMail === undefined ? undefined : normalizeMail(input.createrMail)
+  const participantList = input.participantList?.map(normalizeMail)
 
   if (!validateTitle(title)) {
     throw new Error('Invalid title')

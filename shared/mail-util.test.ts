@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
-import { censorMail, isMailValid } from './mail-util.ts'
+import { censorMail, isMailValid, normalizeMail } from './mail-util.ts'
+
+describe('normalizeMail', () => {
+  it('lower-cases and trims', () => {
+    expect(normalizeMail(' Per@Example.COM ')).toBe('per@example.com')
+  })
+})
 
 describe('isMailValid', () => {
   it.each(['a@b.com', 'first.last@example.co.uk', 'x+tag@mail.example.com', 'a@[127.0.0.1]'])(

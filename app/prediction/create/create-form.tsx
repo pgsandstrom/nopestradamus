@@ -6,6 +6,7 @@ import { Button } from '../../../components/ui/button.tsx'
 import { TextAreaField, TextField } from '../../../components/ui/text-field.tsx'
 import { toDateInputValue } from '../../../shared/date-util.ts'
 import {
+  isSameMail,
   validateCreaterMail,
   validateDateString,
   validateDescription,
@@ -138,7 +139,7 @@ export default function CreateForm({ initialCreaterMail }: CreateFormProps) {
                 setParticipantList((list) => list.map((p, i) => (index === i ? e.target.value : p)))
               }
               error={invalid(
-                participant.trim().toLowerCase() === createrMail.trim().toLowerCase()
+                isSameMail(participant, createrMail)
                   ? 'You are already part of the prediction as its creater'
                   : 'Invalid participant e-mail',
                 validateParticipant(participant, participantList, createrMail),
