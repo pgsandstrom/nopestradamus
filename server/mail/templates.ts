@@ -44,7 +44,7 @@ export const getCreaterAcceptMail = (prediction: Prediction): MailDocument => ({
   preheader: 'Your prediction does not start until you accept it.',
   blocks: [
     { kind: 'heading', text: 'One step left' },
-    { kind: 'paragraph', text: 'This is the bet that was created by this mail address.' },
+    { kind: 'paragraph', text: 'This is the prediction that was created by this mail address.' },
     { kind: 'quote', title: prediction.title, body: prediction.body },
     ...predictionFacts(prediction),
     ...participantBlocks(prediction),
@@ -88,20 +88,20 @@ export const getParticipantAcceptMail = (
 })
 
 export const getCreaterEndMail = (prediction: Prediction): MailDocument => ({
-  title: `Your bet has finished: ${prediction.title}`,
+  title: `Your prediction has finished: ${prediction.title}`,
   preheader: `Created ${formatDateString(prediction.created)}. Time is up.`,
   blocks: [
-    { kind: 'heading', text: 'Your bet has finished' },
+    { kind: 'heading', text: 'Your prediction has finished' },
     {
       kind: 'paragraph',
-      text: `A bet was created by you on ${formatDateString(prediction.created)}. It has now finished.`,
+      text: `A prediction was created by you on ${formatDateString(prediction.created)}. It has now finished.`,
     },
     { kind: 'quote', title: prediction.title, body: prediction.body },
     ...predictionFacts(prediction),
     ...participantBlocks(prediction),
     {
       kind: 'button',
-      label: 'See the bet',
+      label: 'See the prediction',
       url: predictionUrl(prediction.hash, prediction.creater.hash),
     },
     { kind: 'note', text: 'Hope you had fun!' },
@@ -112,23 +112,23 @@ export const getParticipantEndMail = (
   prediction: Prediction,
   participant: Participant,
 ): MailDocument => ({
-  title: `Your bet from ${prediction.creater.mail} has finished!`,
-  preheader: 'Time is up. Now you have to work out who won.',
+  title: `The prediction from ${prediction.creater.mail} has finished!`,
+  preheader: 'Time is up. Now you have to work out who was right.',
   blocks: [
-    { kind: 'heading', text: 'The bet has finished' },
+    { kind: 'heading', text: 'The prediction has finished' },
     {
       kind: 'paragraph',
-      text: `A bet from ${prediction.creater.mail} was accepted by you on ${formatDateString(participant.accepted_date)}. It has now finished.`,
+      text: `A prediction from ${prediction.creater.mail} was accepted by you on ${formatDateString(participant.accepted_date)}. It has now finished.`,
     },
     { kind: 'quote', title: prediction.title, body: prediction.body },
     ...predictionFacts(prediction),
     ...participantBlocks(prediction),
     {
       kind: 'button',
-      label: 'See the bet',
+      label: 'See the prediction',
       url: predictionUrl(prediction.hash, participant.hash),
     },
-    { kind: 'note', text: 'Now you must discuss who won the bet!' },
+    { kind: 'note', text: 'Now you must discuss who was right!' },
   ],
 })
 

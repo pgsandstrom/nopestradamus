@@ -157,7 +157,7 @@ const selectPredictionHashes = async (text: string): Promise<string[]> => {
   return cursor.rows.map((row) => row.hash)
 }
 
-export const getOldBetWithUnsentCreaterAcceptMails = (): Promise<string[]> =>
+export const getOldPredictionWithUnsentCreaterAcceptMails = (): Promise<string[]> =>
   selectPredictionHashes(`
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN creater on prediction.hash = creater.prediction_hash
@@ -177,7 +177,7 @@ WHERE creater.accepted IS NULL
 ORDER BY prediction.created DESC
 `)
 
-export const getOldBetWithUnsentCreaterEndMails = (): Promise<string[]> =>
+export const getOldPredictionWithUnsentCreaterEndMails = (): Promise<string[]> =>
   selectPredictionHashes(`
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN creater on prediction.hash = creater.prediction_hash
@@ -186,7 +186,7 @@ WHERE prediction.finish_date < now()
   AND creater.end_mail_sent = false
 `)
 
-export const getOldBetWithUnsentParticipantsAcceptMails = (): Promise<string[]> =>
+export const getOldPredictionWithUnsentParticipantsAcceptMails = (): Promise<string[]> =>
   selectPredictionHashes(`
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN participant on prediction.hash = participant.prediction_hash
@@ -195,7 +195,7 @@ WHERE participant.accepted_mail_sent = false
   AND creater.accepted = true
 `)
 
-export const getOldBetWithUnsentParticipantsEndMails = (): Promise<string[]> =>
+export const getOldPredictionWithUnsentParticipantsEndMails = (): Promise<string[]> =>
   selectPredictionHashes(`
 SELECT DISTINCT prediction.hash FROM prediction
 JOIN participant on prediction.hash = participant.prediction_hash

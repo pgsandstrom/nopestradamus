@@ -64,8 +64,8 @@ export function canWriteComments(
 
 /**
  * How the addresses on a prediction are shown to `viewerMail`. Whoever is part of the prediction
- * sees them all in full — they are in the same bet, and the creater typed every one of them —
- * everybody else sees them censored. Comments go through the same function, so a mail reads the
+ * sees them all in full — they are in the same prediction, and the creater typed every one of
+ * them — everybody else sees them censored. Comments go through the same function, so a mail reads the
  * same in the participant list as it does above a comment.
  */
 export function getMailFormatter(
@@ -115,8 +115,9 @@ export function isLoginFragment(fragment: string): boolean {
 }
 
 /**
- * One line of a visitor's own list of bets. Sibling of {@link PredictionAdminListItem}: the same
- * idea, but scoped to one person and carrying their own answer rather than a tally of everyone's.
+ * One line of a visitor's own list of predictions. Sibling of {@link PredictionAdminListItem}: the
+ * same idea, but scoped to one person and carrying their own answer rather than a tally of
+ * everyone's.
  */
 export interface PredictionListItem {
   hash: string
@@ -132,8 +133,8 @@ export interface PredictionListItem {
 }
 
 /**
- * Whether a bet is actually sitting on the viewer, which is not the same as their not having
- * answered it. A participant is not asked anything until the creater has accepted — that is when
+ * Whether a prediction is actually sitting on the viewer, which is not the same as their not
+ * having answered it. A participant is not asked anything until the creater has accepted — that is when
  * their mail goes out — so a prediction whose creater has not answered is waiting on the creater
  * even though every participant's answer is missing too.
  */

@@ -25,7 +25,7 @@ export default async function MyPredictionsPage() {
   if (mail === undefined) {
     return (
       <GoBackWrapper>
-        <h1 className={styles.heading}>Your bets</h1>
+        <h1 className={styles.heading}>Your predictions</h1>
         <p className={styles.note}>
           You are not logged in. Put your address in at the top of the page and a login link will be
           mailed to you — or open the link from any prediction you are part of.
@@ -39,7 +39,7 @@ export default async function MyPredictionsPage() {
 
   return (
     <GoBackWrapper>
-      <h1 className={styles.heading}>Your bets</h1>
+      <h1 className={styles.heading}>Your predictions</h1>
       <p className={styles.note}>Everything {mail} is part of.</p>
 
       {awaiting.length > 0 && (
@@ -52,7 +52,8 @@ export default async function MyPredictionsPage() {
 
       {predictions.length === 0 ? (
         <p className={styles.note}>
-          Nothing here yet. Bets you create, and bets you are invited to, show up on this page.
+          Nothing here yet. Predictions you create, and predictions you are invited to, show up on
+          this page.
         </p>
       ) : (
         <ul className={styles.list}>

@@ -116,9 +116,26 @@ function AnswerPrompt({ prediction, role, isAnswering, doAnswer }: AnswerPromptP
     )
   }
 
+  const finishDate = formatDateString(prediction.finish_date)
   return (
     <div>
-      <p className={styles.heading}>You can see the prediction below. Are you satisfied with it?</p>
+      {role === 'creater' ? (
+        <>
+          <p className={styles.heading}>Read your prediction below.</p>
+          <p>
+            If you accept, each participant gets an invitation, and on {finishDate} everyone who
+            accepted gets a mail. If you reject, nothing is sent.
+          </p>
+        </>
+      ) : (
+        <>
+          <p className={styles.heading}>You&apos;ve been invited to the prediction below.</p>
+          <p>
+            If you accept, you&apos;ll get a mail on {finishDate} when it ends. If you reject, you
+            won&apos;t hear about it again.
+          </p>
+        </>
+      )}
       <div className={styles.actions}>
         <Button disabled={isAnswering} onClick={() => doAnswer(true)}>
           Accept

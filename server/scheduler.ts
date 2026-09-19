@@ -11,10 +11,10 @@ import {
 } from './mail/templates.ts'
 import { sendMail } from './mailer.ts'
 import {
-  getOldBetWithUnsentCreaterAcceptMails,
-  getOldBetWithUnsentCreaterEndMails,
-  getOldBetWithUnsentParticipantsAcceptMails,
-  getOldBetWithUnsentParticipantsEndMails,
+  getOldPredictionWithUnsentCreaterAcceptMails,
+  getOldPredictionWithUnsentCreaterEndMails,
+  getOldPredictionWithUnsentParticipantsAcceptMails,
+  getOldPredictionWithUnsentParticipantsEndMails,
   getPrediction,
   getPredictionHealth,
   setCreaterAcceptMailSent,
@@ -25,10 +25,10 @@ import {
 
 export const handleAllUnsentMails = async (): Promise<void> => {
   console.log('handle all unsent mails', formatDateTime(new Date()))
-  await handleAll(getOldBetWithUnsentCreaterAcceptMails, handleUnsentCreaterAcceptEmail)
-  await handleAll(getOldBetWithUnsentParticipantsAcceptMails, handleUnsentAcceptEmail)
-  await handleAll(getOldBetWithUnsentCreaterEndMails, handleUnsentCreaterEndEmail)
-  await handleAll(getOldBetWithUnsentParticipantsEndMails, handleUnsentEndEmail)
+  await handleAll(getOldPredictionWithUnsentCreaterAcceptMails, handleUnsentCreaterAcceptEmail)
+  await handleAll(getOldPredictionWithUnsentParticipantsAcceptMails, handleUnsentAcceptEmail)
+  await handleAll(getOldPredictionWithUnsentCreaterEndMails, handleUnsentCreaterEndEmail)
+  await handleAll(getOldPredictionWithUnsentParticipantsEndMails, handleUnsentEndEmail)
   console.log('completed handle all unsent mails')
 }
 
@@ -58,10 +58,10 @@ export const sendHealthMail = async (): Promise<void> => {
  */
 const countPredictionsWithUnsentMail = async (): Promise<number> => {
   const hashLists = await Promise.all([
-    getOldBetWithUnsentCreaterAcceptMails(),
-    getOldBetWithUnsentParticipantsAcceptMails(),
-    getOldBetWithUnsentCreaterEndMails(),
-    getOldBetWithUnsentParticipantsEndMails(),
+    getOldPredictionWithUnsentCreaterAcceptMails(),
+    getOldPredictionWithUnsentParticipantsAcceptMails(),
+    getOldPredictionWithUnsentCreaterEndMails(),
+    getOldPredictionWithUnsentParticipantsEndMails(),
   ])
   return new Set(hashLists.flat()).size
 }

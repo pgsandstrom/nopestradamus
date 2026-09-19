@@ -35,7 +35,7 @@ export default async function Home() {
           <div className={styles.introBody}>
             <p>
               So here is how this site works: You describe a prediction and an end date. If you
-              want, you can add other participants that have to accept what you have written.
+              want, you can add other participants that can accept what you have written.
             </p>
             <p>
               When the end date is upon us, you all receive a mail. And that&apos;s it. No need to
@@ -47,6 +47,10 @@ export default async function Home() {
               Predicting the future is hard.
             </p>
             <p>You can also just use it as a bet tracker.</p>
+            <p>
+              Nopestradamus has been running since 2018, and I plan to keep it running for a very
+              long time. Go ahead and pick an end date many years from now. The mail will arrive.
+            </p>
             <LinkButton href="/prediction/create">Create a prediction</LinkButton>
           </div>
         </div>
