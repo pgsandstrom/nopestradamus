@@ -1,6 +1,5 @@
-import type { Comment, CommentCensored, Prediction } from '../shared/index.ts'
-import { getRoleForMail } from '../shared/index.ts'
-import { censorMail } from '../shared/mail-util.ts'
+import type { Comment, CommentView, Prediction } from '../shared/index.ts'
+import { getMailFormatter, getRoleForMail } from '../shared/index.ts'
 import { validateComment } from '../shared/validate-comment.ts'
 import { query, SQL } from '../util/db.ts'
 
@@ -32,19 +31,21 @@ export const createComment = async (
 }
 
 /**
- * Strips the author's address down to what the prediction page shows for everyone else, and
- * works out what the author is to the prediction from the prediction as it stands now.
+ * Shows the author's address the way the prediction page shows it to this viewer, and works out
+ * what the author is to the prediction from the prediction as it stands now.
  */
-export const getCensoredComments = (
+export const getCommentViews = (
   prediction: Pick<Prediction, 'creater' | 'participants'>,
   comments: Comment[],
   currentUserMail?: string,
-): CommentCensored[] =>
-  comments.map((comment) => ({
+): CommentView[] => {
+  const formatMail = getMailFormatter(prediction, currentUserMail)
+  return comments.map((comment) => ({
     id: comment.id,
     body: comment.body,
     created: comment.created,
-    mail: censorMail(comment.mail),
+    mail: formatMail(comment.mail),
     role: getRoleForMail(prediction, comment.mail),
     isCurrentUser: comment.mail === currentUserMail,
   }))
+}

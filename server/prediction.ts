@@ -5,13 +5,14 @@ import type {
   Prediction,
   PredictionAdmin,
   PredictionAdminListItem,
-  PredictionCensored,
   PredictionHealth,
   PredictionListItem,
   PredictionRow,
   PredictionShallow,
+  PredictionView,
 } from '../shared/index.ts'
-import { censorMail, isMailValid } from '../shared/mail-util.ts'
+import { getMailFormatter } from '../shared/index.ts'
+import { isMailValid } from '../shared/mail-util.ts'
 import {
   validateCreaterMail,
   validateDateString,
@@ -25,26 +26,30 @@ import { randomHash } from './hash.ts'
 import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './scheduler.ts'
 
 /**
- * Removes all private hashes from the prediction. Also censors the mails!
- * @param currentUserMail the logged-in viewer's address, so we can flag their own row
+ * Removes all private hashes from the prediction, and censors the mails for anybody who is not
+ * part of it.
+ * @param currentUserMail the logged-in viewer's address, which decides both of those things
  */
-export const getCensoredPrediction = (
+export const getPredictionView = (
   prediction: Prediction,
   currentUserMail?: string,
-): PredictionCensored => ({
-  ...prediction,
-  creater: {
-    ...prediction.creater,
-    hash: undefined,
-    mail: censorMail(prediction.creater.mail),
-  },
-  participants: prediction.participants.map((participant) => ({
-    ...participant,
-    hash: undefined,
-    isCurrentUser: currentUserMail === participant.mail,
-    mail: censorMail(participant.mail),
-  })),
-})
+): PredictionView => {
+  const formatMail = getMailFormatter(prediction, currentUserMail)
+  return {
+    ...prediction,
+    creater: {
+      ...prediction.creater,
+      hash: undefined,
+      mail: formatMail(prediction.creater.mail),
+    },
+    participants: prediction.participants.map((participant) => ({
+      ...participant,
+      hash: undefined,
+      isCurrentUser: currentUserMail === participant.mail,
+      mail: formatMail(participant.mail),
+    })),
+  }
+}
 
 /**
  * The address behind a creater or participant hash. That hash was only ever sent to that
@@ -304,15 +309,11 @@ export const setParticipantEndMailSent = async (hash: string): Promise<void> => 
   await query(SQL`UPDATE participant SET end_mail_sent = true WHERE hash = ${hash}`)
 }
 
-/**
- * Returns the participants' uncensored mails. Safe to hand back to the caller: the update only
- * succeeds for whoever holds the creater hash, and those are the addresses they typed themselves.
- */
 export const updateCreaterAcceptStatus = async (
   predictionHash: string,
   mail: string,
   accepted: boolean,
-): Promise<string[]> => {
+): Promise<void> => {
   const result = await query(
     SQL`UPDATE creater SET accepted = ${accepted}, accepted_date = now() WHERE prediction_hash = ${predictionHash} AND mail = ${mail}`,
   )
@@ -325,7 +326,6 @@ export const updateCreaterAcceptStatus = async (
   }
   await validateAccount(prediction.creater.mail)
   await handleUnsentAcceptEmail(predictionHash)
-  return prediction.participants.map((participant) => participant.mail)
 }
 
 export const updateParticipantAcceptStatus = async (

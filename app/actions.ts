@@ -112,11 +112,6 @@ export async function logOutAction(): Promise<void> {
   revalidatePath('/', 'layout')
 }
 
-export interface AnswerResult extends ActionResult {
-  /** The participants' uncensored mails, so the creater can see who is about to be mailed. */
-  participantMails?: string[]
-}
-
 /**
  * Accepts or rejects on behalf of whoever the session says is here. Nothing is taken from the
  * caller but the prediction and the answer: the role is looked up from the address in the
@@ -125,12 +120,11 @@ export interface AnswerResult extends ActionResult {
 export async function answerPredictionAction(
   predictionHash: string,
   accept: boolean,
-): Promise<AnswerResult> {
+): Promise<ActionResult> {
   const mail = await getCurrentUserMail()
   if (mail === undefined) {
     return { ok: false, error: 'You are not logged in.' }
   }
-  let participantMails: string[]
   try {
     const prediction = await getPrediction(predictionHash)
     if (prediction === undefined) {
@@ -140,13 +134,13 @@ export async function answerPredictionAction(
     if (role === undefined) {
       return { ok: false, error: 'You are not part of this prediction.' }
     }
-    participantMails = await answerAs(role, predictionHash, mail, accept)
+    await answerAs(role, predictionHash, mail, accept)
   } catch (e) {
     return failed(e, 'Could not register your answer.')
   }
   revalidatePath('/')
   revalidatePath(`/prediction/${predictionHash}`)
-  return { ...OK, participantMails }
+  return OK
 }
 
 const answerAs = async (
@@ -154,12 +148,12 @@ const answerAs = async (
   predictionHash: string,
   mail: string,
   accept: boolean,
-): Promise<string[]> => {
+): Promise<void> => {
   if (role === 'participant') {
     await updateParticipantAcceptStatus(predictionHash, mail, accept)
-    return []
+  } else {
+    await updateCreaterAcceptStatus(predictionHash, mail, accept)
   }
-  return updateCreaterAcceptStatus(predictionHash, mail, accept)
 }
 
 /**

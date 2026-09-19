@@ -5,12 +5,12 @@ import { useState, useTransition } from 'react'
 import Prediction from '../../../components/prediction.tsx'
 import { Button } from '../../../components/ui/button.tsx'
 import { formatDateString } from '../../../shared/date-util.ts'
-import type { PredictionCensored, Role } from '../../../shared/index.ts'
+import type { PredictionView, Role } from '../../../shared/index.ts'
 import { answerPredictionAction } from '../../actions.ts'
 import styles from './answer-controller.module.css'
 
 interface AnswerControllerProps {
-  prediction: PredictionCensored
+  prediction: PredictionView
   predictionHash: string
   /** The role the session holds on this prediction. The server decides it again when answering. */
   role: Role
@@ -22,7 +22,6 @@ export default function AnswerController({
   role,
 }: AnswerControllerProps) {
   const [answer, setAnswer] = useState<boolean>()
-  const [participantMails, setParticipantMails] = useState<string[]>([])
   const [error, setError] = useState<string>()
   const [isAnswering, startAnswering] = useTransition()
 
@@ -31,7 +30,6 @@ export default function AnswerController({
       const result = await answerPredictionAction(predictionHash, accept)
       if (result.ok) {
         setAnswer(accept)
-        setParticipantMails(result.participantMails ?? [])
       } else {
         setError(result.error)
       }
@@ -45,7 +43,6 @@ export default function AnswerController({
           prediction={prediction}
           role={role}
           answer={answer}
-          participantMails={participantMails}
           error={error}
           isAnswering={isAnswering}
           doAnswer={doAnswer}
@@ -58,21 +55,17 @@ export default function AnswerController({
 
 interface AnswerPanelContentProps extends AnswerPromptProps {
   answer: boolean | undefined
-  participantMails: string[]
   error: string | undefined
 }
 
-function AnswerPanelContent({
-  answer,
-  participantMails,
-  error,
-  ...promptProps
-}: AnswerPanelContentProps) {
+function AnswerPanelContent({ answer, error, ...promptProps }: AnswerPanelContentProps) {
   if (error !== undefined) {
     return <p className={styles.error}>{error} Sorry :(</p>
   }
 
   if (answer === true) {
+    // uncensored, since only somebody who is part of the prediction gets to answer it
+    const participantMails = promptProps.prediction.participants.map((p) => p.mail)
     return (
       <div>
         <p className={styles.heading}>Thank you!</p>
@@ -98,7 +91,7 @@ function AnswerPanelContent({
 }
 
 interface AnswerPromptProps {
-  prediction: PredictionCensored
+  prediction: PredictionView
   role: Role
   isAnswering: boolean
   doAnswer: (accept: boolean) => void

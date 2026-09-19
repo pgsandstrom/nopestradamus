@@ -1,9 +1,9 @@
 import { formatDateString } from '../shared/date-util.ts'
-import type { PredictionCensored } from '../shared/index.ts'
+import type { PredictionView } from '../shared/index.ts'
 import styles from './prediction.module.css'
 
 interface PredictionProps {
-  prediction: PredictionCensored
+  prediction: PredictionView
   suppressNotAcceptedWarning?: boolean
 }
 

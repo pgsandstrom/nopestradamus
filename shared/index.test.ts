@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import type { Prediction } from './index.ts'
 import {
   canWriteComments,
+  getMailFormatter,
   getPredictionStatus,
   getRoleForMail,
   isAwaitingAnswerFrom,
@@ -76,6 +77,26 @@ describe('canWriteComments', () => {
   it('keeps out a logged-in stranger and a visitor with no session', () => {
     expect(canWriteComments(prediction, 'x@y.se')).toBe(false)
     expect(canWriteComments(prediction, undefined)).toBe(false)
+  })
+})
+
+describe('getMailFormatter', () => {
+  const prediction = predictionWith('creater@example.com', ['participant@example.com'])
+
+  it('shows mails in full to the creater and the participants', () => {
+    for (const viewer of ['creater@example.com', 'participant@example.com']) {
+      const formatMail = getMailFormatter(prediction, viewer)
+      expect(formatMail('creater@example.com')).toBe('creater@example.com')
+      expect(formatMail('participant@example.com')).toBe('participant@example.com')
+    }
+  })
+
+  it('censors mails for a stranger and for a visitor who is not logged in', () => {
+    for (const viewer of ['stranger@example.com', undefined]) {
+      expect(getMailFormatter(prediction, viewer)('creater@example.com')).not.toBe(
+        'creater@example.com',
+      )
+    }
   })
 })
 

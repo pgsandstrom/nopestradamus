@@ -1,10 +1,10 @@
 import { formatDateTimeString } from '../../../shared/date-util.ts'
-import type { CommentCensored } from '../../../shared/index.ts'
+import type { CommentView } from '../../../shared/index.ts'
 import CommentForm from './comment-form.tsx'
 import styles from './comments.module.css'
 
 interface CommentsProps {
-  comments: CommentCensored[]
+  comments: CommentView[]
   predictionHash: string
   /** Whether to offer the form. The action decides again when a comment arrives. */
   canWrite: boolean

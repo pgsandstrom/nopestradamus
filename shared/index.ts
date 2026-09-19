@@ -1,5 +1,7 @@
 // Domain types shared by the Next.js app and the standalone cron process.
 
+import { censorMail } from './mail-util.ts'
+
 /** A prediction as stored, including the secret hashes. Never send this to a client. */
 export interface Prediction {
   created: string
@@ -60,7 +62,22 @@ export function canWriteComments(
   return mail !== undefined && getRoleForMail(prediction, mail) !== undefined
 }
 
-/** A comment row as stored. Its author's address is uncensored, so never send it to a client. */
+/**
+ * How the addresses on a prediction are shown to `viewerMail`. Whoever is part of the prediction
+ * sees them all in full — they are in the same bet, and the creater typed every one of them —
+ * everybody else sees them censored. Comments go through the same function, so a mail reads the
+ * same in the participant list as it does above a comment.
+ */
+export function getMailFormatter(
+  prediction: Pick<Prediction, 'creater' | 'participants'>,
+  viewerMail: string | undefined,
+): (mail: string) => string {
+  const isPartOfPrediction =
+    viewerMail !== undefined && getRoleForMail(prediction, viewerMail) !== undefined
+  return isPartOfPrediction ? (mail) => mail : censorMail
+}
+
+/** A comment row as stored. Its author's address is uncensored, so never send it as is to a client. */
 export interface Comment {
   id: number
   prediction_hash: string
@@ -69,8 +86,8 @@ export interface Comment {
   created: string
 }
 
-/** A comment safe to hand to a client, censored the same way as the prediction it sits under. */
-export interface CommentCensored {
+/** A comment safe to hand to a client, its mail shown the same way as on the prediction above it. */
+export interface CommentView {
   id: number
   body: string
   created: string
@@ -133,8 +150,11 @@ export interface PredictionShallow {
   hash: string
 }
 
-/** A prediction safe to hand to a client: hashes stripped, mails censored. */
-export interface PredictionCensored {
+/**
+ * A prediction safe to hand to a client: hashes stripped, mails censored unless the viewer is part
+ * of it — see {@link getMailFormatter}.
+ */
+export interface PredictionView {
   created: string
   creater: {
     mail: string
