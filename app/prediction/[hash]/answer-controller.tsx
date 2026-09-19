@@ -38,6 +38,36 @@ export default function AnswerController({
     })
   }
 
+  return (
+    <>
+      <div className={styles.panel}>
+        <AnswerPanelContent
+          prediction={prediction}
+          role={role}
+          answer={answer}
+          participantMails={participantMails}
+          error={error}
+          isAnswering={isAnswering}
+          doAnswer={doAnswer}
+        />
+      </div>
+      <Prediction prediction={prediction} suppressNotAcceptedWarning />
+    </>
+  )
+}
+
+interface AnswerPanelContentProps extends AnswerPromptProps {
+  answer: boolean | undefined
+  participantMails: string[]
+  error: string | undefined
+}
+
+function AnswerPanelContent({
+  answer,
+  participantMails,
+  error,
+  ...promptProps
+}: AnswerPanelContentProps) {
   if (error !== undefined) {
     return <p className={styles.error}>{error} Sorry :(</p>
   }
@@ -45,43 +75,26 @@ export default function AnswerController({
   if (answer === true) {
     return (
       <div>
-        <p>Thank you!</p>
+        <p className={styles.heading}>Thank you!</p>
         {participantMails.length > 0 && (
-          <div className={styles.block}>
-            <p>
-              Please ask your participants to check their spam folders! They should receive a mail
-              any second now:
-            </p>
-            <ul className={styles.mailList}>
-              {participantMails.map((mail) => (
-                <li key={mail}>{mail}</li>
-              ))}
-            </ul>
-          </div>
+          <p>
+            Your participants should receive a mail any second now, ask them to check their spam
+            folders: <span className={styles.mails}>{participantMails.join(', ')}</span>
+          </p>
         )}
-        <p className={styles.wait}>
-          And now you wait! You will receive a mail when the prediction ends on{' '}
-          {formatDateString(prediction.finish_date)}.
+        <p>
+          You will receive a mail when the prediction ends on{' '}
+          {formatDateString(promptProps.prediction.finish_date)}.
         </p>
       </div>
     )
   }
 
   if (answer === false) {
-    return <p>The prediction has been denied</p>
+    return <p className={styles.heading}>The prediction has been rejected.</p>
   }
 
-  return (
-    <>
-      <AnswerPrompt
-        prediction={prediction}
-        role={role}
-        isAnswering={isAnswering}
-        doAnswer={doAnswer}
-      />
-      <Prediction prediction={prediction} suppressNotAcceptedWarning />
-    </>
-  )
+  return <AnswerPrompt {...promptProps} />
 }
 
 interface AnswerPromptProps {
@@ -112,7 +125,7 @@ function AnswerPrompt({ prediction, role, isAnswering, doAnswer }: AnswerPromptP
 
   return (
     <div>
-      <p>You can see the prediction below. Are you satisfied with it?</p>
+      <p className={styles.heading}>You can see the prediction below. Are you satisfied with it?</p>
       <div className={styles.actions}>
         <Button disabled={isAnswering} onClick={() => doAnswer(true)}>
           Accept
