@@ -63,28 +63,20 @@ interface CommentMailRecipient {
  * Who hears about a new comment: everybody who has accepted the prediction, less its author and
  * less whoever muted its comments. Somebody who has not answered yet has not agreed to be part of anything,
  * and somebody who rejected has said they want out, so neither is mailed.
- *
- * An address on the prediction twice — creater and participant both — gets one mail, carrying the
- * creater hash, the same way `getRoleForMail` has creater win.
  */
 export const getCommentMailRecipients = (
   prediction: Pick<Prediction, 'creater' | 'participants'>,
   authorMail: string,
   commentMutedMails: ReadonlySet<string>,
-): CommentMailRecipient[] => {
-  const recipients = new Map<string, CommentMailRecipient>()
-  for (const person of [prediction.creater, ...prediction.participants]) {
-    if (
-      person.accepted === true &&
-      person.mail !== authorMail &&
-      !commentMutedMails.has(person.mail) &&
-      !recipients.has(person.mail)
-    ) {
-      recipients.set(person.mail, { mail: person.mail, roleHash: person.hash })
-    }
-  }
-  return [...recipients.values()]
-}
+): CommentMailRecipient[] =>
+  [prediction.creater, ...prediction.participants]
+    .filter(
+      (person) =>
+        person.accepted === true &&
+        person.mail !== authorMail &&
+        !commentMutedMails.has(person.mail),
+    )
+    .map((person) => ({ mail: person.mail, roleHash: person.hash }))
 
 /**
  * Mails a comment that has just been stored. There is no sent flag and no retry: a comment mail

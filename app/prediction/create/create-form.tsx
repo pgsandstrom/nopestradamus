@@ -47,7 +47,7 @@ export default function CreateForm({ initialCreaterMail }: CreateFormProps) {
       !validateDescription(body) ||
       !validateDateString(date) ||
       !validateCreaterMail(createrMail) ||
-      !participantList.every((p) => validateParticipant(p, participantList))
+      !participantList.every((p) => validateParticipant(p, participantList, createrMail))
     ) {
       setShowValidationError(true)
       return
@@ -138,8 +138,10 @@ export default function CreateForm({ initialCreaterMail }: CreateFormProps) {
                 setParticipantList((list) => list.map((p, i) => (index === i ? e.target.value : p)))
               }
               error={invalid(
-                'Invalid participant e-mail',
-                validateParticipant(participant, participantList),
+                participant.trim().toLowerCase() === createrMail.trim().toLowerCase()
+                  ? 'You are already part of the prediction as its creater'
+                  : 'Invalid participant e-mail',
+                validateParticipant(participant, participantList, createrMail),
               )}
             />
             <Button

@@ -103,16 +103,7 @@ WHERE participant.mail = ${mail}
 ORDER BY created DESC`,
   )
 
-  // Nothing stops a creater from also listing their own address as a participant, which puts the
-  // same prediction in both halves of that union. Creater wins, exactly as getRoleForMail has it.
-  // Replacing a Map value keeps its original position, so the newest-first order survives.
-  const byHash = new Map<string, PredictionListItem>()
-  for (const row of cursor.rows) {
-    if (!byHash.has(row.hash) || row.role === 'creater') {
-      byHash.set(row.hash, row)
-    }
-  }
-  return [...byHash.values()]
+  return cursor.rows
 }
 
 /**
@@ -237,7 +228,7 @@ export const createPrediction = async (input: CreatePredictionInput): Promise<vo
   }
   if (
     participantList === undefined ||
-    !participantList.every((p) => validateParticipant(p, participantList))
+    !participantList.every((p) => validateParticipant(p, participantList, createrMail))
   ) {
     throw new Error('Invalid participantList')
   }

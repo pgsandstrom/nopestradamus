@@ -60,10 +60,6 @@ describe('getRoleForMail', () => {
   it('makes a stranger nobody, not a participant', () => {
     expect(getRoleForMail(predictionWith('a@b.se', ['c@d.se']), 'x@y.se')).toBeUndefined()
   })
-
-  it('prefers creater when the same address holds both roles', () => {
-    expect(getRoleForMail(predictionWith('a@b.se', ['a@b.se']), 'a@b.se')).toBe('creater')
-  })
 })
 
 describe('canWriteComments', () => {

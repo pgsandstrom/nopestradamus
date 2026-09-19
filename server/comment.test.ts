@@ -54,13 +54,4 @@ describe('getCommentMailRecipients', () => {
     )
     expect(mailsOf(recipients)).toEqual(['a'])
   })
-
-  it('mails an address on the prediction twice once, with the creater hash', () => {
-    const recipients = getCommentMailRecipients(
-      prediction(person('both', true), { ...person('both', true), hash: 'participant-hash' }),
-      'someone else',
-      new Set(),
-    )
-    expect(recipients).toEqual([{ mail: 'both', roleHash: 'hash-both' }])
-  })
 })

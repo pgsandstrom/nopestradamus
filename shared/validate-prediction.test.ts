@@ -47,14 +47,19 @@ describe('validateCreaterMail', () => {
 
 describe('validateParticipant', () => {
   it('accepts a valid, unique mail', () => {
-    expect(validateParticipant('a@b.com', ['a@b.com', 'c@d.com'])).toBe(true)
+    expect(validateParticipant('a@b.com', ['a@b.com', 'c@d.com'], 'x@y.com')).toBe(true)
   })
 
   it('rejects duplicates in the list', () => {
-    expect(validateParticipant('a@b.com', ['a@b.com', 'a@b.com'])).toBe(false)
+    expect(validateParticipant('a@b.com', ['a@b.com', 'a@b.com'], 'x@y.com')).toBe(false)
   })
 
   it('rejects invalid mails', () => {
-    expect(validateParticipant('nope', ['nope'])).toBe(false)
+    expect(validateParticipant('nope', ['nope'], 'x@y.com')).toBe(false)
+  })
+
+  it('rejects the creater, whatever the case', () => {
+    expect(validateParticipant('a@b.com', ['a@b.com'], 'a@b.com')).toBe(false)
+    expect(validateParticipant(' A@b.com', [' A@b.com'], 'a@B.com ')).toBe(false)
   })
 })
