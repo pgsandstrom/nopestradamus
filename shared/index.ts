@@ -48,6 +48,39 @@ export function getRoleForMail(
 }
 
 /**
+ * Who may comment on a prediction: today the creater and the participants. Reading needs no
+ * check, since comments are no more secret than the prediction they sit under. The author is
+ * stored as a mail address and not as a role, so letting every logged-in visitor comment only
+ * means changing this function.
+ */
+export function canWriteComments(
+  prediction: Pick<Prediction, 'creater' | 'participants'>,
+  mail: string | undefined,
+): boolean {
+  return mail !== undefined && getRoleForMail(prediction, mail) !== undefined
+}
+
+/** A comment row as stored. Its author's address is uncensored, so never send it to a client. */
+export interface Comment {
+  id: number
+  prediction_hash: string
+  mail: string
+  body: string
+  created: string
+}
+
+/** A comment safe to hand to a client, censored the same way as the prediction it sits under. */
+export interface CommentCensored {
+  id: number
+  body: string
+  created: string
+  mail: string
+  /** What the author is to the prediction, or undefined once somebody else may comment too. */
+  role?: Role
+  isCurrentUser: boolean
+}
+
+/**
  * The shape of a secret that logs somebody in: a `randomHash` — a creater hash, a participant
  * hash or a login token, all 15 Crockford symbols — or the UUID that rows created before
  * `randomHash` existed still carry. Exported because the inline script in `<head>` has to make

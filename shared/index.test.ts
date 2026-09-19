@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import type { Prediction } from './index.ts'
 import {
+  canWriteComments,
   getPredictionStatus,
   getRoleForMail,
   isAwaitingAnswerFrom,
@@ -61,6 +62,20 @@ describe('getRoleForMail', () => {
 
   it('prefers creater when the same address holds both roles', () => {
     expect(getRoleForMail(predictionWith('a@b.se', ['a@b.se']), 'a@b.se')).toBe('creater')
+  })
+})
+
+describe('canWriteComments', () => {
+  const prediction = predictionWith('a@b.se', ['c@d.se'])
+
+  it('lets the creater and the participants in', () => {
+    expect(canWriteComments(prediction, 'a@b.se')).toBe(true)
+    expect(canWriteComments(prediction, 'c@d.se')).toBe(true)
+  })
+
+  it('keeps out a logged-in stranger and a visitor with no session', () => {
+    expect(canWriteComments(prediction, 'x@y.se')).toBe(false)
+    expect(canWriteComments(prediction, undefined)).toBe(false)
   })
 })
 

@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 
 import { getAccountByHash, getAccountByMail, setAccountBlocked } from '../server/account.ts'
+import { createComment } from '../server/comment.ts'
 import { consumeLoginToken, createLoginToken } from '../server/login-token.ts'
 import { getLoginMail } from '../server/mail/templates.ts'
 import { sendMail } from '../server/mailer.ts'
@@ -16,8 +17,9 @@ import {
 } from '../server/prediction.ts'
 import { endUserSession, getCurrentUserMail, startUserSession } from '../server/session-cookie.ts'
 import type { AppAccount, Role } from '../shared/index.ts'
-import { getRoleForMail } from '../shared/index.ts'
+import { canWriteComments, getRoleForMail } from '../shared/index.ts'
 import { isMailValid } from '../shared/mail-util.ts'
+import { COMMENT_MAX_LENGTH, validateComment } from '../shared/validate-comment.ts'
 import { type ActionResult, failed, OK } from './action-result.ts'
 
 export async function createPredictionAction(input: CreatePredictionInput): Promise<ActionResult> {
@@ -158,6 +160,41 @@ const answerAs = async (
     return []
   }
   return updateCreaterAcceptStatus(predictionHash, mail, accept)
+}
+
+/**
+ * Comments as whoever the session says is here. Like answering, the caller supplies nothing but
+ * the prediction and the text: whether this address may comment is decided here, by
+ * `canWriteComments`, and never by what the page chose to render.
+ */
+export async function addCommentAction(
+  predictionHash: string,
+  body: string,
+): Promise<ActionResult> {
+  const mail = await getCurrentUserMail()
+  if (mail === undefined) {
+    return { ok: false, error: 'You are not logged in.' }
+  }
+  if (!validateComment(body)) {
+    return {
+      ok: false,
+      error: `A comment needs some text, and at most ${COMMENT_MAX_LENGTH} characters of it.`,
+    }
+  }
+  try {
+    const prediction = await getPrediction(predictionHash)
+    if (prediction === undefined) {
+      return { ok: false, error: 'That prediction does not exist.' }
+    }
+    if (!canWriteComments(prediction, mail)) {
+      return { ok: false, error: 'You cannot comment on this prediction.' }
+    }
+    await createComment(predictionHash, mail, body)
+  } catch (e) {
+    return failed(e, 'Could not save your comment.')
+  }
+  revalidatePath(`/prediction/${predictionHash}`)
+  return OK
 }
 
 export async function setBlockedAction(

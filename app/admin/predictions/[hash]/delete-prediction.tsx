@@ -41,7 +41,8 @@ export default function DeletePrediction({ hash, title, participantCount }: Dele
   return (
     <>
       <p className={styles.warning}>
-        Deleting removes the prediction and its creater and participant rows. It cannot be undone.
+        Deleting removes the prediction, its creater and participant rows and its comments. It
+        cannot be undone.
       </p>
       <Button variant="danger" onClick={open}>
         Delete prediction

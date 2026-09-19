@@ -1,0 +1,75 @@
+.comments {
+  margin-top: var(--space-6);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.heading {
+  margin: 0 0 var(--space-3);
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.empty {
+  color: var(--color-text-muted);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.comment {
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border-radius: var(--radius);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.author {
+  overflow-wrap: anywhere;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.body {
+  margin: var(--space-1) 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.formFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.counter {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.counterNearLimit {
+  color: var(--color-warning);
+}

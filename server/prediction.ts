@@ -272,11 +272,13 @@ export const deletePrediction = async (hash: string) =>
     const prediction = await tx(SQL`DELETE FROM prediction WHERE hash = ${hash}`)
     const creater = await tx(SQL`DELETE FROM creater WHERE prediction_hash = ${hash}`)
     const participant = await tx(SQL`DELETE FROM participant WHERE prediction_hash = ${hash}`)
+    const comment = await tx(SQL`DELETE FROM comment WHERE prediction_hash = ${hash}`)
 
     return {
       predictionDeleted: prediction.rowCount,
       createrDeleted: creater.rowCount,
       participantDeleted: participant.rowCount,
+      commentDeleted: comment.rowCount,
     }
   })
 
