@@ -49,7 +49,9 @@ export const sendHealthMail = async (): Promise<void> => {
   ])
   await confirmAccountExistance(receiver)
   console.log(`sending health mail to ${receiver}`)
-  await sendMail(receiver, getHealthMail(health, predictionsWithUnsentMail), true)
+  await sendMail(receiver, getHealthMail(health, predictionsWithUnsentMail), {
+    overrideBlock: true,
+  })
 }
 
 /**

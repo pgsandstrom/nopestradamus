@@ -118,7 +118,7 @@ export async function sendMailAction(
 ): Promise<AdminResult<void>> {
   return asAdmin(async () => {
     // the nodemailer result is not serializable across the server-action boundary
-    await sendMail(receiver, textDocument(title, body), true)
+    await sendMail(receiver, textDocument(title, body), { overrideBlock: true })
   })
 }
 

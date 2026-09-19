@@ -47,6 +47,8 @@ The package manager is **pnpm**, not npm.
 - Imports are sorted by `simple-import-sort` and it autofixes, so never hand-sort them.
 - `POST /api/account/[hash]/block` stays a route handler rather than a server action, because mail
   clients POST to it directly for RFC 8058 List-Unsubscribe one-click and `server/mailer.ts`
-  names it in the `List-Unsubscribe` header. It must not move.
+  names it in the `List-Unsubscribe` header. It must not move. Its sibling
+  `POST /api/account/[hash]/mute-comments/[predictionHash]` is what a comment mail names instead:
+  it mutes that prediction's comment mails and nothing else, and must not move either.
 - `README.md` ends with known issues left alone on purpose. They are behaviour changes, not
   cleanups — don't fix them as drive-by work.

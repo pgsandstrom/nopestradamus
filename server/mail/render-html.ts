@@ -107,12 +107,11 @@ const row = (content: string, padding = '0 32px 16px'): string =>
 const paragraph = (text: string, color: string, size: string): string =>
   `<p style="margin:0;color:${color};font-family:${FONT};font-size:${size};line-height:1.6;">${escapeHtml(text).replaceAll('\n', '<br />')}</p>`
 
-/** The prediction, set on its own card so it reads as the thing being quoted rather than as us. */
-const renderQuote = (title: string, body: string): string =>
+/** The prediction or a comment, set on its own card so it reads as the thing quoted rather than as us. */
+const renderQuote = (title: string | undefined, body: string): string =>
   row(`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:${COLOR.quote};border:1px solid ${COLOR.border};border-radius:6px;">
 <tr><td style="padding:18px 20px;">
-<p style="margin:0 0 8px;color:${COLOR.text};font-family:${FONT};font-size:16px;font-weight:600;line-height:1.4;">${escapeHtml(title)}</p>
-<p style="margin:0;color:${COLOR.text};font-family:${FONT};font-size:15px;line-height:1.6;">${escapeHtml(body).replaceAll('\n', '<br />')}</p>
+${title === undefined ? '' : `<p style="margin:0 0 8px;color:${COLOR.text};font-family:${FONT};font-size:16px;font-weight:600;line-height:1.4;">${escapeHtml(title)}</p>\n`}<p style="margin:0;color:${COLOR.text};font-family:${FONT};font-size:15px;line-height:1.6;">${escapeHtml(body).replaceAll('\n', '<br />')}</p>
 </td></tr>
 </table>`)
 

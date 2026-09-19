@@ -8,11 +8,26 @@ import { renderMail } from './mail/render.ts'
 import { SITE_URL } from './mail/site.ts'
 import { withUnsubscribeFooter } from './mail/templates.ts'
 
+interface SendMailOptions {
+  /** Send even to a blocked address. Only for mails to the operator, never to a visitor. */
+  overrideBlock?: boolean
+  /**
+   * Set on a comment mail, to the prediction it is about. The footer then offers muting that
+   * prediction's comment mails before blocking everything, and the one-click unsubscribe in the
+   * mail client mutes those comment mails rather than blocking the address outright.
+   */
+  muteCommentsOf?: string
+}
+
 /**
  * Sending. What the mails say lives in `mail/templates.ts`, and how they look in `mail/render-*`;
  * this file only knows how to put one on the wire.
  */
-export const sendMail = async (receiver: string, mail: MailDocument, overrideBlock = false) => {
+export const sendMail = async (
+  receiver: string,
+  mail: MailDocument,
+  { overrideBlock = false, muteCommentsOf }: SendMailOptions = {},
+) => {
   const accountHash = await getAccountHashByMail(receiver)
 
   if (!overrideBlock) {
@@ -25,7 +40,7 @@ export const sendMail = async (receiver: string, mail: MailDocument, overrideBlo
 
   // both halves carry the footer: a recipient reading the plain-text part still has to be able to
   // get out
-  const { title, text, html } = renderMail(withUnsubscribeFooter(mail, accountHash))
+  const { title, text, html } = renderMail(withUnsubscribeFooter(mail, accountHash, muteCommentsOf))
 
   if (isDev()) {
     console.log('faking sending mail')
@@ -45,7 +60,10 @@ export const sendMail = async (receiver: string, mail: MailDocument, overrideBlo
     },
   })
 
-  const unsubscribeUrl = `${SITE_URL}/api/account/${accountHash}/block`
+  const unsubscribeUrl =
+    muteCommentsOf === undefined
+      ? `${SITE_URL}/api/account/${accountHash}/block`
+      : `${SITE_URL}/api/account/${accountHash}/mute-comments/${muteCommentsOf}`
 
   try {
     await transporter.verify()

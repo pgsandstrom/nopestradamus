@@ -13,8 +13,8 @@
 export type Block =
   | { kind: 'heading'; text: string }
   | { kind: 'paragraph'; text: string }
-  /** The prediction itself, set apart from the words around it. */
-  | { kind: 'quote'; title: string; body: string }
+  /** The prediction itself, or a comment on it, set apart from the words around it. */
+  | { kind: 'quote'; title?: string; body: string }
   /** The table: short label, short value, one pair per row. */
   | { kind: 'facts'; rows: Fact[] }
   | { kind: 'people'; label: string; mails: string[] }

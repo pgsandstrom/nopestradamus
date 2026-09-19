@@ -1,9 +1,11 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { after } from 'next/server'
 
 import { getAccountByHash, getAccountByMail, setAccountBlocked } from '../server/account.ts'
-import { createComment } from '../server/comment.ts'
+import { createComment, sendCommentMails } from '../server/comment.ts'
+import { setCommentMailMuted } from '../server/comment-mute.ts'
 import { consumeLoginToken, createLoginToken } from '../server/login-token.ts'
 import { getLoginMail } from '../server/mail/templates.ts'
 import { sendMail } from '../server/mailer.ts'
@@ -184,8 +186,61 @@ export async function addCommentAction(
       return { ok: false, error: 'You cannot comment on this prediction.' }
     }
     await createComment(predictionHash, mail, body)
+    // after the response, so the author is not kept waiting on the mail server once per reader
+    after(() => sendCommentMails(prediction, mail, body))
   } catch (e) {
     return failed(e, 'Could not save your comment.')
+  }
+  revalidatePath(`/prediction/${predictionHash}`)
+  return OK
+}
+
+/**
+ * Mutes or unmutes the comment mails of one prediction for whoever the session says is here — the
+ * comment mails only, never the prediction's other mails. As with commenting, only the creater and
+ * the participants are offered it, so only they may use it.
+ */
+export async function setCommentMailMutedAction(
+  predictionHash: string,
+  muted: boolean,
+): Promise<ActionResult> {
+  const mail = await getCurrentUserMail()
+  if (mail === undefined) {
+    return { ok: false, error: 'You are not logged in.' }
+  }
+  try {
+    const prediction = await getPrediction(predictionHash)
+    if (prediction === undefined) {
+      return { ok: false, error: 'That prediction does not exist.' }
+    }
+    if (getRoleForMail(prediction, mail) === undefined) {
+      return { ok: false, error: 'You are not part of this prediction.' }
+    }
+    await setCommentMailMuted(predictionHash, mail, muted)
+  } catch (e) {
+    return failed(e, 'Could not update your mail settings.')
+  }
+  revalidatePath(`/prediction/${predictionHash}`)
+  return OK
+}
+
+/**
+ * The same, from the link at the bottom of a comment mail, which knows the account hash rather
+ * than a session — the same key `/blockme` works with, and no more powerful than it.
+ */
+export async function setCommentMailMutedByAccountAction(
+  accountHash: string,
+  predictionHash: string,
+  muted: boolean,
+): Promise<ActionResult> {
+  try {
+    const account = await getAccountByHash(accountHash)
+    if (account === undefined) {
+      return { ok: false, error: 'Account not found.' }
+    }
+    await setCommentMailMuted(predictionHash, account.mail, muted)
+  } catch (e) {
+    return failed(e, 'Could not update your mail settings.')
   }
   revalidatePath(`/prediction/${predictionHash}`)
   return OK

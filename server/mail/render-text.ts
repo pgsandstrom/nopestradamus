@@ -28,7 +28,9 @@ const renderBlock = (block: Block): string => {
     case 'note':
       return wrap(block.text)
     case 'quote':
-      return `${RULE}\n\nTitle: ${wrap(block.title)}\n\n${wrap(block.body)}\n\n${RULE}`
+      return block.title === undefined
+        ? `${RULE}\n\n${wrap(block.body)}\n\n${RULE}`
+        : `${RULE}\n\nTitle: ${wrap(block.title)}\n\n${wrap(block.body)}\n\n${RULE}`
     case 'facts':
       return renderFacts(block.rows)
     case 'people':

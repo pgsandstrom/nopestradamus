@@ -1,6 +1,7 @@
 import type { Participant, Prediction } from '../../shared/index.ts'
 import type { MailDocument } from './blocks.ts'
 import {
+  getCommentMail,
   getCreaterAcceptMail,
   getCreaterEndMail,
   getHealthMail,
@@ -82,7 +83,12 @@ break
 inside the body should survive too.`,
 })
 
-export const MAIL_SAMPLES: MailSample[] = [
+interface Sample extends MailSample {
+  /** Set on comment mails, whose footer offers muting their comments, as the mailer is told. */
+  muteCommentsOf?: string
+}
+
+const SAMPLES: Sample[] = [
   {
     id: 'login',
     name: 'Login link',
@@ -126,6 +132,21 @@ export const MAIL_SAMPLES: MailSample[] = [
     mail: getParticipantEndMail(prediction(), prediction().participants[0]!),
   },
   {
+    id: 'comment',
+    name: 'New comment',
+    description:
+      "To everybody who accepted, except the author. The footer offers muting this prediction's comments first.",
+    mail: getCommentMail(
+      prediction(),
+      'skeptic@example.com',
+      `Ten years is a long time. Have you seen the buses they are testing already?
+
+Dinner is still on.`,
+      prediction().creater.hash,
+    ),
+    muteCommentsOf: prediction().hash,
+  },
+  {
     id: 'awkward',
     name: 'Awkward input',
     description:
@@ -153,7 +174,9 @@ export const MAIL_SAMPLES: MailSample[] = [
     description: 'Every counter zero and no next date — the shape after a fresh deploy.',
     mail: getHealthMail({ total: 0, awaiting_creater: 0, running: 0, finished: 0 }, 0),
   },
-].map((sample) => ({
+]
+
+export const MAIL_SAMPLES: MailSample[] = SAMPLES.map(({ muteCommentsOf, ...sample }) => ({
   ...sample,
-  mail: withUnsubscribeFooter(sample.mail, 'a1c3e5g7j9l2n4q'),
+  mail: withUnsubscribeFooter(sample.mail, 'a1c3e5g7j9l2n4q', muteCommentsOf),
 }))

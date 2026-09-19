@@ -133,6 +133,41 @@ export const getParticipantEndMail = (
 })
 
 /**
+ * A comment, sent to everybody who has accepted the prediction except whoever wrote it. The
+ * button carries the recipient's own role hash, like every other prediction mail, so it logs them
+ * in and a reply is one click away.
+ *
+ * Every address shows in full: everybody who gets this is part of the prediction, and the
+ * prediction page shows them each other's addresses too.
+ */
+export const getCommentMail = (
+  prediction: Prediction,
+  authorMail: string,
+  body: string,
+  recipientRoleHash: string,
+): MailDocument => ({
+  title: `New comment on: ${prediction.title}`,
+  preheader: `${authorMail} commented on a prediction you accepted.`,
+  blocks: [
+    { kind: 'heading', text: 'New comment' },
+    {
+      kind: 'paragraph',
+      text: `${authorMail} commented on the prediction "${prediction.title}".`,
+    },
+    { kind: 'quote', body },
+    {
+      kind: 'button',
+      label: 'Read and reply',
+      url: predictionUrl(prediction.hash, recipientRoleHash),
+    },
+    {
+      kind: 'note',
+      text: 'You get these because you accepted this prediction. Muting its comments stops these mails, and only these: the mail when the prediction finishes still comes.',
+    },
+  ],
+})
+
+/**
  * The monthly proof of life. Deliberately reports numbers rather than just "it works": generating
  * them exercises the database, and a figure that looks wrong says more than a cheerful constant.
  */
@@ -176,16 +211,36 @@ export const getHealthMail = (
 /**
  * The line every mail ends with. Added when a mail is sent rather than written into each one,
  * because it needs the account hash, which is a property of the recipient and not of the mail.
+ *
+ * A comment mail passes `muteCommentsOf` and offers muting that prediction's comment mails
+ * first, so getting out of one chatty comment thread does not cost somebody every mail the site
+ * will ever send them — the mail when the prediction finishes included.
  */
-export const withUnsubscribeFooter = (mail: MailDocument, accountHash: string): MailDocument => ({
+export const withUnsubscribeFooter = (
+  mail: MailDocument,
+  accountHash: string,
+  muteCommentsOf?: string,
+): MailDocument => ({
   ...mail,
   blocks: [
     ...mail.blocks,
     { kind: 'divider' },
     { kind: 'note', text: "Don't want to receive these mails?" },
+    ...(muteCommentsOf === undefined
+      ? []
+      : [
+          {
+            kind: 'link' as const,
+            label: 'Mute comments on this prediction',
+            url: muteCommentsPageUrl(accountHash, muteCommentsOf),
+          },
+        ]),
     { kind: 'link', label: 'Block yourself here', url: `${SITE_URL}/blockme/${accountHash}` },
   ],
 })
+
+const muteCommentsPageUrl = (accountHash: string, predictionHash: string): string =>
+  `${SITE_URL}/mute-comments/${accountHash}/${predictionHash}`
 
 const predictionFacts = (prediction: Prediction): Block[] => [
   {

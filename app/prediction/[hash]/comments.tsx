@@ -1,6 +1,7 @@
 import { formatDateTimeString } from '../../../shared/date-util.ts'
 import type { CommentView } from '../../../shared/index.ts'
 import CommentForm from './comment-form.tsx'
+import CommentMuteToggle from './comment-mute-toggle.tsx'
 import styles from './comments.module.css'
 
 interface CommentsProps {
@@ -8,9 +9,16 @@ interface CommentsProps {
   predictionHash: string
   /** Whether to offer the form. The action decides again when a comment arrives. */
   canWrite: boolean
+  /** Whether the viewer muted comment mails here; undefined when they would get none anyway. */
+  commentsMuted?: boolean | undefined
 }
 
-export default function Comments({ comments, predictionHash, canWrite }: CommentsProps) {
+export default function Comments({
+  comments,
+  predictionHash,
+  canWrite,
+  commentsMuted,
+}: CommentsProps) {
   return (
     <section className={styles.comments}>
       <h2 className={styles.heading}>Comments</h2>
@@ -33,6 +41,9 @@ export default function Comments({ comments, predictionHash, canWrite }: Comment
         </ol>
       )}
       {canWrite && <CommentForm predictionHash={predictionHash} />}
+      {commentsMuted !== undefined && (
+        <CommentMuteToggle predictionHash={predictionHash} muted={commentsMuted} />
+      )}
     </section>
   )
 }
