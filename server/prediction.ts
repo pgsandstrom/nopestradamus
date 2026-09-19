@@ -19,6 +19,7 @@ import {
   validateDescription,
   validateFinishDate,
   validateParticipant,
+  validateParticipantCount,
   validateTitle,
 } from '../shared/validate-prediction.ts'
 import { query, querySingle, queryString, SQL, transaction } from '../util/db.ts'
@@ -229,6 +230,7 @@ export const createPrediction = async (input: CreatePredictionInput): Promise<vo
   }
   if (
     participantList === undefined ||
+    !validateParticipantCount(participantList) ||
     !participantList.every((p) => validateParticipant(p, participantList, createrMail))
   ) {
     throw new Error('Invalid participantList')

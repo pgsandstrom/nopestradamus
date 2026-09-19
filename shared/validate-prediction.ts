@@ -20,6 +20,12 @@ export const validateFinishDate = (date: string | undefined, today: string): dat
 export const validateCreaterMail = (mail?: string): mail is string =>
   mail !== undefined && isMailValid(mail)
 
+/** The most participants a prediction may be created with. */
+export const MAX_PARTICIPANTS = 10
+
+export const validateParticipantCount = (participantList: string[]): boolean =>
+  participantList.length <= MAX_PARTICIPANTS
+
 export const isSameMail = (a: string, b: string): boolean => normalizeMail(a) === normalizeMail(b)
 
 /**

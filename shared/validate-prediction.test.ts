@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  MAX_PARTICIPANTS,
   validateCreaterMail,
   validateDateString,
   validateDescription,
   validateFinishDate,
   validateParticipant,
+  validateParticipantCount,
   validateTitle,
 } from './validate-prediction.ts'
 
@@ -85,5 +87,19 @@ describe('validateParticipant', () => {
   it('rejects the creater, whatever the case', () => {
     expect(validateParticipant('a@b.com', ['a@b.com'], 'a@b.com')).toBe(false)
     expect(validateParticipant(' A@b.com', [' A@b.com'], 'a@B.com ')).toBe(false)
+  })
+})
+
+describe('validateParticipantCount', () => {
+  const mails = (count: number) => Array.from({ length: count }, (_v, i) => `p${i}@b.com`)
+
+  it('accepts up to MAX_PARTICIPANTS', () => {
+    expect(MAX_PARTICIPANTS).toBe(10)
+    expect(validateParticipantCount([])).toBe(true)
+    expect(validateParticipantCount(mails(10))).toBe(true)
+  })
+
+  it('rejects more than MAX_PARTICIPANTS', () => {
+    expect(validateParticipantCount(mails(11))).toBe(false)
   })
 })

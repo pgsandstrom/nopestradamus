@@ -7,6 +7,7 @@ import { TextAreaField, TextField } from '../../../components/ui/text-field.tsx'
 import { toDateInputValue } from '../../../shared/date-util.ts'
 import {
   isSameMail,
+  MAX_PARTICIPANTS,
   validateCreaterMail,
   validateDateString,
   validateDescription,
@@ -159,9 +160,15 @@ export default function CreateForm({ initialCreaterMail }: CreateFormProps) {
           </div>
         ))}
         <div>
-          <Button onClick={() => setParticipantList((list) => [...list, ''])}>
-            Add participant
-          </Button>
+          {participantList.length < MAX_PARTICIPANTS ? (
+            <Button onClick={() => setParticipantList((list) => [...list, ''])}>
+              Add participant
+            </Button>
+          ) : (
+            <p className={styles.notice}>
+              A prediction can have at most {MAX_PARTICIPANTS} participants.
+            </p>
+          )}
         </div>
       </div>
 
