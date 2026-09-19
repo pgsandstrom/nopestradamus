@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  earliestDateToday,
   formatDate,
   formatDateString,
   formatDateTime,
@@ -59,5 +60,12 @@ describe('isValidDate', () => {
     expect(isValidDate(null)).toBe(false)
     expect(isValidDate(undefined)).toBe(false)
     expect(isValidDate(new Date('nonsense'))).toBe(false)
+  })
+})
+
+describe('earliestDateToday', () => {
+  it('is the date at UTC-12', () => {
+    expect(earliestDateToday(new Date('2026-09-19T11:59:00Z'))).toBe('2026-09-18')
+    expect(earliestDateToday(new Date('2026-09-19T12:00:00Z'))).toBe('2026-09-19')
   })
 })

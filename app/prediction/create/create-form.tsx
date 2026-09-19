@@ -10,6 +10,7 @@ import {
   validateCreaterMail,
   validateDateString,
   validateDescription,
+  validateFinishDate,
   validateParticipant,
   validateTitle,
 } from '../../../shared/validate-prediction.ts'
@@ -46,7 +47,7 @@ export default function CreateForm({ initialCreaterMail }: CreateFormProps) {
     if (
       !validateTitle(title) ||
       !validateDescription(body) ||
-      !validateDateString(date) ||
+      !validateFinishDate(date, today) ||
       !validateCreaterMail(createrMail) ||
       !participantList.every((p) => validateParticipant(p, participantList, createrMail))
     ) {
@@ -112,7 +113,10 @@ export default function CreateForm({ initialCreaterMail }: CreateFormProps) {
         value={date}
         min={today}
         onChange={(e) => setDate(e.target.value)}
-        error={invalid('Invalid date', validateDateString(date))}
+        error={invalid(
+          validateDateString(date) ? 'The end date cannot be in the past' : 'Invalid date',
+          validateFinishDate(date, today),
+        )}
       />
       <TextField
         label="Your mail"

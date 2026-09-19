@@ -4,6 +4,7 @@ import {
   validateCreaterMail,
   validateDateString,
   validateDescription,
+  validateFinishDate,
   validateParticipant,
   validateTitle,
 } from './validate-prediction.ts'
@@ -34,6 +35,25 @@ describe('validateDateString', () => {
     expect(validateDateString('nonsense')).toBe(false)
     expect(validateDateString('')).toBe(false)
     expect(validateDateString(undefined)).toBe(false)
+  })
+})
+
+describe('validateFinishDate', () => {
+  it('accepts today and later', () => {
+    expect(validateFinishDate('2026-09-19', '2026-09-19')).toBe(true)
+    expect(validateFinishDate('2026-09-20', '2026-09-19')).toBe(true)
+    expect(validateFinishDate('2031-12-01T00:00:00.000Z', '2026-09-19')).toBe(true)
+  })
+
+  it('rejects a date in the past', () => {
+    expect(validateFinishDate('2026-09-18', '2026-09-19')).toBe(false)
+    expect(validateFinishDate('2026-09-18T23:59:59.000Z', '2026-09-19')).toBe(false)
+  })
+
+  it('rejects junk, missing values and dates not written yyyy-MM-dd', () => {
+    expect(validateFinishDate('nonsense', '2026-09-19')).toBe(false)
+    expect(validateFinishDate(undefined, '2026-09-19')).toBe(false)
+    expect(validateFinishDate('Dec 1 2031', '2026-09-19')).toBe(false)
   })
 })
 

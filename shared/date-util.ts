@@ -39,3 +39,20 @@ export function isValidDate(date?: Date | null): date is Date {
 export function toDateInputValue(date: Date): string {
   return DATE_FORMAT.format(date)
 }
+
+// Etc/GMT+12 is UTC-12: the last place on earth where any given day is still going on.
+const EARLIEST_DATE_FORMAT = new Intl.DateTimeFormat('sv-SE', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  timeZone: 'Etc/GMT+12',
+})
+
+/**
+ * The earliest calendar day, as 'yyyy-MM-dd', that is today somewhere on earth. The server does
+ * not know the visitor's time zone, so this is the most it can demand without rejecting a date
+ * that is today where the visitor is.
+ */
+export function earliestDateToday(now: Date = new Date()): string {
+  return EARLIEST_DATE_FORMAT.format(now)
+}

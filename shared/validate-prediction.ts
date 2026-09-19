@@ -10,6 +10,13 @@ export const validateDescription = (description?: string): description is string
 export const validateDateString = (date?: string): date is string =>
   date !== undefined && isValidDate(new Date(date))
 
+/**
+ * A finish date may be today but not before it. `today` is 'yyyy-MM-dd', and the comparison is on
+ * the calendar day alone so it cannot be shifted by the time zone a timestamp is parsed in.
+ */
+export const validateFinishDate = (date: string | undefined, today: string): date is string =>
+  validateDateString(date) && /^\d{4}-\d{2}-\d{2}/.test(date) && date.slice(0, 10) >= today
+
 export const validateCreaterMail = (mail?: string): mail is string =>
   mail !== undefined && isMailValid(mail)
 

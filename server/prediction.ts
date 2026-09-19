@@ -1,3 +1,4 @@
+import { earliestDateToday } from '../shared/date-util.ts'
 import type {
   Creater,
   OrphanedRow,
@@ -15,8 +16,8 @@ import { getMailFormatter } from '../shared/index.ts'
 import { isMailValid, normalizeMail } from '../shared/mail-util.ts'
 import {
   validateCreaterMail,
-  validateDateString,
   validateDescription,
+  validateFinishDate,
   validateParticipant,
   validateTitle,
 } from '../shared/validate-prediction.ts'
@@ -217,7 +218,7 @@ export const createPrediction = async (input: CreatePredictionInput): Promise<vo
   if (!validateDescription(body)) {
     throw new Error('Invalid description')
   }
-  if (!validateDateString(finishDate)) {
+  if (!validateFinishDate(finishDate, earliestDateToday())) {
     throw new Error('Invalid finishDate')
   }
   if (isPublic === undefined) {
