@@ -6,14 +6,11 @@ import { Button } from '../../../components/ui/button.tsx'
 import { TextAreaField, TextField } from '../../../components/ui/text-field.tsx'
 import { toDateInputValue } from '../../../shared/date-util.ts'
 import {
-  isSameMail,
+  DESCRIPTION_MAX_LENGTH,
+  listPredictionErrors,
   MAX_PARTICIPANTS,
-  validateCreaterMail,
-  validateDateString,
-  validateDescription,
-  validateFinishDate,
-  validateParticipant,
-  validateTitle,
+  TITLE_MAX_LENGTH,
+  validatePrediction,
 } from '../../../shared/validate-prediction.ts'
 import { createPredictionAction } from '../../actions.ts'
 import styles from './create-form.module.css'
@@ -40,41 +37,36 @@ export default function CreateForm({ initialCreaterMail }: CreateFormProps) {
   const [error, setError] = useState<string>()
   const [isPosting, startPosting] = useTransition()
 
-  const invalid = (message: string, isValid: boolean) =>
-    showValidationError && !isValid ? message : undefined
+  const input = { title, body, finishDate: date, isPublic, createrMail, participantList }
+  const errors = validatePrediction(input, today)
+
+  // Most messages wait for the first submit, so an empty form is not already red. Too long is
+  // different: it is only ever the result of typing, and worth hearing before the next sentence.
+  const shown = (message: string | undefined, isLive = false) =>
+    showValidationError || isLive ? message : undefined
 
   const onSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault()
-    if (
-      !validateTitle(title) ||
-      !validateDescription(body) ||
-      !validateFinishDate(date, today) ||
-      !validateCreaterMail(createrMail) ||
-      !participantList.every((p) => validateParticipant(p, participantList, createrMail))
-    ) {
+    setError(undefined)
+    if (listPredictionErrors(errors).length > 0) {
       setShowValidationError(true)
       return
     }
 
     startPosting(async () => {
-      const result = await createPredictionAction({
-        title,
-        body,
-        finishDate: date,
-        isPublic,
-        createrMail,
-        participantList,
-      })
-      if (result.ok) {
-        setStatus('posted')
-      } else {
-        setError(result.error)
+      try {
+        const result = await createPredictionAction(input)
+        if (result.ok) {
+          setStatus('posted')
+        } else {
+          setError(result.error ?? 'Could not create the prediction.')
+        }
+      } catch (e) {
+        // the action never answered: offline, or the request refused before it ran
+        console.error(e)
+        setError('Could not reach the server. Please try again.')
       }
     })
-  }
-
-  if (error !== undefined) {
-    return <p className={styles.error}>{error} Sorry :(</p>
   }
 
   if (status === 'posted') {
@@ -100,13 +92,13 @@ export default function CreateForm({ initialCreaterMail }: CreateFormProps) {
         label="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        error={invalid('Invalid title', validateTitle(title))}
+        error={shown(errors.title, title.trim().length > TITLE_MAX_LENGTH)}
       />
       <TextAreaField
         label="Description"
         value={body}
         onChange={(e) => setBody(e.target.value)}
-        error={invalid('Invalid description', validateDescription(body))}
+        error={shown(errors.body, body.trim().length > DESCRIPTION_MAX_LENGTH)}
       />
       <TextField
         label="End date"
@@ -114,17 +106,14 @@ export default function CreateForm({ initialCreaterMail }: CreateFormProps) {
         value={date}
         min={today}
         onChange={(e) => setDate(e.target.value)}
-        error={invalid(
-          validateDateString(date) ? 'The end date cannot be in the past' : 'Invalid date',
-          validateFinishDate(date, today),
-        )}
+        error={shown(errors.finishDate)}
       />
       <TextField
         label="Your mail"
         type="email"
         value={createrMail}
         onChange={(e) => setCreaterMail(e.target.value)}
-        error={invalid('Invalid mail', validateCreaterMail(createrMail))}
+        error={shown(errors.createrMail)}
       />
 
       <label className={styles.checkboxRow}>
@@ -143,12 +132,7 @@ export default function CreateForm({ initialCreaterMail }: CreateFormProps) {
               onChange={(e) =>
                 setParticipantList((list) => list.map((p, i) => (index === i ? e.target.value : p)))
               }
-              error={invalid(
-                isSameMail(participant, createrMail)
-                  ? 'You are already part of the prediction as its creater'
-                  : 'Invalid participant e-mail',
-                validateParticipant(participant, participantList, createrMail),
-              )}
+              error={shown(errors.participants?.[index])}
             />
             <Button
               variant="danger"
@@ -175,6 +159,11 @@ export default function CreateForm({ initialCreaterMail }: CreateFormProps) {
       <Button type="submit" className={styles.submit} disabled={isPosting}>
         Create prediction
       </Button>
+      {error !== undefined && (
+        <p className={styles.error} role="alert">
+          {error}
+        </p>
+      )}
     </form>
   )
 }

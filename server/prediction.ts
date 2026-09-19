@@ -15,12 +15,9 @@ import type {
 import { getMailFormatter } from '../shared/index.ts'
 import { isMailValid, normalizeMail } from '../shared/mail-util.ts'
 import {
-  validateCreaterMail,
-  validateDescription,
-  validateFinishDate,
-  validateParticipant,
-  validateParticipantCount,
-  validateTitle,
+  type CreatePredictionInput,
+  listPredictionErrors,
+  validatePrediction,
 } from '../shared/validate-prediction.ts'
 import { query, querySingle, queryString, SQL, transaction } from '../util/db.ts'
 import { adminGetAccounts, confirmAccountExistance, validateAccount } from './account.ts'
@@ -199,41 +196,29 @@ WHERE prediction.finish_date < now()
   AND creater.accepted = true
 `)
 
-export interface CreatePredictionInput {
-  title?: string
-  body?: string
-  finishDate?: string
-  isPublic?: boolean
-  createrMail?: string
-  participantList?: string[]
-}
-
+/**
+ * Refuses anything `validatePrediction` refuses. `createPredictionAction` asks it first so it can
+ * answer with the reasons; this is the backstop for any other caller.
+ */
 export const createPrediction = async (input: CreatePredictionInput): Promise<void> => {
   const { title, body, finishDate, isPublic } = input
   const createrMail = input.createrMail === undefined ? undefined : normalizeMail(input.createrMail)
   const participantList = input.participantList?.map(normalizeMail)
 
-  if (!validateTitle(title)) {
-    throw new Error('Invalid title')
-  }
-  if (!validateDescription(body)) {
-    throw new Error('Invalid description')
-  }
-  if (!validateFinishDate(finishDate, earliestDateToday())) {
-    throw new Error('Invalid finishDate')
-  }
-  if (isPublic === undefined) {
-    throw new Error('Invalid isPublic')
-  }
-  if (!validateCreaterMail(createrMail)) {
-    throw new Error('Invalid createrMail')
-  }
+  const errors = listPredictionErrors(
+    validatePrediction({ ...input, createrMail, participantList }, earliestDateToday()),
+  )
   if (
-    participantList === undefined ||
-    !validateParticipantCount(participantList) ||
-    !participantList.every((p) => validateParticipant(p, participantList, createrMail))
+    errors.length > 0 ||
+    // the same checks, spelled out once more so the compiler knows the fields are set
+    title === undefined ||
+    body === undefined ||
+    finishDate === undefined ||
+    isPublic === undefined ||
+    createrMail === undefined ||
+    participantList === undefined
   ) {
-    throw new Error('Invalid participantList')
+    throw new Error(`Invalid prediction: ${errors.join(', ')}`)
   }
 
   const hash = randomHash()

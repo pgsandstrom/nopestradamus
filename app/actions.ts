@@ -12,20 +12,31 @@ import { getAnswerMail, getLoginMail } from '../server/mail/templates.ts'
 import { sendMail } from '../server/mailer.ts'
 import {
   createPrediction,
-  type CreatePredictionInput,
   getMailByRoleHash,
   getPrediction,
   updateCreaterAcceptStatus,
   updateParticipantAcceptStatus,
 } from '../server/prediction.ts'
 import { endUserSession, getCurrentUserMail, startUserSession } from '../server/session-cookie.ts'
+import { earliestDateToday } from '../shared/date-util.ts'
 import type { AppAccount, Role } from '../shared/index.ts'
 import { canWriteComments, getRoleForMail } from '../shared/index.ts'
 import { isMailValid } from '../shared/mail-util.ts'
 import { COMMENT_MAX_LENGTH, validateComment } from '../shared/validate-comment.ts'
+import {
+  type CreatePredictionInput,
+  listPredictionErrors,
+  validatePrediction,
+} from '../shared/validate-prediction.ts'
 import { type ActionResult, failed, OK } from './action-result.ts'
 
 export async function createPredictionAction(input: CreatePredictionInput): Promise<ActionResult> {
+  // The form runs the same rules before it sends, so this only speaks up when the two disagree,
+  // such as over what day it is, or when something other than the form is calling.
+  const [firstError] = listPredictionErrors(validatePrediction(input, earliestDateToday()))
+  if (firstError !== undefined) {
+    return { ok: false, error: `${firstError}.` }
+  }
   try {
     await createPrediction(input)
   } catch (e) {
