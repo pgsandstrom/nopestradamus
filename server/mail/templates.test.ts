@@ -55,6 +55,19 @@ describe('prediction mails', () => {
     expect(html).not.toContain('createrhash1234')
   })
 
+  // the link opens the page; the accepting happens there
+  it('does not let an accept mail read as if the link were the accepting', () => {
+    for (const mail of [
+      getCreaterAcceptMail(prediction()),
+      getParticipantAcceptMail(prediction(), prediction().participants[0]!),
+    ]) {
+      expect(mail.blocks).toContainEqual({
+        kind: 'paragraph',
+        text: 'The link below only opens the prediction on the site. Accept or reject it with the buttons on the page.',
+      })
+    }
+  })
+
   it('leaves the participant list out when there is nobody else', () => {
     const solo = { ...prediction(), participants: [] }
     expect(renderMail(getCreaterAcceptMail(solo)).text).not.toContain(

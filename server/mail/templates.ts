@@ -40,7 +40,7 @@ export const getLoginMail = (token: string): MailDocument => ({
 })
 
 export const getCreaterAcceptMail = (prediction: Prediction): MailDocument => ({
-  title: 'Nopestradamus: Validate your mail for your prediction!',
+  title: 'Nopestradamus: your prediction is waiting for you to accept it',
   preheader: 'Your prediction does not start until you accept it.',
   blocks: [
     { kind: 'heading', text: 'One step left' },
@@ -49,13 +49,17 @@ export const getCreaterAcceptMail = (prediction: Prediction): MailDocument => ({
     ...predictionFacts(prediction),
     ...participantBlocks(prediction),
     {
+      kind: 'paragraph',
+      text: 'The link below only opens the prediction on the site. Accept or reject it with the buttons on the page.',
+    },
+    {
       kind: 'button',
-      label: 'Accept the prediction',
+      label: 'Open the prediction',
       url: predictionUrl(prediction.hash, prediction.creater.hash),
     },
     {
       kind: 'note',
-      text: 'Nothing is sent to anybody else until you have accepted it.',
+      text: 'Nothing is sent to anybody else until you have accepted the prediction.',
     },
   ],
 })
@@ -70,7 +74,7 @@ export const getParticipantAcceptMail = (
     { kind: 'heading', text: 'You have been asked to take a side' },
     {
       kind: 'paragraph',
-      text: `${prediction.creater.mail} has asked you to accept a prediction.`,
+      text: `${prediction.creater.mail} has asked you to accept or reject a prediction.`,
     },
     { kind: 'quote', title: prediction.title, body: prediction.body },
     ...predictionFacts(prediction),
@@ -80,8 +84,12 @@ export const getParticipantAcceptMail = (
       text: `On ${formatDateString(prediction.finish_date)} you will all receive a mail and be confronted with your predictions.`,
     },
     {
+      kind: 'paragraph',
+      text: 'The link below only opens the prediction on the site. Accept or reject it with the buttons on the page.',
+    },
+    {
       kind: 'button',
-      label: 'Accept or reject it',
+      label: 'Open the prediction',
       url: predictionUrl(prediction.hash, participant.hash),
     },
   ],
