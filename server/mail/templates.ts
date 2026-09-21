@@ -279,7 +279,11 @@ export const withUnsubscribeFooter = (
             url: muteActivityPageUrl(accountHash, muteActivityOf),
           },
         ]),
-    { kind: 'link', label: 'Block yourself here', url: `${SITE_URL}/blockme/${accountHash}` },
+    {
+      kind: 'link',
+      label: 'Stop every mail from Nopestradamus',
+      url: `${SITE_URL}/blockme/${accountHash}`,
+    },
   ],
 })
 
