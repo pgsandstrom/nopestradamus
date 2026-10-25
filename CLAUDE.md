@@ -44,7 +44,9 @@ The package manager is **pnpm**, not npm.
   form, but it is not the gate: each admin page and each action in `app/admin/actions.ts` asks
   `isAdminAuthenticated()` for itself, because a layout is not re-rendered when the visitor moves
   between the pages under it.
-- Imports are sorted by `simple-import-sort` and it autofixes, so never hand-sort them.
+- Lint is oxlint (`oxlint.config.ts`, custom rules in `oxlint/`) and formatting is oxfmt, which
+  also sorts imports, so never hand-sort them. `eslint-disable` comments are ignored; write
+  `oxlint-disable-next-line rule -- reason`.
 - `POST /api/account/[hash]/block` stays a route handler rather than a server action, because mail
   clients POST to it directly for RFC 8058 List-Unsubscribe one-click and `server/mailer.ts`
   names it in the `List-Unsubscribe` header. It must not move. Its sibling

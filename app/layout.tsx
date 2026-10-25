@@ -1,11 +1,10 @@
 import './globals.css'
-
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 
 import Header from '../components/header.tsx'
-import LoginCover from '../components/login-cover.tsx'
 import { loginCoverScript } from '../components/login-cover-script.ts'
+import LoginCover from '../components/login-cover.tsx'
 
 export const metadata: Metadata = {
   title: 'Nopestradamus',
@@ -36,6 +35,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     // before React ever sees it
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* oxlint-disable-next-line react/no-danger -- our own constant, it has to run before first paint */}
         <script dangerouslySetInnerHTML={{ __html: loginCoverScript }} />
       </head>
       <body>

@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest'
 
 import type { Block, MailDocument } from './blocks.ts'
 import { MAIL_SAMPLES } from './fixtures.ts'
-import { renderMail } from './render.ts'
 import { renderHtml } from './render-html.ts'
+import { renderMail } from './render.ts'
 
 const document = (blocks: Block[]): MailDocument => ({ title: 'a subject', blocks })
 

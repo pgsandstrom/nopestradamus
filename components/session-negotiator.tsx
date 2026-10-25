@@ -5,8 +5,9 @@ import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from 're
 
 import { logInWithHashAction } from '../app/actions.ts'
 import { isLoginFragment } from '../shared/index.ts'
-import styles from './header.module.css'
 import { LOGIN_COVER_ATTRIBUTE } from './login-cover-script.ts'
+
+import styles from './header.module.css'
 
 type Status = 'idle' | 'working' | 'failed'
 

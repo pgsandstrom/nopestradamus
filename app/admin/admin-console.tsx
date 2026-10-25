@@ -15,6 +15,7 @@ import {
   sendMailAction,
   triggerCronAction,
 } from './actions.ts'
+
 import styles from './page.module.css'
 
 export default function AdminConsole() {

@@ -1,5 +1,6 @@
 import { formatDateString } from '../shared/date-util.ts'
 import type { PredictionView } from '../shared/index.ts'
+
 import styles from './prediction.module.css'
 
 interface PredictionProps {

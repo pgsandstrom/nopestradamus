@@ -5,6 +5,7 @@ import { useRef, useState, useTransition } from 'react'
 
 import { Button } from '../../../../components/ui/button.tsx'
 import { deletePredictionAction } from '../../actions.ts'
+
 import styles from './delete-prediction.module.css'
 
 interface DeletePredictionProps {

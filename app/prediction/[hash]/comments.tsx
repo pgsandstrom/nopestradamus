@@ -2,6 +2,7 @@ import { formatDateTimeString } from '../../../shared/date-util.ts'
 import type { CommentView } from '../../../shared/index.ts'
 import ActivityMuteToggle from './activity-mute-toggle.tsx'
 import CommentForm from './comment-form.tsx'
+
 import styles from './comments.module.css'
 
 interface CommentsProps {

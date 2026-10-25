@@ -15,7 +15,7 @@ try {
   // release, where the message is what matters and the stack is only there if it doesn't.
   console.error(e)
   console.error(
-    `\nmigration failed, the database was left untouched: ${e instanceof Error ? e.message : e}`,
+    `\nmigration failed, the database was left untouched: ${e instanceof Error ? e.message : String(e)}`,
   )
   process.exit(1)
 }

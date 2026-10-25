@@ -5,6 +5,7 @@ import { useState, useTransition } from 'react'
 
 import { Button } from '../../../../components/ui/button.tsx'
 import { setActivityMailMutedByAccountAction } from '../../../actions.ts'
+
 import styles from './mute-controls.module.css'
 
 interface MuteActivityControlsProps {

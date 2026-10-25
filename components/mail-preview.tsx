@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 import type { RenderedMail } from '../server/mail/render.ts'
+
 import styles from './mail-preview.module.css'
 
 const VIEWS = ['rendered', 'text', 'source'] as const
@@ -85,6 +86,8 @@ function RenderedMailFrame({ html, title }: { html: string; title: string }) {
       className={styles.frame}
       style={{ height: `${height}px` }}
       srcDoc={html}
+      // same origin so the height can be measured, but the mail's own scripts never run
+      sandbox="allow-same-origin"
       title={`${title} (rendered)`}
     />
   )

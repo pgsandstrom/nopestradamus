@@ -13,6 +13,7 @@ import {
   validatePrediction,
 } from '../../../shared/validate-prediction.ts'
 import { createPredictionAction } from '../../actions.ts'
+
 import styles from './create-form.module.css'
 
 type Status = 'editing' | 'posted'
@@ -23,7 +24,7 @@ interface CreateFormProps {
 }
 
 export default function CreateForm({ initialCreaterMail }: CreateFormProps) {
-  const today = toDateInputValue(new Date())
+  const [today] = useState(() => toDateInputValue(new Date()))
 
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')

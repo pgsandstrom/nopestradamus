@@ -78,7 +78,9 @@ export function TextAreaField({
 
   useLayoutEffect(() => {
     const el = own.current
-    if (!autoGrow || el === null || supportsFieldSizing()) return
+    if (!autoGrow || el === null || supportsFieldSizing()) {
+      return
+    }
     el.style.height = 'auto'
     el.style.height = `${el.scrollHeight + el.offsetHeight - el.clientHeight}px`
   }, [autoGrow, props.value])
@@ -105,6 +107,9 @@ export function TextAreaField({
 }
 
 function assignRef<T>(ref: Ref<T> | undefined, value: T | null) {
-  if (typeof ref === 'function') ref(value)
-  else if (ref) ref.current = value
+  if (typeof ref === 'function') {
+    ref(value)
+  } else if (ref) {
+    ref.current = value
+  }
 }

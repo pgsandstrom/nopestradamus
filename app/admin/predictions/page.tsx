@@ -10,6 +10,7 @@ import {
   type PredictionAdminListItem,
   type PredictionStatus,
 } from '../../../shared/index.ts'
+
 import styles from './page.module.css'
 
 export const dynamic = 'force-dynamic'

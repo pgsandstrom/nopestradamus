@@ -3,32 +3,27 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
-  "engines": {
-    "node": ">=24.22.1"
-  },
-  "packageManager": "pnpm@12.15.0",
   "scripts": {
     "build": "next build",
     "check-config": "node --input-type=module -e \"import('./util/config.ts').then((m) => m.getConfig())\"",
     "clone-prod-db": "scripts/clone-prod-db.sh",
     "cron": "node server-cron.ts",
     "dev": "next dev",
-    "dev-session": "node scripts/dev-session.ts",
     "dev-database": "docker compose -f docker-compose-dev.yml up -d --wait && pnpm migrate",
+    "dev-session": "node scripts/dev-session.ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "health-mail": "node scripts/send-health-mail.ts",
-    "migrate": "node scripts/migrate.ts",
-    "format": "prettier --log-level warn --write .",
-    "format:check": "prettier --log-level warn --check .",
     "knip": "pnpm knip:production && pnpm knip:default",
     "knip:default": "knip --no-progress --no-config-hints",
     "knip:production": "knip --production --no-progress",
-    "lint": "eslint --max-warnings 0",
+    "lint": "oxlint",
+    "migrate": "node scripts/migrate.ts",
     "pre-commit": "lint-staged",
     "pre-push": "pnpm validate && pnpm format:check",
     "prepare": "husky || true",
     "release": "docker compose build --pull && docker compose up -d",
     "test": "vitest run",
-    "test-watch": "vitest",
     "typecheck": "tsc --noEmit",
     "validate": "pnpm typecheck && pnpm lint && pnpm test"
   },
@@ -41,35 +36,34 @@
     "react-dom": "19.3.1"
   },
   "devDependencies": {
-    "@eslint/js": "10.0.1",
-    "@next/eslint-plugin-next": "16.4.3",
+    "@oxlint/plugins": "1.89.0",
     "@types/node": "24.19.2",
     "@types/pg": "8.23.1",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "eslint": "10.13.0",
-    "eslint-config-prettier": "10.1.8",
     "eslint-plugin-no-only-tests": "3.4.0",
-    "eslint-plugin-react-hooks": "7.1.1",
-    "eslint-plugin-simple-import-sort": "14.0.0",
-    "globals": "17.13.0",
     "knip": "6.43.0",
     "lint-staged": "17.6.0",
-    "prettier": "3.9.10",
+    "oxfmt": "0.74.0",
+    "oxlint": "1.89.0",
+    "oxlint-tsgolint": "7.0.2005",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.72.0",
     "vitest": "5.0.5"
   },
   "optionalDependencies": {
     "husky": "9.1.7"
   },
   "lint-staged": {
-    "*.{js,mjs,json,md,css,html}": [
-      "prettier --write"
+    "*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}": [
+      "oxlint --fix --no-error-on-unmatched-pattern",
+      "oxfmt --no-error-on-unmatched-pattern"
     ],
-    "*.{ts,tsx}": [
-      "eslint --fix --max-warnings 0 --no-warn-ignored",
-      "prettier --write"
+    "!(*.{js,jsx,ts,tsx,mjs,cjs,mts,cts})": [
+      "oxfmt --no-error-on-unmatched-pattern"
     ]
-  }
+  },
+  "engines": {
+    "node": ">=24.22.1"
+  },
+  "packageManager": "pnpm@12.15.0"
 }

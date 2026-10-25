@@ -2,10 +2,11 @@ import Link from 'next/link'
 
 import { logOutAction } from '../app/actions.ts'
 import { getCurrentUserMail } from '../server/session-cookie.ts'
-import styles from './header.module.css'
 import LoginForm from './login-form.tsx'
 import SessionNegotiator from './session-negotiator.tsx'
 import { Button } from './ui/button.tsx'
+
+import styles from './header.module.css'
 
 /**
  * The one bar on every page. It answers "am I logged in", offers the way in when the answer is

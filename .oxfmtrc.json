@@ -1,0 +1,9 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "semi": false,
+  "singleQuote": true,
+  "sortPackageJson": { "sortScripts": true },
+  "ignorePatterns": [".next", "dist*", "next-env.d.ts", "pnpm-lock.yaml", "public", ".prod-dumps"],
+  "sortImports": true
+}

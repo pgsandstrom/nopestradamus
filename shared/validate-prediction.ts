@@ -1,5 +1,6 @@
 import { isValidDate } from './date-util.ts'
 import { isMailValid, normalizeMail } from './mail-util.ts'
+import { objectKeys } from './object-util.ts'
 
 /**
  * What the create form sends. Every field is optional because it arrives through a server action,
@@ -126,7 +127,11 @@ export const validatePrediction = (
     participants: participants.some((e) => e !== undefined) ? participants : undefined,
   }
   // drop the fields that passed, so an empty object means a valid prediction
-  return Object.fromEntries(Object.entries(errors).filter(([, message]) => message !== undefined))
+  return Object.fromEntries(
+    objectKeys(errors)
+      .filter((key) => errors[key] !== undefined)
+      .map((key) => [key, errors[key]]),
+  )
 }
 
 /** Every message, in form order, for when there is one place to say them rather than a field. */

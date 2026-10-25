@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { LinkButton } from '../components/ui/button.tsx'
 import { getLatestPredictions } from '../server/prediction.ts'
 import { isDev } from '../util/env.ts'
+
 import styles from './page.module.css'
 
 export const dynamic = 'force-dynamic'

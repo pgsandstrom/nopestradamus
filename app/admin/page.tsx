@@ -4,6 +4,7 @@ import { adminGetBlockedAccounts } from '../../server/account.ts'
 import { isAdminAuthenticated } from '../../server/admin-session.ts'
 import type { AdminAccount } from '../../shared/index.ts'
 import AdminConsole from './admin-console.tsx'
+
 import styles from './page.module.css'
 
 export const dynamic = 'force-dynamic'

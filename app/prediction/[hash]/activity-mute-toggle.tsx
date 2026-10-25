@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 
 import { Button } from '../../../components/ui/button.tsx'
 import { setActivityMailMutedAction } from '../../actions.ts'
+
 import styles from './comments.module.css'
 
 interface ActivityMuteToggleProps {

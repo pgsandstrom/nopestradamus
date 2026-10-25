@@ -18,7 +18,7 @@ const run = (hash: string) => {
     },
   }
   // the Function constructor is the point: this is a test of a string that the browser evals
-  // eslint-disable-next-line @typescript-eslint/no-implied-eval
+  // oxlint-disable-next-line typescript/no-implied-eval
   const script = new Function('document', 'location', 'setTimeout', loginCoverScript) as (
     documentGlobal: typeof documentStub,
     locationGlobal: { hash: string },

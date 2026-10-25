@@ -15,7 +15,8 @@ const config: KnipConfig = {
     'scripts/migrate.ts!',
     '**/*.test.ts',
   ],
-  project: ['**/*.{ts,tsx}!'],
+  // the local oxlint plugin is dev tooling, reached through oxlint.config.ts
+  project: ['**/*.{ts,tsx}!', '!oxlint/**!'],
   // husky lives in optionalDependencies so the docker images can skip it with --no-optional
   ignoreBinaries: ['husky'],
   // an export used inside its own file is a style nit, not dead code

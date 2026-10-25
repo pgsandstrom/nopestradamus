@@ -24,6 +24,7 @@ import {
   type Role,
 } from '../../../../shared/index.ts'
 import DeletePrediction from './delete-prediction.tsx'
+
 import styles from './page.module.css'
 
 export const dynamic = 'force-dynamic'

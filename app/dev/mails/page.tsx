@@ -4,6 +4,7 @@ import MailPreview from '../../../components/mail-preview.tsx'
 import { MAIL_SAMPLES } from '../../../server/mail/fixtures.ts'
 import { renderMail } from '../../../server/mail/render.ts'
 import { isDev } from '../../../util/env.ts'
+
 import styles from './page.module.css'
 
 /**
