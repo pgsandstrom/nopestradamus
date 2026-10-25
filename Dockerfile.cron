@@ -39,5 +39,6 @@ COPY privkey.pem config.json ./
 # same reason as in Dockerfile.frontend: fail the release, not the monthly health mail
 RUN pnpm check-config
 
-# node runs the TypeScript directly via type stripping, so there is no build step
-CMD service postfix start && node server-cron.ts
+# node runs the TypeScript directly via type stripping, so there is no build step.
+# exec replaces the shell with node, so docker's SIGTERM reaches node and its handler.
+CMD service postfix start && exec node server-cron.ts

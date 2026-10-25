@@ -10,7 +10,8 @@ const FIRST_OF_EVERY_MONTH = "0 0 5 1 * *"
 // the container runs UTC, so without this the health mail would drift an hour twice a year
 const TIME_ZONE = "Europe/Stockholm"
 
-export const startCronStuff = (): void => {
+// Returns a stop function that resolves once any running tick has finished
+export const startCronStuff = (): (() => Promise<void>) => {
   const cronJob = CronJob.from({
     cronTime: EVERY_HOUR,
     onTick: async () => {
@@ -32,6 +33,8 @@ export const startCronStuff = (): void => {
         console.error(`Session sweep threw error: ${String(e)}`)
       }
     },
+    // lets stop() wait for a running tick, and skips a tick while the previous one still runs
+    waitForCompletion: true,
     start: true,
   })
   const healthJob = CronJob.from({
@@ -44,10 +47,14 @@ export const startCronStuff = (): void => {
         console.error(`Health mail job threw error: ${String(e)}`)
       }
     },
+    waitForCompletion: true,
     start: true,
   })
   console.log(
     `Cron jobs initiated. Next run: ${cronJob.nextDate().toISO()}. ` +
       `Next health mail: ${healthJob.nextDate().toISO()}. NODE_ENV: "${process.env.NODE_ENV}"`,
   )
+  return async () => {
+    await Promise.all([cronJob.stop(), healthJob.stop()])
+  }
 }

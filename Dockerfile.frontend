@@ -49,4 +49,5 @@ COPY privkey.pem config.json ./
 
 EXPOSE 3000
 
-CMD service postfix start && node server.js
+# exec replaces the shell with node, so docker's SIGTERM reaches next's own shutdown handler
+CMD service postfix start && exec node server.js

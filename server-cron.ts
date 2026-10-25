@@ -3,4 +3,10 @@
 
 import { startCronStuff } from "./server/cron-controller.ts"
 
-startCronStuff()
+const stopCronStuff = startCronStuff()
+
+// docker stop sends SIGTERM: let a running job finish instead of cutting it off mid-batch
+process.once("SIGTERM", () => {
+  console.log("SIGTERM received, waiting for running cron jobs to finish")
+  void stopCronStuff().then(() => process.exit(0))
+})
