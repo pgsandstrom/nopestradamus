@@ -16,13 +16,13 @@
  *     back every statement in every pending file and the database stays on the last version
  *     that fully worked — no half-migrated state to repair by hand.
  */
-import { createHash } from 'node:crypto'
-import { readdir, readFile } from 'node:fs/promises'
-import path from 'node:path'
+import { createHash } from "node:crypto"
+import { readdir, readFile } from "node:fs/promises"
+import path from "node:path"
 
-import { SQL, transaction } from '../util/db.ts'
+import { SQL, transaction } from "../util/db.ts"
 
-const MIGRATIONS_DIR = path.join(import.meta.dirname, 'migrations')
+const MIGRATIONS_DIR = path.join(import.meta.dirname, "migrations")
 
 // Arbitrary but fixed: two runs agreeing on the same number is the whole point.
 const LOCK_KEY = 8074312
@@ -40,7 +40,7 @@ interface Migration {
  */
 export const orderMigrations = (fileNames: string[]): string[] => {
   const numbered = fileNames
-    .filter((name) => name.endsWith('.sql'))
+    .filter((name) => name.endsWith(".sql"))
     .map((name) => {
       const match = /^(\d{3,})-[a-z0-9-]+\.sql$/.exec(name)
       if (!match) {
@@ -63,13 +63,13 @@ export const orderMigrations = (fileNames: string[]): string[] => {
 // Line endings are normalised first, so a checkout that lands CRLF on one machine does not make
 // every migration look edited on the next.
 const checksumOf = (sql: string): string =>
-  createHash('md5').update(sql.replace(/\r\n/g, '\n')).digest('hex')
+  createHash("md5").update(sql.replace(/\r\n/g, "\n")).digest("hex")
 
 const readMigrations = async (): Promise<Migration[]> => {
   const names = orderMigrations(await readdir(MIGRATIONS_DIR))
   return Promise.all(
     names.map(async (name) => {
-      const sql = await readFile(path.join(MIGRATIONS_DIR, name), 'utf8')
+      const sql = await readFile(path.join(MIGRATIONS_DIR, name), "utf8")
       return { name, sql, checksum: checksumOf(sql) }
     }),
   )
@@ -93,7 +93,7 @@ export const migrate = async (): Promise<void> => {
     })
 
     const appliedRows = await tx<{ name: string; checksum: string }>({
-      text: 'SELECT name, checksum FROM schema_migration',
+      text: "SELECT name, checksum FROM schema_migration",
     })
     const appliedChecksums = new Map(appliedRows.rows.map((row) => [row.name, row.checksum]))
 
@@ -133,7 +133,7 @@ export const migrate = async (): Promise<void> => {
     console.log(
       appliedNow === 0
         ? `database is up to date (${migrations.length} migrations applied)`
-        : `applied ${appliedNow} migration${appliedNow === 1 ? '' : 's'}`,
+        : `applied ${appliedNow} migration${appliedNow === 1 ? "" : "s"}`,
     )
   })
 }

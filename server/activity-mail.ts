@@ -1,7 +1,7 @@
-import type { Prediction } from '../shared/index.ts'
-import { getActivityMailMutedMails } from './activity-mute.ts'
-import type { MailDocument } from './mail/blocks.ts'
-import { sendMail } from './mailer.ts'
+import type { Prediction } from "../shared/index.ts"
+import { getActivityMailMutedMails } from "./activity-mute.ts"
+import type { MailDocument } from "./mail/blocks.ts"
+import { sendMail } from "./mailer.ts"
 
 interface ActivityMailRecipient {
   mail: string
@@ -16,7 +16,7 @@ interface ActivityMailRecipient {
  * who rejected has said they want out, so neither is mailed.
  */
 export const getActivityMailRecipients = (
-  prediction: Pick<Prediction, 'creater' | 'participants'>,
+  prediction: Pick<Prediction, "creater" | "participants">,
   actorMail: string,
   mutedMails: ReadonlySet<string>,
 ): ActivityMailRecipient[] =>
@@ -49,7 +49,7 @@ export const sendActivityMails = async (
     ),
   )
   results.forEach((result, index) => {
-    if (result.status === 'rejected') {
+    if (result.status === "rejected") {
       console.error(`failed sending activity mail to ${recipients[index]!.mail}`, result.reason)
     }
   })

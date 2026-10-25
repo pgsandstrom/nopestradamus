@@ -1,6 +1,6 @@
-import { isValidDate } from './date-util.ts'
-import { isMailValid, normalizeMail } from './mail-util.ts'
-import { objectKeys } from './object-util.ts'
+import { isValidDate } from "./date-util.ts"
+import { isMailValid, normalizeMail } from "./mail-util.ts"
+import { objectKeys } from "./object-util.ts"
 
 /**
  * What the create form sends. Every field is optional because it arrives through a server action,
@@ -53,7 +53,7 @@ export const isSameMail = (a: string, b: string): boolean => normalizeMail(a) ==
 
 /** Measured after trimming, because the ends are not what a reader sees. */
 const textError = (text: unknown, name: string, maxLength: number): string | undefined => {
-  if (typeof text !== 'string' || text.trim().length === 0) {
+  if (typeof text !== "string" || text.trim().length === 0) {
     return `The prediction needs a ${name}`
   }
   const length = text.trim().length
@@ -63,14 +63,14 @@ const textError = (text: unknown, name: string, maxLength: number): string | und
 }
 
 const finishDateError = (date: unknown, today: string): string | undefined => {
-  if (typeof date !== 'string' || !validateDateString(date)) {
-    return 'Invalid date'
+  if (typeof date !== "string" || !validateDateString(date)) {
+    return "Invalid date"
   }
-  return validateFinishDate(date, today) ? undefined : 'The end date cannot be in the past'
+  return validateFinishDate(date, today) ? undefined : "The end date cannot be in the past"
 }
 
 const createrMailError = (mail: unknown): string | undefined =>
-  typeof mail === 'string' && isMailValid(mail) ? undefined : 'Invalid mail'
+  typeof mail === "string" && isMailValid(mail) ? undefined : "Invalid mail"
 
 /**
  * The creater is never a participant too: they already answer as creater, and a second row would
@@ -81,21 +81,21 @@ const participantError = (
   participantList: unknown[],
   createrMail: unknown,
 ): string | undefined => {
-  if (typeof participant !== 'string' || !isMailValid(participant)) {
-    return 'Invalid participant e-mail'
+  if (typeof participant !== "string" || !isMailValid(participant)) {
+    return "Invalid participant e-mail"
   }
-  if (typeof createrMail === 'string' && isSameMail(participant, createrMail)) {
-    return 'You are already part of the prediction as its creater'
+  if (typeof createrMail === "string" && isSameMail(participant, createrMail)) {
+    return "You are already part of the prediction as its creater"
   }
   const sameMailCount = participantList.filter(
-    (p) => typeof p === 'string' && isSameMail(p, participant),
+    (p) => typeof p === "string" && isSameMail(p, participant),
   ).length
-  return sameMailCount > 1 ? 'This participant is already on the list' : undefined
+  return sameMailCount > 1 ? "This participant is already on the list" : undefined
 }
 
 const participantListError = (participantList: unknown): string | undefined => {
   if (!Array.isArray(participantList)) {
-    return 'Invalid participant list'
+    return "Invalid participant list"
   }
   return participantList.length > MAX_PARTICIPANTS
     ? `A prediction can have at most ${MAX_PARTICIPANTS} participants`
@@ -118,10 +118,10 @@ export const validatePrediction = (
     participantError(p, participantList, input.createrMail),
   )
   const errors: PredictionErrors = {
-    title: textError(input.title, 'title', TITLE_MAX_LENGTH),
-    body: textError(input.body, 'description', DESCRIPTION_MAX_LENGTH),
+    title: textError(input.title, "title", TITLE_MAX_LENGTH),
+    body: textError(input.body, "description", DESCRIPTION_MAX_LENGTH),
     finishDate: finishDateError(input.finishDate, today),
-    isPublic: typeof input.isPublic === 'boolean' ? undefined : 'Invalid visibility',
+    isPublic: typeof input.isPublic === "boolean" ? undefined : "Invalid visibility",
     createrMail: createrMailError(input.createrMail),
     participantList: participantListError(input.participantList),
     participants: participants.some((e) => e !== undefined) ? participants : undefined,

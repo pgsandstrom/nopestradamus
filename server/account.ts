@@ -1,7 +1,7 @@
-import type { AdminAccount, AppAccount } from '../shared/index.ts'
-import { isMailValid, normalizeMail } from '../shared/mail-util.ts'
-import { query, querySingle, SQL } from '../util/db.ts'
-import { randomHash } from './hash.ts'
+import type { AdminAccount, AppAccount } from "../shared/index.ts"
+import { isMailValid, normalizeMail } from "../shared/mail-util.ts"
+import { query, querySingle, SQL } from "../util/db.ts"
+import { randomHash } from "./hash.ts"
 
 export const confirmAccountExistance = async (mail: string, validated = false): Promise<void> => {
   if (!isMailValid(mail)) {

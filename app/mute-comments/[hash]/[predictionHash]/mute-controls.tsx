@@ -1,12 +1,12 @@
-'use client'
+"use client"
 
-import Link from 'next/link'
-import { useState, useTransition } from 'react'
+import Link from "next/link"
+import { useState, useTransition } from "react"
 
-import { Button } from '../../../../components/ui/button.tsx'
-import { setActivityMailMutedByAccountAction } from '../../../actions.ts'
+import { Button } from "../../../../components/ui/button.tsx"
+import { setActivityMailMutedByAccountAction } from "../../../actions.ts"
 
-import styles from './mute-controls.module.css'
+import styles from "./mute-controls.module.css"
 
 interface MuteActivityControlsProps {
   hash: string
@@ -73,7 +73,7 @@ export default function MuteActivityControls({
       </p>
       {error !== undefined && <p className={styles.error}>{error}</p>}
       <p className={styles.other}>
-        To stop every mail from Nopestradamus instead,{' '}
+        To stop every mail from Nopestradamus instead,{" "}
         <Link href={`/blockme/${hash}`}>block yourself</Link>.
       </p>
     </div>

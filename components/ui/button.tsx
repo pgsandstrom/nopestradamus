@@ -1,20 +1,20 @@
-import Link from 'next/link'
-import type { ComponentProps } from 'react'
+import Link from "next/link"
+import type { ComponentProps } from "react"
 
-import styles from './button.module.css'
+import styles from "./button.module.css"
 
-type Variant = 'primary' | 'danger'
+type Variant = "primary" | "danger"
 
-const classesFor = (variant: Variant = 'primary', className?: string) =>
-  [styles.button, variant === 'danger' ? styles.danger : undefined, className]
+const classesFor = (variant: Variant = "primary", className?: string) =>
+  [styles.button, variant === "danger" ? styles.danger : undefined, className]
     .filter(Boolean)
-    .join(' ')
+    .join(" ")
 
-interface ButtonProps extends ComponentProps<'button'> {
+interface ButtonProps extends ComponentProps<"button"> {
   variant?: Variant
 }
 
-export function Button({ variant, className, type = 'button', ...props }: ButtonProps) {
+export function Button({ variant, className, type = "button", ...props }: ButtonProps) {
   return <button type={type} className={classesFor(variant, className)} {...props} />
 }
 

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from "vitest"
 
 import {
   earliestDateToday,
@@ -7,65 +7,65 @@ import {
   formatDateTime,
   formatDateTimeString,
   isValidDate,
-} from './date-util.ts'
+} from "./date-util.ts"
 
-describe('formatDate', () => {
-  it('formats as yyyy-MM-dd', () => {
-    expect(formatDate(new Date(2024, 0, 5))).toBe('2024-01-05')
+describe("formatDate", () => {
+  it("formats as yyyy-MM-dd", () => {
+    expect(formatDate(new Date(2024, 0, 5))).toBe("2024-01-05")
   })
 
-  it('reports missing and invalid dates', () => {
-    expect(formatDate(undefined)).toBe('[MISSING DATE]')
-    expect(formatDate(new Date('nonsense'))).toBe('[MISSING DATE]')
-  })
-})
-
-describe('formatDateTime', () => {
-  it('formats as yyyy-MM-dd HH:mm in 24 hour time', () => {
-    expect(formatDateTime(new Date(2024, 0, 5, 14, 30))).toBe('2024-01-05 14:30')
-  })
-
-  it('reports missing dates', () => {
-    expect(formatDateTime(undefined)).toBe('[MISSING DATE]')
+  it("reports missing and invalid dates", () => {
+    expect(formatDate(undefined)).toBe("[MISSING DATE]")
+    expect(formatDate(new Date("nonsense"))).toBe("[MISSING DATE]")
   })
 })
 
-describe('formatDateString', () => {
-  it('parses an ISO string', () => {
-    expect(formatDateString('2031-12-01T12:00:00.000Z')).toBe('2031-12-01')
+describe("formatDateTime", () => {
+  it("formats as yyyy-MM-dd HH:mm in 24 hour time", () => {
+    expect(formatDateTime(new Date(2024, 0, 5, 14, 30))).toBe("2024-01-05 14:30")
   })
 
-  it('reports unparseable strings', () => {
-    expect(formatDateString('nonsense')).toBe('[MISSING DATE]')
-    expect(formatDateString(undefined)).toBe('[MISSING DATE]')
+  it("reports missing dates", () => {
+    expect(formatDateTime(undefined)).toBe("[MISSING DATE]")
   })
 })
 
-describe('formatDateTimeString', () => {
-  it('parses an ISO string', () => {
+describe("formatDateString", () => {
+  it("parses an ISO string", () => {
+    expect(formatDateString("2031-12-01T12:00:00.000Z")).toBe("2031-12-01")
+  })
+
+  it("reports unparseable strings", () => {
+    expect(formatDateString("nonsense")).toBe("[MISSING DATE]")
+    expect(formatDateString(undefined)).toBe("[MISSING DATE]")
+  })
+})
+
+describe("formatDateTimeString", () => {
+  it("parses an ISO string", () => {
     expect(formatDateTimeString(new Date(2031, 11, 1, 14, 30).toISOString())).toBe(
-      '2031-12-01 14:30',
+      "2031-12-01 14:30",
     )
   })
 
-  it('reports unparseable strings', () => {
-    expect(formatDateTimeString('nonsense')).toBe('[MISSING DATE]')
-    expect(formatDateTimeString(undefined)).toBe('[MISSING DATE]')
+  it("reports unparseable strings", () => {
+    expect(formatDateTimeString("nonsense")).toBe("[MISSING DATE]")
+    expect(formatDateTimeString(undefined)).toBe("[MISSING DATE]")
   })
 })
 
-describe('isValidDate', () => {
-  it('narrows valid dates', () => {
+describe("isValidDate", () => {
+  it("narrows valid dates", () => {
     expect(isValidDate(new Date())).toBe(true)
     expect(isValidDate(null)).toBe(false)
     expect(isValidDate(undefined)).toBe(false)
-    expect(isValidDate(new Date('nonsense'))).toBe(false)
+    expect(isValidDate(new Date("nonsense"))).toBe(false)
   })
 })
 
-describe('earliestDateToday', () => {
-  it('is the date at UTC-12', () => {
-    expect(earliestDateToday(new Date('2026-09-19T11:59:00Z'))).toBe('2026-09-18')
-    expect(earliestDateToday(new Date('2026-09-19T12:00:00Z'))).toBe('2026-09-19')
+describe("earliestDateToday", () => {
+  it("is the date at UTC-12", () => {
+    expect(earliestDateToday(new Date("2026-09-19T11:59:00Z"))).toBe("2026-09-18")
+    expect(earliestDateToday(new Date("2026-09-19T12:00:00Z"))).toBe("2026-09-19")
   })
 })

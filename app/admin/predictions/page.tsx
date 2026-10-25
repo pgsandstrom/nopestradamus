@@ -1,19 +1,19 @@
-import Link from 'next/link'
+import Link from "next/link"
 
-import { StatusBadge } from '../../../components/status-badge.tsx'
-import { isAdminAuthenticated } from '../../../server/admin-session.ts'
-import { adminGetAnsweredPredictions, adminGetOrphanedRows } from '../../../server/prediction.ts'
-import { formatDateString, formatDateTimeString } from '../../../shared/date-util.ts'
+import { StatusBadge } from "../../../components/status-badge.tsx"
+import { isAdminAuthenticated } from "../../../server/admin-session.ts"
+import { adminGetAnsweredPredictions, adminGetOrphanedRows } from "../../../server/prediction.ts"
+import { formatDateString, formatDateTimeString } from "../../../shared/date-util.ts"
 import {
   getPredictionStatus,
   type OrphanedRow,
   type PredictionAdminListItem,
   type PredictionStatus,
-} from '../../../shared/index.ts'
+} from "../../../shared/index.ts"
 
-import styles from './page.module.css'
+import styles from "./page.module.css"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 export default async function AdminPredictionsPage() {
   // the layout renders the login form instead of this page, but it does not re-render on a
@@ -68,11 +68,11 @@ function Summary({ predictions }: { predictions: PredictionAdminListItem[] }) {
   const privateCount = predictions.filter((p) => !p.public).length
   // the predictions awaiting an answer live on /admin/mails, so a row left without one here is a
   // broken one with no creater row at all
-  const missingCreaterCount = count('awaiting creater')
+  const missingCreaterCount = count("awaiting creater")
 
   return (
     <p className={styles.summary}>
-      {count('running')} running · {count('finished')} finished · {count('rejected')} rejected ·{' '}
+      {count("running")} running · {count("finished")} finished · {count("rejected")} rejected ·{" "}
       {privateCount} private
       {missingCreaterCount > 0 && ` · ${missingCreaterCount} with no creater row`}
     </p>
@@ -90,11 +90,11 @@ function PredictionRow({ prediction }: { prediction: PredictionAdminListItem }) 
       <td>
         <StatusBadge status={statusOf(prediction)} />
       </td>
-      <td>{prediction.public ? 'public' : 'private'}</td>
+      <td>{prediction.public ? "public" : "private"}</td>
       <td>{prediction.creater_mail ?? <span className={styles.missing}>no creater row</span>}</td>
       <td className={styles.nowrap}>
         {prediction.participant_count === 0
-          ? 'none'
+          ? "none"
           : `${prediction.participant_accepted_count}/${prediction.participant_count} accepted`}
         {prediction.participant_rejected_count > 0 &&
           `, ${prediction.participant_rejected_count} rejected`}

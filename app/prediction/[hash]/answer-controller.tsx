@@ -1,14 +1,14 @@
-'use client'
+"use client"
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition } from "react"
 
-import Prediction from '../../../components/prediction.tsx'
-import { Button } from '../../../components/ui/button.tsx'
-import { formatDateString } from '../../../shared/date-util.ts'
-import type { PredictionView, Role } from '../../../shared/index.ts'
-import { answerPredictionAction } from '../../actions.ts'
+import Prediction from "../../../components/prediction.tsx"
+import { Button } from "../../../components/ui/button.tsx"
+import { formatDateString } from "../../../shared/date-util.ts"
+import type { PredictionView, Role } from "../../../shared/index.ts"
+import { answerPredictionAction } from "../../actions.ts"
 
-import styles from './answer-controller.module.css'
+import styles from "./answer-controller.module.css"
 
 interface AnswerControllerProps {
   prediction: PredictionView
@@ -73,11 +73,11 @@ function AnswerPanelContent({ answer, error, ...promptProps }: AnswerPanelConten
         {participantMails.length > 0 && (
           <p>
             Your participants should receive a mail any second now, ask them to check their spam
-            folders: <span className={styles.mails}>{participantMails.join(', ')}</span>
+            folders: <span className={styles.mails}>{participantMails.join(", ")}</span>
           </p>
         )}
         <p>
-          You will receive a mail when the prediction ends on{' '}
+          You will receive a mail when the prediction ends on{" "}
           {formatDateString(promptProps.prediction.finish_date)}.
         </p>
       </div>
@@ -99,20 +99,20 @@ interface AnswerPromptProps {
 }
 
 function AnswerPrompt({ prediction, role, isAnswering, doAnswer }: AnswerPromptProps) {
-  if (role === 'creater' && prediction.creater.accepted !== undefined) {
+  if (role === "creater" && prediction.creater.accepted !== undefined) {
     return (
       <p>
-        You own this prediction and have {prediction.creater.accepted ? 'accepted' : 'rejected'} it.
+        You own this prediction and have {prediction.creater.accepted ? "accepted" : "rejected"} it.
       </p>
     )
   }
 
   const participantAccepted = prediction.participants.find((p) => p.isCurrentUser)?.accepted
-  if (role === 'participant' && participantAccepted !== undefined) {
+  if (role === "participant" && participantAccepted !== undefined) {
     return (
       <p>
-        You are a participant in this prediction and have{' '}
-        {participantAccepted ? 'accepted' : 'rejected'} it.
+        You are a participant in this prediction and have{" "}
+        {participantAccepted ? "accepted" : "rejected"} it.
       </p>
     )
   }
@@ -120,7 +120,7 @@ function AnswerPrompt({ prediction, role, isAnswering, doAnswer }: AnswerPromptP
   const finishDate = formatDateString(prediction.finish_date)
   return (
     <div>
-      {role === 'creater' ? (
+      {role === "creater" ? (
         <>
           <p className={styles.heading}>Read your prediction below.</p>
           <p>

@@ -1,18 +1,18 @@
-const DATE_FORMAT = new Intl.DateTimeFormat('sv-SE', {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
+const DATE_FORMAT = new Intl.DateTimeFormat("sv-SE", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
 })
 
-const DATE_TIME_FORMAT = new Intl.DateTimeFormat('sv-SE', {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-  hour: '2-digit',
-  minute: '2-digit',
+const DATE_TIME_FORMAT = new Intl.DateTimeFormat("sv-SE", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
 })
 
-const MISSING_DATE = '[MISSING DATE]'
+const MISSING_DATE = "[MISSING DATE]"
 
 // The 'sv-SE' locale renders as 'yyyy-MM-dd' / 'yyyy-MM-dd HH:mm', which is exactly what we want.
 export function formatDate(date?: Date): string {
@@ -41,11 +41,11 @@ export function toDateInputValue(date: Date): string {
 }
 
 // Etc/GMT+12 is UTC-12: the last place on earth where any given day is still going on.
-const EARLIEST_DATE_FORMAT = new Intl.DateTimeFormat('sv-SE', {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-  timeZone: 'Etc/GMT+12',
+const EARLIEST_DATE_FORMAT = new Intl.DateTimeFormat("sv-SE", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  timeZone: "Etc/GMT+12",
 })
 
 /**

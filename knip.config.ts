@@ -1,4 +1,4 @@
-import type { KnipConfig } from 'knip'
+import type { KnipConfig } from "knip"
 
 // `!` suffix marks a pattern as production. The next plugin finds the app router entries.
 // server-cron.ts is only reachable through the `cron` script, which --production ignores,
@@ -9,16 +9,16 @@ import type { KnipConfig } from 'knip'
 // the `dev-session` script, which --production ignores too.
 const config: KnipConfig = {
   entry: [
-    'server-cron.ts!',
-    'scripts/dev-session.ts',
-    'scripts/send-health-mail.ts',
-    'scripts/migrate.ts!',
-    '**/*.test.ts',
+    "server-cron.ts!",
+    "scripts/dev-session.ts",
+    "scripts/send-health-mail.ts",
+    "scripts/migrate.ts!",
+    "**/*.test.ts",
   ],
   // the local oxlint plugin is dev tooling, reached through oxlint.config.ts
-  project: ['**/*.{ts,tsx}!', '!oxlint/**!'],
+  project: ["**/*.{ts,tsx}!", "!oxlint/**!"],
   // husky lives in optionalDependencies so the docker images can skip it with --no-optional
-  ignoreBinaries: ['husky'],
+  ignoreBinaries: ["husky"],
   // an export used inside its own file is a style nit, not dead code
   ignoreExportsUsedInFile: true,
 }

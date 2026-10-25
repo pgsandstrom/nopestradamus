@@ -1,11 +1,11 @@
-'use client'
+"use client"
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition } from "react"
 
-import { Button } from '../../../components/ui/button.tsx'
-import { setActivityMailMutedAction } from '../../actions.ts'
+import { Button } from "../../../components/ui/button.tsx"
+import { setActivityMailMutedAction } from "../../actions.ts"
 
-import styles from './comments.module.css'
+import styles from "./comments.module.css"
 
 interface ActivityMuteToggleProps {
   predictionHash: string
@@ -32,11 +32,11 @@ export default function ActivityMuteToggle({ predictionHash, muted }: ActivityMu
     <div className={styles.mute}>
       <p className={styles.muteText}>
         {muted
-          ? 'Activity muted: you get no mail about new comments or answers here.'
-          : 'New comments and answers here are mailed to everybody who has accepted.'}
+          ? "Activity muted: you get no mail about new comments or answers here."
+          : "New comments and answers here are mailed to everybody who has accepted."}
       </p>
       <Button onClick={toggle} disabled={isSaving}>
-        {muted ? 'Unmute activity' : 'Mute activity'}
+        {muted ? "Unmute activity" : "Mute activity"}
       </Button>
       {error !== undefined && <p className={styles.muteError}>{error}</p>}
     </div>

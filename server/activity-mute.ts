@@ -1,4 +1,4 @@
-import { query, querySingle, SQL } from '../util/db.ts'
+import { query, querySingle, SQL } from "../util/db.ts"
 
 /**
  * Muting the activity mails of one prediction: new comments, and somebody accepting or rejecting

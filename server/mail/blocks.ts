@@ -11,20 +11,20 @@
  * looking like each other, and it keeps the styling decisions out of the mail texts.
  */
 export type Block =
-  | { kind: 'heading'; text: string }
-  | { kind: 'paragraph'; text: string }
+  | { kind: "heading"; text: string }
+  | { kind: "paragraph"; text: string }
   /** The prediction itself, or a comment on it, set apart from the words around it. */
-  | { kind: 'quote'; title?: string; body: string }
+  | { kind: "quote"; title?: string; body: string }
   /** The table: short label, short value, one pair per row. */
-  | { kind: 'facts'; rows: Fact[] }
-  | { kind: 'people'; label: string; mails: string[] }
+  | { kind: "facts"; rows: Fact[] }
+  | { kind: "people"; label: string; mails: string[] }
   /** The one thing the mail wants you to do. At most one per mail. */
-  | { kind: 'button'; label: string; url: string }
+  | { kind: "button"; label: string; url: string }
   /** A quieter link, for the things a mail has to offer but is not asking for. */
-  | { kind: 'link'; label: string; url: string }
+  | { kind: "link"; label: string; url: string }
   /** Small print: expiry times, "if that was not you", the unsubscribe line. */
-  | { kind: 'note'; text: string }
-  | { kind: 'divider' }
+  | { kind: "note"; text: string }
+  | { kind: "divider" }
 
 export interface Fact {
   label: string
@@ -55,5 +55,5 @@ export const textDocument = (title: string, body: string): MailDocument => ({
     .split(/\n\s*\n/)
     .map((text) => text.trim())
     .filter((text) => text.length > 0)
-    .map((text) => ({ kind: 'paragraph', text })),
+    .map((text) => ({ kind: "paragraph", text })),
 })

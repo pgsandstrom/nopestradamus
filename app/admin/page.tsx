@@ -1,13 +1,13 @@
-import Link from 'next/link'
+import Link from "next/link"
 
-import { adminGetBlockedAccounts } from '../../server/account.ts'
-import { isAdminAuthenticated } from '../../server/admin-session.ts'
-import type { AdminAccount } from '../../shared/index.ts'
-import AdminConsole from './admin-console.tsx'
+import { adminGetBlockedAccounts } from "../../server/account.ts"
+import { isAdminAuthenticated } from "../../server/admin-session.ts"
+import type { AdminAccount } from "../../shared/index.ts"
+import AdminConsole from "./admin-console.tsx"
 
-import styles from './page.module.css'
+import styles from "./page.module.css"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 export default async function AdminPage() {
   // the layout renders the login form instead of this page, but it does not re-render on a
@@ -63,7 +63,7 @@ function BlockedRow({ account }: { account: AdminAccount }) {
     <tr>
       <td>{account.mail}</td>
       <td>
-        {account.validated ? 'validated' : <span className={styles.muted}>not validated</span>}
+        {account.validated ? "validated" : <span className={styles.muted}>not validated</span>}
       </td>
       <td className={styles.nowrap}>
         <Link href={`/blockme/${account.hash}`}>/blockme/{account.hash}</Link>

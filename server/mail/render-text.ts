@@ -1,4 +1,4 @@
-import type { Block, MailDocument } from './blocks.ts'
+import type { Block, MailDocument } from "./blocks.ts"
 
 /**
  * The plain-text half of every mail. It is not a fallback nobody reads: a message with no text
@@ -7,9 +7,9 @@ import type { Block, MailDocument } from './blocks.ts'
  * URL somebody can copy.
  */
 export const renderText = (mail: MailDocument): string =>
-  `${mail.blocks.map(renderBlock).join('\n\n')}\n`
+  `${mail.blocks.map(renderBlock).join("\n\n")}\n`
 
-const RULE = '---'
+const RULE = "---"
 
 /**
  * Plain-text mail is not reflowed by the client, so a paragraph that is one long line stays one
@@ -20,25 +20,25 @@ const WIDTH = 78
 
 const renderBlock = (block: Block): string => {
   switch (block.kind) {
-    case 'heading':
+    case "heading":
       // underlined rather than shouted: an all-caps line reads as shouting, and some filters
       // count capitals
-      return `${block.text}\n${'='.repeat(block.text.length)}`
-    case 'paragraph':
-    case 'note':
+      return `${block.text}\n${"=".repeat(block.text.length)}`
+    case "paragraph":
+    case "note":
       return wrap(block.text)
-    case 'quote':
+    case "quote":
       return block.title === undefined
         ? `${RULE}\n\n${wrap(block.body)}\n\n${RULE}`
         : `${RULE}\n\nTitle: ${wrap(block.title)}\n\n${wrap(block.body)}\n\n${RULE}`
-    case 'facts':
+    case "facts":
       return renderFacts(block.rows)
-    case 'people':
-      return `${block.label}\n\n${block.mails.join('\n')}`
-    case 'button':
-    case 'link':
+    case "people":
+      return `${block.label}\n\n${block.mails.join("\n")}`
+    case "button":
+    case "link":
       return `${block.label}:\n${block.url}`
-    case 'divider':
+    case "divider":
       return RULE
   }
 }
@@ -50,22 +50,22 @@ const renderBlock = (block: Block): string => {
  */
 const wrap = (text: string): string =>
   text
-    .split('\n')
+    .split("\n")
     .map((line) =>
-      line.split(' ').reduce((wrapped, word) => {
-        const current = wrapped.slice(wrapped.lastIndexOf('\n') + 1)
-        if (wrapped === '') {
+      line.split(" ").reduce((wrapped, word) => {
+        const current = wrapped.slice(wrapped.lastIndexOf("\n") + 1)
+        if (wrapped === "") {
           return word
         }
         return current.length + word.length + 1 > WIDTH
           ? `${wrapped}\n${word}`
           : `${wrapped} ${word}`
-      }, ''),
+      }, ""),
     )
-    .join('\n')
+    .join("\n")
 
 /** The HTML table, as the closest thing plain text has: labels padded to a common width. */
 const renderFacts = (rows: { label: string; value: string }[]): string => {
   const width = Math.max(...rows.map((row) => row.label.length))
-  return rows.map((row) => `${`${row.label}:`.padEnd(width + 2)}${row.value}`).join('\n')
+  return rows.map((row) => `${`${row.label}:`.padEnd(width + 2)}${row.value}`).join("\n")
 }

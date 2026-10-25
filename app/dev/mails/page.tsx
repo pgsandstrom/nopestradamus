@@ -1,11 +1,11 @@
-import { notFound } from 'next/navigation'
+import { notFound } from "next/navigation"
 
-import MailPreview from '../../../components/mail-preview.tsx'
-import { MAIL_SAMPLES } from '../../../server/mail/fixtures.ts'
-import { renderMail } from '../../../server/mail/render.ts'
-import { isDev } from '../../../util/env.ts'
+import MailPreview from "../../../components/mail-preview.tsx"
+import { MAIL_SAMPLES } from "../../../server/mail/fixtures.ts"
+import { renderMail } from "../../../server/mail/render.ts"
+import { isDev } from "../../../util/env.ts"
 
-import styles from './page.module.css'
+import styles from "./page.module.css"
 
 /**
  * Every mail the service sends, side by side, against fixtures.

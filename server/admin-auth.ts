@@ -1,6 +1,6 @@
-import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto'
+import { createHmac, randomBytes, timingSafeEqual } from "node:crypto"
 
-import { getConfig } from '../util/config.ts'
+import { getConfig } from "../util/config.ts"
 
 /**
  * Deliberately not in a 'use server' file: every export of one is a POST-able endpoint, and
@@ -21,7 +21,7 @@ const equals = (a: string, b: string): boolean => {
 const isAdminPassword = (password: string): boolean => equals(password, getConfig().adminPassword)
 
 const sign = (payload: string, secret: string): string =>
-  createHmac('sha256', secret).update(payload).digest('base64url')
+  createHmac("sha256", secret).update(payload).digest("base64url")
 
 /**
  * `<expiry ms>.<nonce>.<signature>`. There is one admin, so the token carries no identity —
@@ -31,7 +31,7 @@ const sign = (payload: string, secret: string): string =>
  * production callers hand it {@link adminSessionSecret}.
  */
 export function createSessionToken(secret: string, now: number = Date.now()): string {
-  const payload = `${now + SESSION_TTL_MS}.${randomBytes(16).toString('base64url')}`
+  const payload = `${now + SESSION_TTL_MS}.${randomBytes(16).toString("base64url")}`
   return `${payload}.${sign(payload, secret)}`
 }
 
@@ -40,7 +40,7 @@ export function isSessionTokenValid(
   secret: string,
   now: number = Date.now(),
 ): boolean {
-  const signatureAt = token.lastIndexOf('.')
+  const signatureAt = token.lastIndexOf(".")
   if (signatureAt === -1) {
     return false
   }
@@ -49,7 +49,7 @@ export function isSessionTokenValid(
   if (!equals(token.slice(signatureAt + 1), sign(payload, secret))) {
     return false
   }
-  return Number(payload.slice(0, payload.indexOf('.'))) > now
+  return Number(payload.slice(0, payload.indexOf("."))) > now
 }
 
 /**

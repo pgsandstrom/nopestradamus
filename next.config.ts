@@ -1,8 +1,8 @@
-import type { NextConfig } from 'next'
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
   // the frontend image runs the standalone server bundle
-  output: 'standalone',
+  output: "standalone",
 }
 
 export default nextConfig

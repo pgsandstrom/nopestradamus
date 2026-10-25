@@ -1,6 +1,6 @@
-import { Pool, type QueryConfig, type QueryResult, type QueryResultRow, types } from 'pg'
+import { Pool, type QueryConfig, type QueryResult, type QueryResultRow, types } from "pg"
 
-import { objectKeys } from '../shared/object-util.ts'
+import { objectKeys } from "../shared/object-util.ts"
 
 // Force count-function in database to return number instead of string
 // https://github.com/brianc/node-pg-types#use
@@ -10,11 +10,11 @@ let dbPool: Pool | undefined
 
 const getDbPool = (): Pool => {
   dbPool ??= new Pool({
-    host: process.env.PGHOST ?? (process.env.NODE_ENV === 'production' ? 'db' : 'localhost'),
+    host: process.env.PGHOST ?? (process.env.NODE_ENV === "production" ? "db" : "localhost"),
     port: Number(process.env.PGPORT ?? 5432),
-    database: process.env.PGDATABASE ?? 'nopestradamus',
-    user: process.env.PGUSER ?? 'postgres',
-    password: process.env.PGPASSWORD ?? 'postgres',
+    database: process.env.PGDATABASE ?? "nopestradamus",
+    user: process.env.PGUSER ?? "postgres",
+    password: process.env.PGPASSWORD ?? "postgres",
   })
   return dbPool
 }
@@ -30,7 +30,7 @@ function nullToUndefined(item: unknown): unknown {
   if (item === null) {
     return undefined
   }
-  if (typeof item === 'object' && !(item instanceof Date)) {
+  if (typeof item === "object" && !(item instanceof Date)) {
     const source = item as Record<string, unknown>
     const result: Record<string, unknown> = {}
     for (const key of objectKeys(source)) {
@@ -89,16 +89,16 @@ export const transaction = async <T>(
 ): Promise<T> => {
   const client = await getDbPool().connect()
   try {
-    await client.query('BEGIN')
+    await client.query("BEGIN")
     const result = await run(async (config) => {
       const queryResult = await client.query(config)
       queryResult.rows = nullToUndefined(queryResult.rows) as typeof queryResult.rows
       return queryResult
     })
-    await client.query('COMMIT')
+    await client.query("COMMIT")
     return result
   } catch (e) {
-    await client.query('ROLLBACK')
+    await client.query("ROLLBACK")
     throw e
   } finally {
     client.release()

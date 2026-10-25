@@ -1,9 +1,9 @@
-import { formatDateTimeString } from '../../../shared/date-util.ts'
-import type { CommentView } from '../../../shared/index.ts'
-import ActivityMuteToggle from './activity-mute-toggle.tsx'
-import CommentForm from './comment-form.tsx'
+import { formatDateTimeString } from "../../../shared/date-util.ts"
+import type { CommentView } from "../../../shared/index.ts"
+import ActivityMuteToggle from "./activity-mute-toggle.tsx"
+import CommentForm from "./comment-form.tsx"
 
-import styles from './comments.module.css'
+import styles from "./comments.module.css"
 
 interface CommentsProps {
   comments: CommentView[]
@@ -31,9 +31,9 @@ export default function Comments({
             <li key={comment.id} className={styles.comment}>
               <p className={styles.meta}>
                 <span className={styles.author}>
-                  {comment.isCurrentUser ? 'You' : comment.mail}
+                  {comment.isCurrentUser ? "You" : comment.mail}
                 </span>
-                {comment.role === 'creater' && <span>(creater)</span>}
+                {comment.role === "creater" && <span>(creater)</span>}
                 <span>{formatDateTimeString(comment.created)}</span>
               </p>
               <p className={styles.body}>{comment.body}</p>

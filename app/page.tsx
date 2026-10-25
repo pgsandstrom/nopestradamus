@@ -1,13 +1,13 @@
-import Image from 'next/image'
-import Link from 'next/link'
+import Image from "next/image"
+import Link from "next/link"
 
-import { LinkButton } from '../components/ui/button.tsx'
-import { getLatestPredictions } from '../server/prediction.ts'
-import { isDev } from '../util/env.ts'
+import { LinkButton } from "../components/ui/button.tsx"
+import { getLatestPredictions } from "../server/prediction.ts"
+import { isDev } from "../util/env.ts"
 
-import styles from './page.module.css'
+import styles from "./page.module.css"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 export default async function Home() {
   const predictionShallowList = await getLatestPredictions()
@@ -78,7 +78,7 @@ export default async function Home() {
 
       <footer className={styles.footer}>
         <span>
-          Bugs or suggestions? Project is on{' '}
+          Bugs or suggestions? Project is on{" "}
           <a href="https://github.com/pgsandstrom/nopestradamus">Github</a>.
         </span>
       </footer>

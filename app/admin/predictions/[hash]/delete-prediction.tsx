@@ -1,12 +1,12 @@
-'use client'
+"use client"
 
-import { useRouter } from 'next/navigation'
-import { useRef, useState, useTransition } from 'react'
+import { useRouter } from "next/navigation"
+import { useRef, useState, useTransition } from "react"
 
-import { Button } from '../../../../components/ui/button.tsx'
-import { deletePredictionAction } from '../../actions.ts'
+import { Button } from "../../../../components/ui/button.tsx"
+import { deletePredictionAction } from "../../actions.ts"
 
-import styles from './delete-prediction.module.css'
+import styles from "./delete-prediction.module.css"
 
 interface DeletePredictionProps {
   hash: string
@@ -31,7 +31,7 @@ export default function DeletePrediction({ hash, title, participantCount }: Dele
       if (result.ok) {
         dialog.current?.close()
         // the list is a server component, so it needs a re-render to lose the deleted row
-        router.replace('/admin/predictions')
+        router.replace("/admin/predictions")
         router.refresh()
       } else {
         setError(result.error)
@@ -67,8 +67,8 @@ export default function DeletePrediction({ hash, title, participantCount }: Dele
           <strong>{title}</strong>
         </p>
         <p className={styles.dialogBody}>
-          This deletes the prediction, its creater row and{' '}
-          {participantCount === 1 ? '1 participant row' : `${participantCount} participant rows`}.
+          This deletes the prediction, its creater row and{" "}
+          {participantCount === 1 ? "1 participant row" : `${participantCount} participant rows`}.
           There is no undo.
         </p>
         {error !== undefined && <p className={styles.error}>{error}</p>}
@@ -77,7 +77,7 @@ export default function DeletePrediction({ hash, title, participantCount }: Dele
             Cancel
           </Button>
           <Button variant="danger" disabled={isDeleting} onClick={doDelete}>
-            {isDeleting ? 'Deleting…' : 'Yes, delete it'}
+            {isDeleting ? "Deleting…" : "Yes, delete it"}
           </Button>
         </div>
       </dialog>

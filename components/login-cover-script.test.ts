@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from "vitest"
 
-import { LOGIN_COVER_ATTRIBUTE, loginCoverScript } from './login-cover-script.ts'
+import { LOGIN_COVER_ATTRIBUTE, loginCoverScript } from "./login-cover-script.ts"
 
 /**
  * The script is a string, so the compiler never looks at it and the browser is the first thing
@@ -19,7 +19,7 @@ const run = (hash: string) => {
   }
   // the Function constructor is the point: this is a test of a string that the browser evals
   // oxlint-disable-next-line typescript/no-implied-eval
-  const script = new Function('document', 'location', 'setTimeout', loginCoverScript) as (
+  const script = new Function("document", "location", "setTimeout", loginCoverScript) as (
     documentGlobal: typeof documentStub,
     locationGlobal: { hash: string },
     setTimeoutGlobal: (fn: () => void, ms: number) => void,
@@ -28,20 +28,20 @@ const run = (hash: string) => {
   return { covered: () => attributes.has(LOGIN_COVER_ATTRIBUTE), giveUp: () => timeouts[0]?.() }
 }
 
-describe('loginCoverScript', () => {
-  it('covers the page for a fragment that looks like a role hash', () => {
-    expect(run('#0123456789abcdf').covered()).toBe(true)
-    expect(run('#f81d4fae-7dec-11d0-a765-00a0c91e6bf6').covered()).toBe(true)
+describe("loginCoverScript", () => {
+  it("covers the page for a fragment that looks like a role hash", () => {
+    expect(run("#0123456789abcdf").covered()).toBe(true)
+    expect(run("#f81d4fae-7dec-11d0-a765-00a0c91e6bf6").covered()).toBe(true)
   })
 
-  it('leaves the page alone for anything else', () => {
-    expect(run('').covered()).toBe(false)
-    expect(run('#participants').covered()).toBe(false)
-    expect(run('#0123456789abcd').covered()).toBe(false)
+  it("leaves the page alone for anything else", () => {
+    expect(run("").covered()).toBe(false)
+    expect(run("#participants").covered()).toBe(false)
+    expect(run("#0123456789abcd").covered()).toBe(false)
   })
 
-  it('uncovers itself if nothing ever answers', () => {
-    const cover = run('#0123456789abcdf')
+  it("uncovers itself if nothing ever answers", () => {
+    const cover = run("#0123456789abcdf")
     expect(cover.covered()).toBe(true)
     cover.giveUp()
     expect(cover.covered()).toBe(false)

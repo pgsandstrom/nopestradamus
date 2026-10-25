@@ -1,7 +1,7 @@
 /**
  * Reads which migration the database is on, for the admin header.
  */
-import { query } from '../util/db.ts'
+import { query } from "../util/db.ts"
 
 export interface SchemaVersion {
   name: string
@@ -27,7 +27,7 @@ export const currentSchemaVersion = async (): Promise<SchemaVersion | undefined>
   } catch (e) {
     // 42P01 is undefined_table: this database has never been migrated. Anything else is a real
     // database problem and belongs on screen as one.
-    if (e !== null && typeof e === 'object' && 'code' in e && e.code === '42P01') {
+    if (e !== null && typeof e === "object" && "code" in e && e.code === "42P01") {
       return undefined
     }
     throw e

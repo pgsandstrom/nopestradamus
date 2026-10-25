@@ -1,26 +1,26 @@
-'use server'
+"use server"
 
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation"
 
-import { getAccountByMail } from '../../server/account.ts'
-import { attemptAdminLogin } from '../../server/admin-auth.ts'
+import { getAccountByMail } from "../../server/account.ts"
+import { attemptAdminLogin } from "../../server/admin-auth.ts"
 import {
   endAdminSession,
   isAdminAuthenticated,
   startAdminSession,
-} from '../../server/admin-session.ts'
-import { createLoginToken } from '../../server/login-token.ts'
-import { textDocument } from '../../server/mail/blocks.ts'
-import { sendMail } from '../../server/mailer.ts'
+} from "../../server/admin-session.ts"
+import { createLoginToken } from "../../server/login-token.ts"
+import { textDocument } from "../../server/mail/blocks.ts"
+import { sendMail } from "../../server/mailer.ts"
 import {
   adminGetPredictionsByTitle,
   deletePrediction,
   getPrediction,
-} from '../../server/prediction.ts'
-import { handleAllUnsentMails } from '../../server/scheduler.ts'
-import type { ActionResult } from '../action-result.ts'
+} from "../../server/prediction.ts"
+import { handleAllUnsentMails } from "../../server/scheduler.ts"
+import type { ActionResult } from "../action-result.ts"
 
-const TEST_PREDICTION_OWNERS = ['hello@persandstrom.com', 'pg.sandstrom@gmail.com']
+const TEST_PREDICTION_OWNERS = ["hello@persandstrom.com", "pg.sandstrom@gmail.com"]
 
 /** mail-tester.com hands out a throwaway address per run, on a rotating subdomain. */
 const MAIL_TESTER_PATTERN = /@([a-z0-9-]+\.)*mail-tester\.com$/
@@ -35,12 +35,12 @@ type AdminResult<T> = ActionResult & { data?: T }
 /** Runs `action` only for a logged-in admin, turning any throw into an ActionResult. */
 async function asAdmin<T>(action: () => Promise<T>): Promise<AdminResult<T>> {
   if (!(await isAdminAuthenticated())) {
-    return { ok: false, error: 'Not logged in' }
+    return { ok: false, error: "Not logged in" }
   }
   try {
     return { ok: true, data: await action() }
   } catch (e) {
-    console.error('admin action failed', e)
+    console.error("admin action failed", e)
     return { ok: false, error: String(e) }
   }
 }
@@ -50,24 +50,24 @@ export async function logInAction(
   _previous: ActionResult | undefined,
   formData: FormData,
 ): Promise<ActionResult> {
-  const password = formData.get('password')
-  const attempt = attemptAdminLogin(typeof password === 'string' ? password : '')
+  const password = formData.get("password")
+  const attempt = attemptAdminLogin(typeof password === "string" ? password : "")
   if (!attempt.ok) {
     return {
       ok: false,
       error:
         attempt.retryInSeconds > 0
           ? `Too many attempts. Try again in ${attempt.retryInSeconds} seconds.`
-          : 'Wrong password',
+          : "Wrong password",
     }
   }
   await startAdminSession()
-  redirect('/admin')
+  redirect("/admin")
 }
 
 export async function logOutAction(): Promise<void> {
   await endAdminSession()
-  redirect('/admin')
+  redirect("/admin")
 }
 
 export interface LoginLink {
@@ -101,7 +101,7 @@ export async function createLoginLinkAction(mail: string): Promise<AdminResult<L
     }
     const token = await createLoginToken(account.mail, { ignoreCooldown: true })
     if (token === undefined) {
-      throw new Error('Could not mint a login token')
+      throw new Error("Could not mint a login token")
     }
     return { path: `/#${token}`, mail: account.mail }
   })
@@ -129,7 +129,7 @@ export async function deletePredictionAction(hash: string) {
 export async function deleteTestPredictionsAction() {
   return asAdmin(async () => {
     let deleted = 0
-    for (const shallow of await adminGetPredictionsByTitle('test')) {
+    for (const shallow of await adminGetPredictionsByTitle("test")) {
       const prediction = await getPrediction(shallow.hash)
       if (prediction === undefined) {
         throw new Error(`Prediction not found: ${shallow.hash}`)

@@ -1,15 +1,15 @@
-import Link from 'next/link'
-import type { ReactNode } from 'react'
+import Link from "next/link"
+import type { ReactNode } from "react"
 
-import GoBackWrapper from '../../components/go-back-wrapper.tsx'
-import { Button } from '../../components/ui/button.tsx'
-import { isAdminAuthenticated } from '../../server/admin-session.ts'
-import { currentSchemaVersion } from '../../server/schema-version.ts'
-import { formatDateTime } from '../../shared/date-util.ts'
-import { logOutAction } from './actions.ts'
-import LoginForm from './login-form.tsx'
+import GoBackWrapper from "../../components/go-back-wrapper.tsx"
+import { Button } from "../../components/ui/button.tsx"
+import { isAdminAuthenticated } from "../../server/admin-session.ts"
+import { currentSchemaVersion } from "../../server/schema-version.ts"
+import { formatDateTime } from "../../shared/date-util.ts"
+import { logOutAction } from "./actions.ts"
+import LoginForm from "./login-form.tsx"
 
-import styles from './layout.module.css'
+import styles from "./layout.module.css"
 
 /**
  * The gate for everything under /admin, so a new admin screen is a page.tsx and nothing else.
@@ -60,7 +60,7 @@ async function SchemaVersion() {
 
   return (
     <span className={styles.schema} title={`applied ${formatDateTime(version.applied)}`}>
-      db {version.name.replace(/\.sql$/, '')}
+      db {version.name.replace(/\.sql$/, "")}
     </span>
   )
 }

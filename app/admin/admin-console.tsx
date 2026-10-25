@@ -1,12 +1,12 @@
-'use client'
+"use client"
 
-import Link from 'next/link'
-import { useState, useTransition } from 'react'
+import Link from "next/link"
+import { useState, useTransition } from "react"
 
-import { Button } from '../../components/ui/button.tsx'
-import { TextAreaField, TextField } from '../../components/ui/text-field.tsx'
-import { isDev } from '../../util/env.ts'
-import type { ActionResult } from '../action-result.ts'
+import { Button } from "../../components/ui/button.tsx"
+import { TextAreaField, TextField } from "../../components/ui/text-field.tsx"
+import { isDev } from "../../util/env.ts"
+import type { ActionResult } from "../action-result.ts"
 import {
   createLoginLinkAction,
   deletePredictionAction,
@@ -14,17 +14,17 @@ import {
   type LoginLink,
   sendMailAction,
   triggerCronAction,
-} from './actions.ts'
+} from "./actions.ts"
 
-import styles from './page.module.css'
+import styles from "./page.module.css"
 
 export default function AdminConsole() {
-  const [title, setTitle] = useState('')
-  const [body, setBody] = useState('')
-  const [mail, setMail] = useState('')
-  const [hash, setHash] = useState('')
+  const [title, setTitle] = useState("")
+  const [body, setBody] = useState("")
+  const [mail, setMail] = useState("")
+  const [hash, setHash] = useState("")
 
-  const [loginMail, setLoginMail] = useState('')
+  const [loginMail, setLoginMail] = useState("")
   // its own state rather than the shared `result` below: this one is a link to click, not a line
   // of JSON to read
   const [loginLink, setLoginLink] = useState<LoginLink>()
@@ -129,7 +129,7 @@ export default function AdminConsole() {
       {result !== undefined && (
         <output className={result.ok ? styles.ok : styles.error}>
           {result.ok
-            ? `ok${result.data === undefined ? '' : `: ${JSON.stringify(result.data)}`}`
+            ? `ok${result.data === undefined ? "" : `: ${JSON.stringify(result.data)}`}`
             : result.error}
         </output>
       )}

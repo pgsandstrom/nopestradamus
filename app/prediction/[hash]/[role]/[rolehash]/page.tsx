@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation"
 
 /**
  * The shape of every link in every mail sent before the fragment login existed, and those mails

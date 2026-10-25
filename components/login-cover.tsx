@@ -1,4 +1,4 @@
-import styles from './login-cover.module.css'
+import styles from "./login-cover.module.css"
 
 /**
  * Covers the page while a secret link is being traded for a session, so the prediction is never

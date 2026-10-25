@@ -1,7 +1,7 @@
-import fs from 'node:fs'
+import fs from "node:fs"
 
-const CONFIG_PATH = './config.json'
-const PRIVATE_KEY_PATH = './privkey.pem'
+const CONFIG_PATH = "./config.json"
+const PRIVATE_KEY_PATH = "./privkey.pem"
 
 // to find the config file, just check config.json in the project folder on the server
 export interface AppConfig {
@@ -27,15 +27,15 @@ export function parseConfig(contents: string, path = CONFIG_PATH): AppConfig {
   } catch (e) {
     throw new Error(`${path} is not valid JSON: ${(e as Error).message}`, { cause: e })
   }
-  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
     throw new Error(`${path} must hold a JSON object, see config.example.json`)
   }
 
   const { adminPassword, healthMailReceiver } = parsed as Record<string, unknown>
-  if (typeof adminPassword !== 'string' || adminPassword === '') {
+  if (typeof adminPassword !== "string" || adminPassword === "") {
     throw new Error(`${path} needs "adminPassword" to be a non-empty string`)
   }
-  if (healthMailReceiver !== undefined && typeof healthMailReceiver !== 'string') {
+  if (healthMailReceiver !== undefined && typeof healthMailReceiver !== "string") {
     throw new Error(`${path} needs "healthMailReceiver" to be a string, or to leave the key out`)
   }
 
@@ -51,9 +51,9 @@ export function getConfig(): AppConfig {
     if (!fs.existsSync(CONFIG_PATH)) {
       throw new Error(`No config file exists at ${CONFIG_PATH}`)
     }
-    cachedConfig = parseConfig(fs.readFileSync(CONFIG_PATH, 'utf8'))
+    cachedConfig = parseConfig(fs.readFileSync(CONFIG_PATH, "utf8"))
   }
   return cachedConfig
 }
 
-export const getPrivateKey = (): string => fs.readFileSync(PRIVATE_KEY_PATH, 'utf8')
+export const getPrivateKey = (): string => fs.readFileSync(PRIVATE_KEY_PATH, "utf8")

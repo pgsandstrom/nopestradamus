@@ -1,6 +1,6 @@
-import type { MailDocument } from './blocks.ts'
-import { renderHtml } from './render-html.ts'
-import { renderText } from './render-text.ts'
+import type { MailDocument } from "./blocks.ts"
+import { renderHtml } from "./render-html.ts"
+import { renderText } from "./render-text.ts"
 
 /** A mail in the two shapes it goes out in. Both halves say the same thing. */
 export interface RenderedMail {

@@ -1,14 +1,14 @@
-import GoBackWrapper from '../../../components/go-back-wrapper.tsx'
-import Prediction from '../../../components/prediction.tsx'
-import { isActivityMailMuted } from '../../../server/activity-mute.ts'
-import { getComments, getCommentViews } from '../../../server/comment.ts'
-import { getPrediction, getPredictionView } from '../../../server/prediction.ts'
-import { getCurrentUserMail } from '../../../server/session-cookie.ts'
-import { canWriteComments, getRoleForMail } from '../../../shared/index.ts'
-import AnswerController from './answer-controller.tsx'
-import Comments from './comments.tsx'
+import GoBackWrapper from "../../../components/go-back-wrapper.tsx"
+import Prediction from "../../../components/prediction.tsx"
+import { isActivityMailMuted } from "../../../server/activity-mute.ts"
+import { getComments, getCommentViews } from "../../../server/comment.ts"
+import { getPrediction, getPredictionView } from "../../../server/prediction.ts"
+import { getCurrentUserMail } from "../../../server/session-cookie.ts"
+import { canWriteComments, getRoleForMail } from "../../../shared/index.ts"
+import AnswerController from "./answer-controller.tsx"
+import Comments from "./comments.tsx"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 interface PredictionPageProps {
   params: Promise<{ hash: string }>

@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server'
+import { NextResponse } from "next/server"
 
-import { getAccountByHash } from '../../../../../../server/account.ts'
-import { setActivityMailMuted } from '../../../../../../server/activity-mute.ts'
+import { getAccountByHash } from "../../../../../../server/account.ts"
+import { setActivityMailMuted } from "../../../../../../server/activity-mute.ts"
 
 interface RouteContext {
   params: Promise<{ hash: string; predictionHash: string }>
@@ -21,7 +21,7 @@ export async function POST(request: Request, { params }: RouteContext) {
   let muted = true
   try {
     const body = (await request.json()) as { muted?: unknown }
-    if (typeof body.muted === 'boolean') {
+    if (typeof body.muted === "boolean") {
       muted = body.muted
     }
   } catch {
@@ -30,9 +30,9 @@ export async function POST(request: Request, { params }: RouteContext) {
 
   const account = await getAccountByHash(hash)
   if (account === undefined) {
-    return NextResponse.json({ status: 'error', error: 'Account not found.' }, { status: 404 })
+    return NextResponse.json({ status: "error", error: "Account not found." }, { status: 404 })
   }
   await setActivityMailMuted(predictionHash, account.mail, muted)
 
-  return NextResponse.json({ status: 'ok' })
+  return NextResponse.json({ status: "ok" })
 }

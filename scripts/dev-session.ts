@@ -6,22 +6,22 @@
  * treat the jar as the same secret config.json is: it is gitignored, and if the local password
  * is also the production one the cookie is valid there too.
  */
-import fs from 'node:fs'
+import fs from "node:fs"
 
 import {
   adminSessionSecret,
   createSessionToken,
   SESSION_TTL_SECONDS,
-} from '../server/admin-auth.ts'
-import { isDev } from '../util/env.ts'
+} from "../server/admin-auth.ts"
+import { isDev } from "../util/env.ts"
 
-const JAR_PATH = '.dev-session'
-const COOKIE = 'admin_session'
-const DOMAIN = 'localhost'
+const JAR_PATH = ".dev-session"
+const COOKIE = "admin_session"
+const DOMAIN = "localhost"
 
 if (!isDev()) {
   throw new Error(
-    'dev-session is a local development helper, refusing to run with NODE_ENV=production',
+    "dev-session is a local development helper, refusing to run with NODE_ENV=production",
   )
 }
 
@@ -34,7 +34,7 @@ const jar = `# Netscape HTTP Cookie File
 ${DOMAIN}\tFALSE\t/\tFALSE\t${expiry}\t${COOKIE}\t${token}
 `
 
-fs.writeFileSync(JAR_PATH, jar, { encoding: 'utf8', mode: 0o600 })
+fs.writeFileSync(JAR_PATH, jar, { encoding: "utf8", mode: 0o600 })
 
 // deliberately never prints the token itself, so it cannot leak into a terminal transcript
 console.log(`wrote ${JAR_PATH}, valid until ${new Date(expiry * 1000).toISOString()}`)

@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server'
+import { NextResponse } from "next/server"
 
-import { setAccountBlocked } from '../../../../../server/account.ts'
+import { setAccountBlocked } from "../../../../../server/account.ts"
 
 interface RouteContext {
   params: Promise<{ hash: string }>
@@ -16,7 +16,7 @@ export async function POST(request: Request, { params }: RouteContext) {
   let blocked = true
   try {
     const body = (await request.json()) as { blocked?: unknown }
-    if (typeof body.blocked === 'boolean') {
+    if (typeof body.blocked === "boolean") {
       blocked = body.blocked
     }
   } catch {
@@ -25,8 +25,8 @@ export async function POST(request: Request, { params }: RouteContext) {
 
   const updated = await setAccountBlocked(hash, blocked)
   if (!updated) {
-    return NextResponse.json({ status: 'error', error: 'Account not found.' }, { status: 404 })
+    return NextResponse.json({ status: "error", error: "Account not found." }, { status: 404 })
   }
 
-  return NextResponse.json({ status: 'ok' })
+  return NextResponse.json({ status: "ok" })
 }

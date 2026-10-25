@@ -1,19 +1,19 @@
-import Link from 'next/link'
+import Link from "next/link"
 
-import GoBackWrapper from '../../components/go-back-wrapper.tsx'
-import { StatusBadge } from '../../components/status-badge.tsx'
-import { getPredictionsForMail } from '../../server/prediction.ts'
-import { getCurrentUserMail } from '../../server/session-cookie.ts'
-import { formatDateString } from '../../shared/date-util.ts'
+import GoBackWrapper from "../../components/go-back-wrapper.tsx"
+import { StatusBadge } from "../../components/status-badge.tsx"
+import { getPredictionsForMail } from "../../server/prediction.ts"
+import { getCurrentUserMail } from "../../server/session-cookie.ts"
+import { formatDateString } from "../../shared/date-util.ts"
 import {
   getPredictionStatus,
   isAwaitingAnswerFrom,
   type PredictionListItem,
-} from '../../shared/index.ts'
+} from "../../shared/index.ts"
 
-import styles from './page.module.css'
+import styles from "./page.module.css"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 /**
  * Everything the visitor is part of, which is the one view that needs no secret link: the session
@@ -46,7 +46,7 @@ export default async function MyPredictionsPage() {
       {awaiting.length > 0 && (
         <p className={styles.callout}>
           {awaiting.length === 1
-            ? 'One of these is waiting for your answer.'
+            ? "One of these is waiting for your answer."
             : `${awaiting.length} of these are waiting for your answer.`}
         </p>
       )}
@@ -71,7 +71,7 @@ function PredictionRow({ prediction }: { prediction: PredictionListItem }) {
   const awaiting = isAwaitingAnswerFrom(prediction)
 
   return (
-    <li className={[styles.row, awaiting ? styles.awaiting : undefined].filter(Boolean).join(' ')}>
+    <li className={[styles.row, awaiting ? styles.awaiting : undefined].filter(Boolean).join(" ")}>
       <Link className={styles.title} href={`/prediction/${prediction.hash}`}>
         {prediction.title}
       </Link>

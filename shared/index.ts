@@ -1,6 +1,6 @@
 // Domain types shared by the Next.js app and the standalone cron process.
 
-import { censorMail } from './mail-util.ts'
+import { censorMail } from "./mail-util.ts"
 
 /** A prediction as stored, including the secret hashes. Never send this to a client. */
 export interface Prediction {
@@ -31,7 +31,7 @@ export interface Participant {
   end_mail_sent: boolean
 }
 
-export const ROLES = ['creater', 'participant'] as const
+export const ROLES = ["creater", "participant"] as const
 export type Role = (typeof ROLES)[number]
 
 /**
@@ -40,13 +40,13 @@ export type Role = (typeof ROLES)[number]
  * wins, because that is the role with the answer that gates the whole prediction.
  */
 export function getRoleForMail(
-  prediction: Pick<Prediction, 'creater' | 'participants'>,
+  prediction: Pick<Prediction, "creater" | "participants">,
   mail: string,
 ): Role | undefined {
   if (prediction.creater.mail === mail) {
-    return 'creater'
+    return "creater"
   }
-  return prediction.participants.some((p) => p.mail === mail) ? 'participant' : undefined
+  return prediction.participants.some((p) => p.mail === mail) ? "participant" : undefined
 }
 
 /**
@@ -56,7 +56,7 @@ export function getRoleForMail(
  * means changing this function.
  */
 export function canWriteComments(
-  prediction: Pick<Prediction, 'creater' | 'participants'>,
+  prediction: Pick<Prediction, "creater" | "participants">,
   mail: string | undefined,
 ): boolean {
   return mail !== undefined && getRoleForMail(prediction, mail) !== undefined
@@ -69,7 +69,7 @@ export function canWriteComments(
  * same in the participant list as it does above a comment.
  */
 export function getMailFormatter(
-  prediction: Pick<Prediction, 'creater' | 'participants'>,
+  prediction: Pick<Prediction, "creater" | "participants">,
   viewerMail: string | undefined,
 ): (mail: string) => string {
   const isPartOfPrediction =
@@ -142,7 +142,7 @@ export function isAwaitingAnswerFrom(prediction: PredictionListItem): boolean {
   if (prediction.own_answer !== undefined) {
     return false
   }
-  return prediction.role === 'creater' || prediction.creater_accepted === true
+  return prediction.role === "creater" || prediction.creater_accepted === true
 }
 
 export interface PredictionShallow {
@@ -243,7 +243,7 @@ export interface OrphanedRow {
   mail: string
 }
 
-export type PredictionStatus = 'awaiting creater' | 'rejected' | 'running' | 'finished'
+export type PredictionStatus = "awaiting creater" | "rejected" | "running" | "finished"
 
 /** Where a prediction is in its life: waiting on the creater, running, or over. */
 export function getPredictionStatus(
@@ -251,10 +251,10 @@ export function getPredictionStatus(
   finishDate: string,
 ): PredictionStatus {
   if (createrAccepted === false) {
-    return 'rejected'
+    return "rejected"
   }
   if (createrAccepted !== true) {
-    return 'awaiting creater'
+    return "awaiting creater"
   }
-  return new Date(finishDate).getTime() <= Date.now() ? 'finished' : 'running'
+  return new Date(finishDate).getTime() <= Date.now() ? "finished" : "running"
 }

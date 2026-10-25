@@ -1,15 +1,15 @@
-import { formatDateTime } from '../shared/date-util.ts'
-import { isMailValid } from '../shared/mail-util.ts'
-import { getConfig } from '../util/config.ts'
-import { confirmAccountExistance } from './account.ts'
+import { formatDateTime } from "../shared/date-util.ts"
+import { isMailValid } from "../shared/mail-util.ts"
+import { getConfig } from "../util/config.ts"
+import { confirmAccountExistance } from "./account.ts"
 import {
   getCreaterAcceptMail,
   getCreaterEndMail,
   getHealthMail,
   getParticipantAcceptMail,
   getParticipantEndMail,
-} from './mail/templates.ts'
-import { sendMail } from './mailer.ts'
+} from "./mail/templates.ts"
+import { sendMail } from "./mailer.ts"
 import {
   getOldPredictionWithUnsentCreaterAcceptMails,
   getOldPredictionWithUnsentCreaterEndMails,
@@ -21,15 +21,15 @@ import {
   setCreaterEndMailSent,
   setParticipantAcceptMailSent,
   setParticipantEndMailSent,
-} from './prediction.ts'
+} from "./prediction.ts"
 
 export const handleAllUnsentMails = async (): Promise<void> => {
-  console.log('handle all unsent mails', formatDateTime(new Date()))
+  console.log("handle all unsent mails", formatDateTime(new Date()))
   await handleAll(getOldPredictionWithUnsentCreaterAcceptMails, handleUnsentCreaterAcceptEmail)
   await handleAll(getOldPredictionWithUnsentParticipantsAcceptMails, handleUnsentAcceptEmail)
   await handleAll(getOldPredictionWithUnsentCreaterEndMails, handleUnsentCreaterEndEmail)
   await handleAll(getOldPredictionWithUnsentParticipantsEndMails, handleUnsentEndEmail)
-  console.log('completed handle all unsent mails')
+  console.log("completed handle all unsent mails")
 }
 
 /**
@@ -40,7 +40,7 @@ export const handleAllUnsentMails = async (): Promise<void> => {
 export const sendHealthMail = async (): Promise<void> => {
   const receiver = getConfig().healthMailReceiver
   if (receiver === undefined) {
-    console.log('no healthMailReceiver in config.json, skipping health mail')
+    console.log("no healthMailReceiver in config.json, skipping health mail")
     return
   }
   const [health, predictionsWithUnsentMail] = await Promise.all([

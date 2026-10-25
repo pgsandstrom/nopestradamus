@@ -1,9 +1,9 @@
-import type { Comment, CommentView, Prediction } from '../shared/index.ts'
-import { getMailFormatter, getRoleForMail } from '../shared/index.ts'
-import { validateComment } from '../shared/validate-comment.ts'
-import { query, SQL } from '../util/db.ts'
-import { sendActivityMails } from './activity-mail.ts'
-import { getCommentMail } from './mail/templates.ts'
+import type { Comment, CommentView, Prediction } from "../shared/index.ts"
+import { getMailFormatter, getRoleForMail } from "../shared/index.ts"
+import { validateComment } from "../shared/validate-comment.ts"
+import { query, SQL } from "../util/db.ts"
+import { sendActivityMails } from "./activity-mail.ts"
+import { getCommentMail } from "./mail/templates.ts"
 
 /** Oldest first, so the list reads as the conversation it is. `id` breaks ties within a second. */
 export const getComments = async (predictionHash: string): Promise<Comment[]> => {
@@ -25,7 +25,7 @@ export const createComment = async (
   body: string,
 ): Promise<void> => {
   if (!validateComment(body)) {
-    throw new Error('Invalid comment')
+    throw new Error("Invalid comment")
   }
   await query(
     SQL`INSERT INTO comment (prediction_hash, mail, body) VALUES (${predictionHash}, ${mail}, ${body.trim()})`,
@@ -37,7 +37,7 @@ export const createComment = async (
  * what the author is to the prediction from the prediction as it stands now.
  */
 export const getCommentViews = (
-  prediction: Pick<Prediction, 'creater' | 'participants'>,
+  prediction: Pick<Prediction, "creater" | "participants">,
   comments: Comment[],
   currentUserMail?: string,
 ): CommentView[] => {

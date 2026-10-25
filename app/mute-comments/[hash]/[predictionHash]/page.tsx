@@ -1,11 +1,11 @@
-import GoBackWrapper from '../../../../components/go-back-wrapper.tsx'
-import { getAccountByHash } from '../../../../server/account.ts'
-import { isActivityMailMuted } from '../../../../server/activity-mute.ts'
-import { getPrediction } from '../../../../server/prediction.ts'
-import { getRoleForMail } from '../../../../shared/index.ts'
-import MuteActivityControls from './mute-controls.tsx'
+import GoBackWrapper from "../../../../components/go-back-wrapper.tsx"
+import { getAccountByHash } from "../../../../server/account.ts"
+import { isActivityMailMuted } from "../../../../server/activity-mute.ts"
+import { getPrediction } from "../../../../server/prediction.ts"
+import { getRoleForMail } from "../../../../shared/index.ts"
+import MuteActivityControls from "./mute-controls.tsx"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 interface MuteActivityPageProps {
   params: Promise<{ hash: string; predictionHash: string }>

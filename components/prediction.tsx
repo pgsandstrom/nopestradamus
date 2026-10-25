@@ -1,7 +1,7 @@
-import { formatDateString } from '../shared/date-util.ts'
-import type { PredictionView } from '../shared/index.ts'
+import { formatDateString } from "../shared/date-util.ts"
+import type { PredictionView } from "../shared/index.ts"
 
-import styles from './prediction.module.css'
+import styles from "./prediction.module.css"
 
 interface PredictionProps {
   prediction: PredictionView
@@ -57,14 +57,14 @@ function ParticipantRow({ accepted, name, extraText }: ParticipantRowProps) {
 
 function StatusBox({ accepted }: { accepted?: boolean }) {
   const label =
-    accepted === true ? 'Accepted' : accepted === false ? 'Rejected' : 'Awaiting response'
+    accepted === true ? "Accepted" : accepted === false ? "Rejected" : "Awaiting response"
   const className = [
     styles.status,
     accepted === true ? styles.accepted : undefined,
     accepted === false ? styles.rejected : undefined,
   ]
     .filter(Boolean)
-    .join(' ')
+    .join(" ")
 
   return (
     <svg

@@ -3,4 +3,4 @@
  * HTML renderer needs it too, and the renderer must not import the mailer — the mailer imports
  * the renderer.
  */
-export const SITE_URL = 'https://nopestradamus.com'
+export const SITE_URL = "https://nopestradamus.com"

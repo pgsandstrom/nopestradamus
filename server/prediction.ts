@@ -1,4 +1,4 @@
-import { earliestDateToday } from '../shared/date-util.ts'
+import { earliestDateToday } from "../shared/date-util.ts"
 import type {
   Creater,
   OrphanedRow,
@@ -11,18 +11,18 @@ import type {
   PredictionRow,
   PredictionShallow,
   PredictionView,
-} from '../shared/index.ts'
-import { getMailFormatter } from '../shared/index.ts'
-import { isMailValid, normalizeMail } from '../shared/mail-util.ts'
+} from "../shared/index.ts"
+import { getMailFormatter } from "../shared/index.ts"
+import { isMailValid, normalizeMail } from "../shared/mail-util.ts"
 import {
   type CreatePredictionInput,
   listPredictionErrors,
   validatePrediction,
-} from '../shared/validate-prediction.ts'
-import { query, querySingle, queryString, SQL, transaction } from '../util/db.ts'
-import { adminGetAccounts, confirmAccountExistance, validateAccount } from './account.ts'
-import { randomHash } from './hash.ts'
-import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from './scheduler.ts'
+} from "../shared/validate-prediction.ts"
+import { query, querySingle, queryString, SQL, transaction } from "../util/db.ts"
+import { adminGetAccounts, confirmAccountExistance, validateAccount } from "./account.ts"
+import { randomHash } from "./hash.ts"
+import { handleUnsentAcceptEmail, handleUnsentCreaterAcceptEmail } from "./scheduler.ts"
 
 /**
  * Removes all private hashes from the prediction, and censors the mails for anybody who is not
@@ -120,7 +120,7 @@ ORDER BY created DESC`,
 }
 
 export const getPrediction = async (hash: string): Promise<Prediction | undefined> => {
-  const prediction = await querySingle<Omit<Prediction, 'creater' | 'participants'>>(
+  const prediction = await querySingle<Omit<Prediction, "creater" | "participants">>(
     SQL`SELECT created, title, body, hash, finish_date FROM prediction WHERE hash = ${hash}`,
   )
   if (prediction === undefined) {
@@ -218,7 +218,7 @@ export const createPrediction = async (input: CreatePredictionInput): Promise<vo
     createrMail === undefined ||
     participantList === undefined
   ) {
-    throw new Error(`Invalid prediction: ${errors.join(', ')}`)
+    throw new Error(`Invalid prediction: ${errors.join(", ")}`)
   }
 
   const hash = randomHash()
@@ -270,14 +270,14 @@ export const deletePrediction = async (hash: string) =>
 export const setCreaterAcceptMailSent = async (hash: string): Promise<void> => {
   const result = await query(SQL`UPDATE creater SET accepted_mail_sent = true WHERE hash = ${hash}`)
   if (result.rowCount !== 1) {
-    throw new Error('failed to set creater accepted_mail_sent')
+    throw new Error("failed to set creater accepted_mail_sent")
   }
 }
 
 export const setCreaterEndMailSent = async (hash: string): Promise<void> => {
   const result = await query(SQL`UPDATE creater SET end_mail_sent = true WHERE hash = ${hash}`)
   if (result.rowCount !== 1) {
-    throw new Error('failed to set creater end_mail_sent')
+    throw new Error("failed to set creater end_mail_sent")
   }
 }
 
@@ -425,7 +425,7 @@ FROM prediction
 LEFT JOIN creater ON prediction.hash = creater.prediction_hash`,
   )
   if (row === undefined) {
-    throw new Error('health query returned no row')
+    throw new Error("health query returned no row")
   }
   return row
 }

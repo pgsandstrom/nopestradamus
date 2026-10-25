@@ -1,10 +1,10 @@
-import { LOGIN_FRAGMENT } from '../shared/index.ts'
+import { LOGIN_FRAGMENT } from "../shared/index.ts"
 
 /**
  * Set on `<html>` while a secret link is being traded for a session. `login-cover.module.css`
  * keys the cover off it, so the name is spelled out in that file too.
  */
-export const LOGIN_COVER_ATTRIBUTE = 'data-logging-in'
+export const LOGIN_COVER_ATTRIBUTE = "data-logging-in"
 
 /**
  * Nothing is allowed to remove the cover except a real answer, so a visitor whose JavaScript

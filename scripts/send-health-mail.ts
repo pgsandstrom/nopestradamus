@@ -8,9 +8,9 @@
  *
  *   docker compose exec cron node scripts/send-health-mail.ts
  */
-import { sendHealthMail } from '../server/scheduler.ts'
+import { sendHealthMail } from "../server/scheduler.ts"
 
 await sendHealthMail()
-console.log('done')
+console.log("done")
 // the pg pool keeps the event loop alive, so leaving is explicit
 process.exit(0)

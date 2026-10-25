@@ -1,13 +1,13 @@
-import Link from 'next/link'
+import Link from "next/link"
 
-import { isAdminAuthenticated } from '../../../server/admin-session.ts'
-import { getPrediction, getPredictionsAwaitingCreater } from '../../../server/prediction.ts'
-import { formatDateString, formatDateTimeString } from '../../../shared/date-util.ts'
-import type { Prediction } from '../../../shared/index.ts'
+import { isAdminAuthenticated } from "../../../server/admin-session.ts"
+import { getPrediction, getPredictionsAwaitingCreater } from "../../../server/prediction.ts"
+import { formatDateString, formatDateTimeString } from "../../../shared/date-util.ts"
+import type { Prediction } from "../../../shared/index.ts"
 
-import styles from './page.module.css'
+import styles from "./page.module.css"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 export default async function AdminMailsPage() {
   // the layout renders the login form instead of this page, but it does not re-render on a
@@ -60,7 +60,7 @@ function PendingMailRow({ prediction }: { prediction: Prediction }) {
       <td>{prediction.creater.mail}</td>
       <td className={styles.nowrap}>
         <span className={prediction.creater.accepted_mail_sent ? styles.sent : styles.unsent}>
-          {prediction.creater.accepted_mail_sent ? 'sent' : 'not sent'}
+          {prediction.creater.accepted_mail_sent ? "sent" : "not sent"}
         </span>
       </td>
     </tr>

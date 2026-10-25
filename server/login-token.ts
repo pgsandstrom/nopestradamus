@@ -1,5 +1,5 @@
-import { query, querySingle, SQL } from '../util/db.ts'
-import { randomHash } from './hash.ts'
+import { query, querySingle, SQL } from "../util/db.ts"
+import { randomHash } from "./hash.ts"
 
 /**
  * Half an hour. A login mail is read while the visitor is still sitting there waiting for it, so

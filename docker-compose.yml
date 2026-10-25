@@ -3,7 +3,7 @@ services:
     build:
       dockerfile: ./Dockerfile.frontend
     ports:
-      - '8300:3000'
+      - "8300:3000"
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -31,7 +31,7 @@ services:
         condition: service_healthy
     environment:
       - PGHOST=db
-    restart: 'no'
+    restart: "no"
   db:
     image: postgres:16
     restart: always
@@ -40,7 +40,7 @@ services:
       - POSTGRES_DB=nopestradamus
       - POSTGRES_PASSWORD=postgres
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres -d nopestradamus']
+      test: ["CMD-SHELL", "pg_isready -U postgres -d nopestradamus"]
       interval: 5s
       timeout: 5s
       retries: 10

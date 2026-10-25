@@ -1,4 +1,4 @@
-import { randomBytes } from 'node:crypto'
+import { randomBytes } from "node:crypto"
 
 /**
  * Crockford's base32 in lower case: the ten digits and the alphabet minus i, l, o and u, the
@@ -7,7 +7,7 @@ import { randomBytes } from 'node:crypto'
  *
  * Exactly 32 symbols, which divides 256, so `byte % 32` below is uniform without rejection.
  */
-const ALPHABET = '0123456789abcdefghjkmnpqrstvwxyz'
+const ALPHABET = "0123456789abcdefghjkmnpqrstvwxyz"
 
 /**
  * 15 symbols is 75 bits. These hashes are the only thing guarding a prediction — anyone holding
@@ -22,4 +22,4 @@ const HASH_LENGTH = 15
  * both shapes are looked up the same way and there is no migration.
  */
 export const randomHash = (): string =>
-  Array.from(randomBytes(HASH_LENGTH), (byte) => ALPHABET[byte % ALPHABET.length]).join('')
+  Array.from(randomBytes(HASH_LENGTH), (byte) => ALPHABET[byte % ALPHABET.length]).join("")

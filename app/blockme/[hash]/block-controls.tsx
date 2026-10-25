@@ -1,12 +1,12 @@
-'use client'
+"use client"
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition } from "react"
 
-import { Button } from '../../../components/ui/button.tsx'
-import type { AppAccount } from '../../../shared/index.ts'
-import { setBlockedAction } from '../../actions.ts'
+import { Button } from "../../../components/ui/button.tsx"
+import type { AppAccount } from "../../../shared/index.ts"
+import { setBlockedAction } from "../../actions.ts"
 
-import styles from './block-controls.module.css'
+import styles from "./block-controls.module.css"
 
 interface BlockControlsProps {
   hash: string

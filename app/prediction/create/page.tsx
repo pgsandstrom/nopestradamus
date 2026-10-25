@@ -1,11 +1,11 @@
-import type { Metadata } from 'next'
+import type { Metadata } from "next"
 
-import GoBackWrapper from '../../../components/go-back-wrapper.tsx'
-import { getCurrentUserMail } from '../../../server/session-cookie.ts'
-import CreateForm from './create-form.tsx'
+import GoBackWrapper from "../../../components/go-back-wrapper.tsx"
+import { getCurrentUserMail } from "../../../server/session-cookie.ts"
+import CreateForm from "./create-form.tsx"
 
 export const metadata: Metadata = {
-  title: 'Create a prediction | Nopestradamus',
+  title: "Create a prediction | Nopestradamus",
 }
 
 export default async function CreatePredictionPage() {

@@ -1,12 +1,12 @@
-import Link from 'next/link'
+import Link from "next/link"
 
-import { logOutAction } from '../app/actions.ts'
-import { getCurrentUserMail } from '../server/session-cookie.ts'
-import LoginForm from './login-form.tsx'
-import SessionNegotiator from './session-negotiator.tsx'
-import { Button } from './ui/button.tsx'
+import { logOutAction } from "../app/actions.ts"
+import { getCurrentUserMail } from "../server/session-cookie.ts"
+import LoginForm from "./login-form.tsx"
+import SessionNegotiator from "./session-negotiator.tsx"
+import { Button } from "./ui/button.tsx"
 
-import styles from './header.module.css'
+import styles from "./header.module.css"
 
 /**
  * The one bar on every page. It answers "am I logged in", offers the way in when the answer is
@@ -31,7 +31,7 @@ export default async function Header() {
           ) : (
             <>
               <span className={styles.status}>
-                Logged in as{' '}
+                Logged in as{" "}
                 <Link className={styles.mail} href="/me">
                   {mail}
                 </Link>

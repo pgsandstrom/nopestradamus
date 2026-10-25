@@ -1,13 +1,13 @@
-'use client'
+"use client"
 
-import { type SubmitEvent, useEffect, useRef, useState, useTransition } from 'react'
+import { type SubmitEvent, useEffect, useRef, useState, useTransition } from "react"
 
-import { Button } from '../../../components/ui/button.tsx'
-import { TextAreaField } from '../../../components/ui/text-field.tsx'
-import { COMMENT_MAX_LENGTH, validateComment } from '../../../shared/validate-comment.ts'
-import { addCommentAction } from '../../actions.ts'
+import { Button } from "../../../components/ui/button.tsx"
+import { TextAreaField } from "../../../components/ui/text-field.tsx"
+import { COMMENT_MAX_LENGTH, validateComment } from "../../../shared/validate-comment.ts"
+import { addCommentAction } from "../../actions.ts"
 
-import styles from './comments.module.css'
+import styles from "./comments.module.css"
 
 /** From here the counter turns orange, so the limit is noticed before it stops the typing. */
 const NEAR_LIMIT_SHARE = 0.9
@@ -18,7 +18,7 @@ const NEAR_LIMIT_SHARE = 0.9
  * the text with it. The new comment itself arrives with the page, which the action revalidates.
  */
 export default function CommentForm({ predictionHash }: { predictionHash: string }) {
-  const [body, setBody] = useState('')
+  const [body, setBody] = useState("")
   const [error, setError] = useState<string>()
   const [isSaving, startSaving] = useTransition()
   const textarea = useRef<HTMLTextAreaElement>(null)
@@ -28,7 +28,7 @@ export default function CommentForm({ predictionHash }: { predictionHash: string
   // the counter would read 0 and the button stay disabled, so pick the draft up once here.
   useEffect(() => {
     const restored = textarea.current?.value
-    if (restored !== undefined && restored !== '') {
+    if (restored !== undefined && restored !== "") {
       setBody(restored)
     }
   }, [])
@@ -38,7 +38,7 @@ export default function CommentForm({ predictionHash }: { predictionHash: string
     startSaving(async () => {
       const result = await addCommentAction(predictionHash, body)
       if (result.ok) {
-        setBody('')
+        setBody("")
         setError(undefined)
       } else {
         setError(result.error)
@@ -66,7 +66,7 @@ export default function CommentForm({ predictionHash }: { predictionHash: string
         <span
           className={[styles.counter, isNearLimit ? styles.counterNearLimit : undefined]
             .filter(Boolean)
-            .join(' ')}
+            .join(" ")}
         >
           {body.length} / {COMMENT_MAX_LENGTH}
         </span>

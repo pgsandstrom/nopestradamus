@@ -1,10 +1,10 @@
-import { cookies } from 'next/headers'
+import { cookies } from "next/headers"
 
-import { isDev } from '../util/env.ts'
-import { createSession, deleteSession, getSessionMail, SESSION_TTL_SECONDS } from './session.ts'
+import { isDev } from "../util/env.ts"
+import { createSession, deleteSession, getSessionMail, SESSION_TTL_SECONDS } from "./session.ts"
 
 // Next-only, so it lives apart from session.ts, which the cron process reaches for its sweep.
-const COOKIE = 'session'
+const COOKIE = "session"
 
 /** Only ever called from a server action — cookies cannot be set while a page renders. */
 export async function startUserSession(mail: string): Promise<void> {
@@ -17,8 +17,8 @@ export async function startUserSession(mail: string): Promise<void> {
     // 'lax' rather than the admin cookie's 'strict': these links are followed out of a mail
     // client, and a strict cookie is withheld on exactly that first cross-site navigation, so
     // every visit from a mail would render logged out before correcting itself.
-    sameSite: 'lax',
-    path: '/',
+    sameSite: "lax",
+    path: "/",
     maxAge: SESSION_TTL_SECONDS,
   })
 }

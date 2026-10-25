@@ -1,15 +1,15 @@
-import { cookies } from 'next/headers'
+import { cookies } from "next/headers"
 
-import { isDev } from '../util/env.ts'
+import { isDev } from "../util/env.ts"
 import {
   adminSessionSecret,
   createSessionToken,
   isSessionTokenValid,
   SESSION_TTL_SECONDS,
-} from './admin-auth.ts'
+} from "./admin-auth.ts"
 
 // Next-only, so it lives apart from admin-auth.ts, which the cron process could reach.
-const COOKIE = 'admin_session'
+const COOKIE = "admin_session"
 
 /** Only ever called from a server action — cookies cannot be set while a page renders. */
 export async function startAdminSession(): Promise<void> {
@@ -18,8 +18,8 @@ export async function startAdminSession(): Promise<void> {
     httpOnly: true,
     // dev runs on plain http, where a secure cookie would simply be dropped
     secure: !isDev(),
-    sameSite: 'strict',
-    path: '/',
+    sameSite: "strict",
+    path: "/",
     maxAge: SESSION_TTL_SECONDS,
   })
 }

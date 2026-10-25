@@ -1,8 +1,8 @@
-'use client'
+"use client"
 
-import { type ComponentProps, type Ref, useId, useLayoutEffect, useRef } from 'react'
+import { type ComponentProps, type Ref, useId, useLayoutEffect, useRef } from "react"
 
-import styles from './text-field.module.css'
+import styles from "./text-field.module.css"
 
 interface FieldShellProps {
   label: string
@@ -14,7 +14,7 @@ interface FieldShellProps {
 
 function FieldShell({ label, error, id, className, children }: FieldShellProps) {
   return (
-    <div className={[styles.field, className].filter(Boolean).join(' ')}>
+    <div className={[styles.field, className].filter(Boolean).join(" ")}>
       <label className={styles.label} htmlFor={id}>
         {label}
       </label>
@@ -29,9 +29,9 @@ function FieldShell({ label, error, id, className, children }: FieldShellProps) 
 }
 
 const controlClass = (error?: string) =>
-  [styles.control, error !== undefined ? styles.invalid : undefined].filter(Boolean).join(' ')
+  [styles.control, error !== undefined ? styles.invalid : undefined].filter(Boolean).join(" ")
 
-interface TextFieldProps extends Omit<ComponentProps<'input'>, 'id'> {
+interface TextFieldProps extends Omit<ComponentProps<"input">, "id"> {
   label: string
   error?: string | undefined
   wrapperClassName?: string | undefined
@@ -52,7 +52,7 @@ export function TextField({ label, error, wrapperClassName, ...props }: TextFiel
   )
 }
 
-interface TextAreaFieldProps extends Omit<ComponentProps<'textarea'>, 'id'> {
+interface TextAreaFieldProps extends Omit<ComponentProps<"textarea">, "id"> {
   label: string
   error?: string | undefined
   wrapperClassName?: string | undefined
@@ -63,7 +63,7 @@ interface TextAreaFieldProps extends Omit<ComponentProps<'textarea'>, 'id'> {
 // `field-sizing: content` does the growing where it is supported; elsewhere (Firefox) the height is
 // set from `scrollHeight` whenever the value changes.
 const supportsFieldSizing = () =>
-  typeof CSS !== 'undefined' && CSS.supports('field-sizing', 'content')
+  typeof CSS !== "undefined" && CSS.supports("field-sizing", "content")
 
 export function TextAreaField({
   label,
@@ -81,7 +81,7 @@ export function TextAreaField({
     if (!autoGrow || el === null || supportsFieldSizing()) {
       return
     }
-    el.style.height = 'auto'
+    el.style.height = "auto"
     el.style.height = `${el.scrollHeight + el.offsetHeight - el.clientHeight}px`
   }, [autoGrow, props.value])
 
@@ -97,7 +97,7 @@ export function TextAreaField({
         ref={setRef}
         className={[controlClass(error), autoGrow ? styles.autoGrow : undefined]
           .filter(Boolean)
-          .join(' ')}
+          .join(" ")}
         aria-invalid={error !== undefined}
         aria-describedby={error !== undefined ? `${id}-error` : undefined}
         {...props}
@@ -107,7 +107,7 @@ export function TextAreaField({
 }
 
 function assignRef<T>(ref: Ref<T> | undefined, value: T | null) {
-  if (typeof ref === 'function') {
+  if (typeof ref === "function") {
     ref(value)
   } else if (ref) {
     ref.current = value

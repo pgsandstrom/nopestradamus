@@ -1,12 +1,12 @@
-'use client'
+"use client"
 
-import { useActionState } from 'react'
+import { useActionState } from "react"
 
-import type { ActionResult } from '../app/action-result.ts'
-import { requestLoginMailAction } from '../app/actions.ts'
-import { Button } from './ui/button.tsx'
+import type { ActionResult } from "../app/action-result.ts"
+import { requestLoginMailAction } from "../app/actions.ts"
+import { Button } from "./ui/button.tsx"
 
-import styles from './header.module.css'
+import styles from "./header.module.css"
 
 /**
  * The logged-out half of the header. There is nothing to sign up for, so this is not a

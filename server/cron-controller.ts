@@ -1,14 +1,14 @@
-import { CronJob } from 'cron'
+import { CronJob } from "cron"
 
-import { deleteExpiredLoginTokens } from './login-token.ts'
-import { handleAllUnsentMails, sendHealthMail } from './scheduler.ts'
-import { deleteExpiredSessions } from './session.ts'
+import { deleteExpiredLoginTokens } from "./login-token.ts"
+import { handleAllUnsentMails, sendHealthMail } from "./scheduler.ts"
+import { deleteExpiredSessions } from "./session.ts"
 
-const EVERY_HOUR = '0 0 * * * *'
+const EVERY_HOUR = "0 0 * * * *"
 // six fields, seconds first, like EVERY_HOUR: 05:00 on the first of every month
-const FIRST_OF_EVERY_MONTH = '0 0 5 1 * *'
+const FIRST_OF_EVERY_MONTH = "0 0 5 1 * *"
 // the container runs UTC, so without this the health mail would drift an hour twice a year
-const TIME_ZONE = 'Europe/Stockholm'
+const TIME_ZONE = "Europe/Stockholm"
 
 export const startCronStuff = (): void => {
   const cronJob = CronJob.from({

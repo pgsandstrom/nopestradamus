@@ -1,5 +1,5 @@
-import { query, querySingle, SQL } from '../util/db.ts'
-import { randomHash } from './hash.ts'
+import { query, querySingle, SQL } from "../util/db.ts"
+import { randomHash } from "./hash.ts"
 
 /**
  * A month. A prediction link is read once and then forgotten about for years, so there is no

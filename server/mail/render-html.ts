@@ -1,5 +1,5 @@
-import type { Block, Fact, MailDocument } from './blocks.ts'
-import { SITE_URL } from './site.ts'
+import type { Block, Fact, MailDocument } from "./blocks.ts"
+import { SITE_URL } from "./site.ts"
 
 /**
  * The HTML half of every mail.
@@ -14,13 +14,13 @@ import { SITE_URL } from './site.ts'
  * reach a stylesheet. When those change, change these.
  */
 const COLOR = {
-  bg: '#f1f5f9',
-  surface: '#ffffff',
-  text: '#0f172a',
-  muted: '#64748b',
-  border: '#cbd5e1',
-  primary: '#556cd6',
-  quote: '#f8fafc',
+  bg: "#f1f5f9",
+  surface: "#ffffff",
+  text: "#0f172a",
+  muted: "#64748b",
+  border: "#cbd5e1",
+  primary: "#556cd6",
+  quote: "#f8fafc",
 }
 
 const FONT =
@@ -44,7 +44,7 @@ ${renderPreheader(mail.preheader)}
 <td align="center" style="padding:24px 12px;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:100%;max-width:600px;background-color:${COLOR.surface};border:1px solid ${COLOR.border};border-radius:6px;">
 ${renderBrand()}
-${mail.blocks.map(renderBlock).join('\n')}
+${mail.blocks.map(renderBlock).join("\n")}
 <tr><td style="padding:8px 32px 28px;"></td></tr>
 </table>
 </td>
@@ -61,8 +61,8 @@ ${mail.blocks.map(renderBlock).join('\n')}
  */
 const renderPreheader = (preheader?: string): string =>
   preheader === undefined
-    ? ''
-    : `<div style="display:none;max-height:0;max-width:0;overflow:hidden;opacity:0;color:transparent;font-size:1px;line-height:1px;">${escapeHtml(preheader)}${'&#8203;&#847;'.repeat(60)}</div>`
+    ? ""
+    : `<div style="display:none;max-height:0;max-width:0;overflow:hidden;opacity:0;color:transparent;font-size:1px;line-height:1px;">${escapeHtml(preheader)}${"&#8203;&#847;".repeat(60)}</div>`
 
 const renderBrand = (): string => `<tr>
 <td style="padding:24px 32px 20px;border-bottom:1px solid ${COLOR.border};">
@@ -72,46 +72,46 @@ const renderBrand = (): string => `<tr>
 
 const renderBlock = (block: Block): string => {
   switch (block.kind) {
-    case 'heading':
+    case "heading":
       return row(
         `<h1 style="margin:0;color:${COLOR.text};font-family:${FONT};font-size:21px;font-weight:600;line-height:1.3;">${escapeHtml(block.text)}</h1>`,
-        '24px 32px 4px',
+        "24px 32px 4px",
       )
-    case 'paragraph':
-      return row(paragraph(block.text, COLOR.text, '15px'))
-    case 'note':
-      return row(paragraph(block.text, COLOR.muted, '13px'))
-    case 'quote':
+    case "paragraph":
+      return row(paragraph(block.text, COLOR.text, "15px"))
+    case "note":
+      return row(paragraph(block.text, COLOR.muted, "13px"))
+    case "quote":
       return renderQuote(block.title, block.body)
-    case 'facts':
+    case "facts":
       return renderFacts(block.rows)
-    case 'people':
+    case "people":
       return renderPeople(block.label, block.mails)
-    case 'button':
+    case "button":
       return renderButton(block.label, block.url)
-    case 'link':
+    case "link":
       return row(
         `<p style="margin:0;font-family:${FONT};font-size:13px;line-height:1.6;"><a href="${escapeHtml(block.url)}" style="color:${COLOR.primary};text-decoration:underline;">${escapeHtml(block.label)}</a></p>`,
       )
-    case 'divider':
+    case "divider":
       return row(
         `<hr style="height:1px;margin:0;border:0;background-color:${COLOR.border};" />`,
-        '8px 32px 16px',
+        "8px 32px 16px",
       )
   }
 }
 
-const row = (content: string, padding = '0 32px 16px'): string =>
+const row = (content: string, padding = "0 32px 16px"): string =>
   `<tr><td style="padding:${padding};">${content}</td></tr>`
 
 const paragraph = (text: string, color: string, size: string): string =>
-  `<p style="margin:0;color:${color};font-family:${FONT};font-size:${size};line-height:1.6;">${escapeHtml(text).replaceAll('\n', '<br />')}</p>`
+  `<p style="margin:0;color:${color};font-family:${FONT};font-size:${size};line-height:1.6;">${escapeHtml(text).replaceAll("\n", "<br />")}</p>`
 
 /** The prediction or a comment, set on its own card so it reads as the thing quoted rather than as us. */
 const renderQuote = (title: string | undefined, body: string): string =>
   row(`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:${COLOR.quote};border:1px solid ${COLOR.border};border-radius:6px;">
 <tr><td style="padding:18px 20px;">
-${title === undefined ? '' : `<p style="margin:0 0 8px;color:${COLOR.text};font-family:${FONT};font-size:16px;font-weight:600;line-height:1.4;">${escapeHtml(title)}</p>\n`}<p style="margin:0;color:${COLOR.text};font-family:${FONT};font-size:15px;line-height:1.6;">${escapeHtml(body).replaceAll('\n', '<br />')}</p>
+${title === undefined ? "" : `<p style="margin:0 0 8px;color:${COLOR.text};font-family:${FONT};font-size:16px;font-weight:600;line-height:1.4;">${escapeHtml(title)}</p>\n`}<p style="margin:0;color:${COLOR.text};font-family:${FONT};font-size:15px;line-height:1.6;">${escapeHtml(body).replaceAll("\n", "<br />")}</p>
 </td></tr>
 </table>`)
 
@@ -120,11 +120,11 @@ const renderFacts = (rows: Fact[]): string =>
 ${rows
   .map(
     (fact, index) => `<tr>
-<td style="padding:8px 12px 8px 0;${index === 0 ? '' : `border-top:1px solid ${COLOR.border};`}color:${COLOR.muted};font-family:${FONT};font-size:13px;white-space:nowrap;vertical-align:top;">${escapeHtml(fact.label)}</td>
-<td align="right" style="padding:8px 0;${index === 0 ? '' : `border-top:1px solid ${COLOR.border};`}color:${COLOR.text};font-family:${FONT};font-size:14px;font-weight:500;vertical-align:top;">${escapeHtml(fact.value)}</td>
+<td style="padding:8px 12px 8px 0;${index === 0 ? "" : `border-top:1px solid ${COLOR.border};`}color:${COLOR.muted};font-family:${FONT};font-size:13px;white-space:nowrap;vertical-align:top;">${escapeHtml(fact.label)}</td>
+<td align="right" style="padding:8px 0;${index === 0 ? "" : `border-top:1px solid ${COLOR.border};`}color:${COLOR.text};font-family:${FONT};font-size:14px;font-weight:500;vertical-align:top;">${escapeHtml(fact.value)}</td>
 </tr>`,
   )
-  .join('\n')}
+  .join("\n")}
 </table>`)
 
 const renderPeople = (label: string, mails: string[]): string =>
@@ -135,7 +135,7 @@ ${mails
     (mail) =>
       `<tr><td style="padding:6px 0;color:${COLOR.text};font-family:${FONT};font-size:14px;word-break:break-all;">${escapeHtml(mail)}</td></tr>`,
   )
-  .join('\n')}
+  .join("\n")}
 </table>`)
 
 /**
@@ -158,8 +158,8 @@ const renderButton = (label: string, url: string): string =>
  */
 export const escapeHtml = (value: string): string =>
   value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;')
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;")

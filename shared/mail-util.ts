@@ -16,7 +16,7 @@ export const censorMail = (mail: string): string => {
   if (!isMailValid(mail)) {
     return mail
   }
-  const [firstPart = '', secondPart = ''] = mail.split('@')
+  const [firstPart = "", secondPart = ""] = mail.split("@")
   if (firstPart.length > 2) {
     return `${censorString(firstPart)}@${secondPart}`
   }
@@ -31,7 +31,7 @@ const censorString = (value: string): string => {
   const beforeCensorLength = Math.floor((value.length - censorLength) / 2)
   return (
     value.slice(0, beforeCensorLength) +
-    '*'.repeat(censorLength) +
+    "*".repeat(censorLength) +
     value.slice(beforeCensorLength + censorLength)
   )
 }

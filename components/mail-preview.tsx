@@ -1,18 +1,18 @@
-'use client'
+"use client"
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from "react"
 
-import type { RenderedMail } from '../server/mail/render.ts'
+import type { RenderedMail } from "../server/mail/render.ts"
 
-import styles from './mail-preview.module.css'
+import styles from "./mail-preview.module.css"
 
-const VIEWS = ['rendered', 'text', 'source'] as const
+const VIEWS = ["rendered", "text", "source"] as const
 type View = (typeof VIEWS)[number]
 
 const LABEL: Record<View, string> = {
-  rendered: 'Rendered',
-  text: 'Plain text',
-  source: 'HTML source',
+  rendered: "Rendered",
+  text: "Plain text",
+  source: "HTML source",
 }
 
 /**
@@ -20,7 +20,7 @@ const LABEL: Record<View, string> = {
  * plain-text half reads, and as the source a deliverability tester wants pasted into it.
  */
 export default function MailPreview({ mail }: { mail: RenderedMail }) {
-  const [view, setView] = useState<View>('rendered')
+  const [view, setView] = useState<View>("rendered")
 
   return (
     <div className={styles.preview}>
@@ -42,9 +42,9 @@ export default function MailPreview({ mail }: { mail: RenderedMail }) {
           </button>
         ))}
       </div>
-      {view === 'rendered' && <RenderedMailFrame html={mail.html} title={mail.title} />}
-      {view === 'text' && <pre className={styles.plain}>{mail.text}</pre>}
-      {view === 'source' && <pre className={styles.plain}>{mail.html}</pre>}
+      {view === "rendered" && <RenderedMailFrame html={mail.html} title={mail.title} />}
+      {view === "text" && <pre className={styles.plain}>{mail.text}</pre>}
+      {view === "source" && <pre className={styles.plain}>{mail.html}</pre>}
     </div>
   )
 }
@@ -71,12 +71,12 @@ function RenderedMailFrame({ html, title }: { html: string; title: string }) {
         setHeight(body.scrollHeight)
       }
     }
-    element.addEventListener('load', measure)
-    window.addEventListener('resize', measure)
+    element.addEventListener("load", measure)
+    window.addEventListener("resize", measure)
     measure()
     return () => {
-      element.removeEventListener('load', measure)
-      window.removeEventListener('resize', measure)
+      element.removeEventListener("load", measure)
+      window.removeEventListener("resize", measure)
     }
   }, [html])
 

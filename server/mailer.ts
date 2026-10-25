@@ -1,12 +1,12 @@
-import nodemailer from 'nodemailer'
+import nodemailer from "nodemailer"
 
-import { getPrivateKey } from '../util/config.ts'
-import { isDev } from '../util/env.ts'
-import { getAccountByHash, getAccountHashByMail } from './account.ts'
-import type { MailDocument } from './mail/blocks.ts'
-import { renderMail } from './mail/render.ts'
-import { SITE_URL } from './mail/site.ts'
-import { withUnsubscribeFooter } from './mail/templates.ts'
+import { getPrivateKey } from "../util/config.ts"
+import { isDev } from "../util/env.ts"
+import { getAccountByHash, getAccountHashByMail } from "./account.ts"
+import type { MailDocument } from "./mail/blocks.ts"
+import { renderMail } from "./mail/render.ts"
+import { SITE_URL } from "./mail/site.ts"
+import { withUnsubscribeFooter } from "./mail/templates.ts"
 
 interface SendMailOptions {
   /** Send even to a blocked address. Only for mails to the operator, never to a visitor. */
@@ -43,19 +43,19 @@ export const sendMail = async (
   const { title, text, html } = renderMail(withUnsubscribeFooter(mail, accountHash, muteActivityOf))
 
   if (isDev()) {
-    console.log('faking sending mail')
+    console.log("faking sending mail")
     return
   }
 
   const transporter = nodemailer.createTransport({
-    host: 'localhost',
+    host: "localhost",
     port: 25,
-    name: 'nopestradamus.com',
+    name: "nopestradamus.com",
     secure: false,
     ignoreTLS: true,
     dkim: {
-      domainName: 'nopestradamus.com',
-      keySelector: 'hej',
+      domainName: "nopestradamus.com",
+      keySelector: "hej",
       privateKey: getPrivateKey(),
     },
   })
@@ -77,8 +77,8 @@ export const sendMail = async (
       text,
       html,
       headers: {
-        'List-Unsubscribe': `<${unsubscribeUrl}>`,
-        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        "List-Unsubscribe": `<${unsubscribeUrl}>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
       },
     })
     console.log(`Sent mail: "${result.response}"`)

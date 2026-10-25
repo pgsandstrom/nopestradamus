@@ -1,34 +1,34 @@
-'use server'
+"use server"
 
-import { revalidatePath } from 'next/cache'
-import { after } from 'next/server'
+import { revalidatePath } from "next/cache"
+import { after } from "next/server"
 
-import { getAccountByHash, getAccountByMail, setAccountBlocked } from '../server/account.ts'
-import { sendActivityMails } from '../server/activity-mail.ts'
-import { setActivityMailMuted } from '../server/activity-mute.ts'
-import { createComment, sendCommentMails } from '../server/comment.ts'
-import { consumeLoginToken, createLoginToken } from '../server/login-token.ts'
-import { getAnswerMail, getLoginMail } from '../server/mail/templates.ts'
-import { sendMail } from '../server/mailer.ts'
+import { getAccountByHash, getAccountByMail, setAccountBlocked } from "../server/account.ts"
+import { sendActivityMails } from "../server/activity-mail.ts"
+import { setActivityMailMuted } from "../server/activity-mute.ts"
+import { createComment, sendCommentMails } from "../server/comment.ts"
+import { consumeLoginToken, createLoginToken } from "../server/login-token.ts"
+import { getAnswerMail, getLoginMail } from "../server/mail/templates.ts"
+import { sendMail } from "../server/mailer.ts"
 import {
   createPrediction,
   getMailByRoleHash,
   getPrediction,
   updateCreaterAcceptStatus,
   updateParticipantAcceptStatus,
-} from '../server/prediction.ts'
-import { endUserSession, getCurrentUserMail, startUserSession } from '../server/session-cookie.ts'
-import { earliestDateToday } from '../shared/date-util.ts'
-import type { AppAccount, Role } from '../shared/index.ts'
-import { canWriteComments, getRoleForMail } from '../shared/index.ts'
-import { isMailValid } from '../shared/mail-util.ts'
-import { COMMENT_MAX_LENGTH, validateComment } from '../shared/validate-comment.ts'
+} from "../server/prediction.ts"
+import { endUserSession, getCurrentUserMail, startUserSession } from "../server/session-cookie.ts"
+import { earliestDateToday } from "../shared/date-util.ts"
+import type { AppAccount, Role } from "../shared/index.ts"
+import { canWriteComments, getRoleForMail } from "../shared/index.ts"
+import { isMailValid } from "../shared/mail-util.ts"
+import { COMMENT_MAX_LENGTH, validateComment } from "../shared/validate-comment.ts"
 import {
   type CreatePredictionInput,
   listPredictionErrors,
   validatePrediction,
-} from '../shared/validate-prediction.ts'
-import { type ActionResult, failed, OK } from './action-result.ts'
+} from "../shared/validate-prediction.ts"
+import { type ActionResult, failed, OK } from "./action-result.ts"
 
 export async function createPredictionAction(input: CreatePredictionInput): Promise<ActionResult> {
   // The form runs the same rules before it sends, so this only speaks up when the two disagree,
@@ -40,9 +40,9 @@ export async function createPredictionAction(input: CreatePredictionInput): Prom
   try {
     await createPrediction(input)
   } catch (e) {
-    return failed(e, 'Could not create the prediction.')
+    return failed(e, "Could not create the prediction.")
   }
-  revalidatePath('/')
+  revalidatePath("/")
   return OK
 }
 
@@ -70,13 +70,13 @@ export async function logInWithHashAction(fragment: string): Promise<LogInResult
   try {
     mail = (await getMailByRoleHash(fragment)) ?? (await consumeLoginToken(fragment))
   } catch (e) {
-    return failed(e, 'Could not log you in.')
+    return failed(e, "Could not log you in.")
   }
   if (mail === undefined) {
-    return { ok: false, error: 'That link is not valid.' }
+    return { ok: false, error: "That link is not valid." }
   }
   await startUserSession(mail)
-  revalidatePath('/', 'layout')
+  revalidatePath("/", "layout")
   return { ...OK, mail }
 }
 
@@ -89,17 +89,17 @@ export async function requestLoginMailAction(
   _previous: ActionResult | undefined,
   formData: FormData,
 ): Promise<ActionResult> {
-  const typed = formData.get('mail')
-  const mail = typeof typed === 'string' ? typed.trim() : ''
+  const typed = formData.get("mail")
+  const mail = typeof typed === "string" ? typed.trim() : ""
   // the one thing worth saying out loud, since it is about what they typed rather than about
   // who exists
   if (!isMailValid(mail)) {
-    return { ok: false, error: 'That does not look like an e-mail address.' }
+    return { ok: false, error: "That does not look like an e-mail address." }
   }
   try {
     await sendLoginMail(mail)
   } catch (e) {
-    return failed(e, 'Could not send the mail.')
+    return failed(e, "Could not send the mail.")
   }
   return OK
 }
@@ -123,7 +123,7 @@ const sendLoginMail = async (mail: string): Promise<void> => {
 
 export async function logOutAction(): Promise<void> {
   await endUserSession()
-  revalidatePath('/', 'layout')
+  revalidatePath("/", "layout")
 }
 
 /**
@@ -137,22 +137,22 @@ export async function answerPredictionAction(
 ): Promise<ActionResult> {
   const mail = await getCurrentUserMail()
   if (mail === undefined) {
-    return { ok: false, error: 'You are not logged in.' }
+    return { ok: false, error: "You are not logged in." }
   }
   try {
     const prediction = await getPrediction(predictionHash)
     if (prediction === undefined) {
-      return { ok: false, error: 'That prediction does not exist.' }
+      return { ok: false, error: "That prediction does not exist." }
     }
     const role = getRoleForMail(prediction, mail)
     if (role === undefined) {
-      return { ok: false, error: 'You are not part of this prediction.' }
+      return { ok: false, error: "You are not part of this prediction." }
     }
     await answerAs(role, predictionHash, mail, accept)
     // A creater answering is what sends the invitations, so there is nobody yet to tell. Only a
     // changed answer is news: the same button pressed twice says nothing new.
     const previous = prediction.participants.find((p) => p.mail === mail)?.accepted
-    if (role === 'participant' && previous !== accept) {
+    if (role === "participant" && previous !== accept) {
       // after the response, so the answerer is not kept waiting on the mail server once per reader
       after(() =>
         sendActivityMails(prediction, mail, (roleHash) =>
@@ -161,9 +161,9 @@ export async function answerPredictionAction(
       )
     }
   } catch (e) {
-    return failed(e, 'Could not register your answer.')
+    return failed(e, "Could not register your answer.")
   }
-  revalidatePath('/')
+  revalidatePath("/")
   revalidatePath(`/prediction/${predictionHash}`)
   return OK
 }
@@ -174,7 +174,7 @@ const answerAs = async (
   mail: string,
   accept: boolean,
 ): Promise<void> => {
-  if (role === 'participant') {
+  if (role === "participant") {
     await updateParticipantAcceptStatus(predictionHash, mail, accept)
   } else {
     await updateCreaterAcceptStatus(predictionHash, mail, accept)
@@ -192,7 +192,7 @@ export async function addCommentAction(
 ): Promise<ActionResult> {
   const mail = await getCurrentUserMail()
   if (mail === undefined) {
-    return { ok: false, error: 'You are not logged in.' }
+    return { ok: false, error: "You are not logged in." }
   }
   if (!validateComment(body)) {
     return {
@@ -203,16 +203,16 @@ export async function addCommentAction(
   try {
     const prediction = await getPrediction(predictionHash)
     if (prediction === undefined) {
-      return { ok: false, error: 'That prediction does not exist.' }
+      return { ok: false, error: "That prediction does not exist." }
     }
     if (!canWriteComments(prediction, mail)) {
-      return { ok: false, error: 'You cannot comment on this prediction.' }
+      return { ok: false, error: "You cannot comment on this prediction." }
     }
     await createComment(predictionHash, mail, body)
     // after the response, so the author is not kept waiting on the mail server once per reader
     after(() => sendCommentMails(prediction, mail, body))
   } catch (e) {
-    return failed(e, 'Could not save your comment.')
+    return failed(e, "Could not save your comment.")
   }
   revalidatePath(`/prediction/${predictionHash}`)
   return OK
@@ -229,19 +229,19 @@ export async function setActivityMailMutedAction(
 ): Promise<ActionResult> {
   const mail = await getCurrentUserMail()
   if (mail === undefined) {
-    return { ok: false, error: 'You are not logged in.' }
+    return { ok: false, error: "You are not logged in." }
   }
   try {
     const prediction = await getPrediction(predictionHash)
     if (prediction === undefined) {
-      return { ok: false, error: 'That prediction does not exist.' }
+      return { ok: false, error: "That prediction does not exist." }
     }
     if (getRoleForMail(prediction, mail) === undefined) {
-      return { ok: false, error: 'You are not part of this prediction.' }
+      return { ok: false, error: "You are not part of this prediction." }
     }
     await setActivityMailMuted(predictionHash, mail, muted)
   } catch (e) {
-    return failed(e, 'Could not update your mail settings.')
+    return failed(e, "Could not update your mail settings.")
   }
   revalidatePath(`/prediction/${predictionHash}`)
   return OK
@@ -259,11 +259,11 @@ export async function setActivityMailMutedByAccountAction(
   try {
     const account = await getAccountByHash(accountHash)
     if (account === undefined) {
-      return { ok: false, error: 'Account not found.' }
+      return { ok: false, error: "Account not found." }
     }
     await setActivityMailMuted(predictionHash, account.mail, muted)
   } catch (e) {
-    return failed(e, 'Could not update your mail settings.')
+    return failed(e, "Could not update your mail settings.")
   }
   revalidatePath(`/prediction/${predictionHash}`)
   return OK
@@ -277,9 +277,9 @@ export async function setBlockedAction(
     await setAccountBlocked(hash, blocked)
     const account = await getAccountByHash(hash)
     return account === undefined
-      ? { ok: false, error: 'Account not found.' }
+      ? { ok: false, error: "Account not found." }
       : { ok: true, account }
   } catch (e) {
-    return failed(e, 'Could not update your mail settings.')
+    return failed(e, "Could not update your mail settings.")
   }
 }

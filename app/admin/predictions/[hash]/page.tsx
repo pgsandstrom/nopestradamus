@@ -1,19 +1,19 @@
-import Link from 'next/link'
-import type { ReactNode } from 'react'
+import Link from "next/link"
+import type { ReactNode } from "react"
 
-import MailPreview from '../../../../components/mail-preview.tsx'
-import { StatusBadge } from '../../../../components/status-badge.tsx'
-import { isAdminAuthenticated } from '../../../../server/admin-session.ts'
-import type { MailDocument } from '../../../../server/mail/blocks.ts'
-import { renderMail } from '../../../../server/mail/render.ts'
+import MailPreview from "../../../../components/mail-preview.tsx"
+import { StatusBadge } from "../../../../components/status-badge.tsx"
+import { isAdminAuthenticated } from "../../../../server/admin-session.ts"
+import type { MailDocument } from "../../../../server/mail/blocks.ts"
+import { renderMail } from "../../../../server/mail/render.ts"
 import {
   getCreaterAcceptMail,
   getCreaterEndMail,
   getParticipantAcceptMail,
   getParticipantEndMail,
-} from '../../../../server/mail/templates.ts'
-import { adminGetPrediction } from '../../../../server/prediction.ts'
-import { formatDateString, formatDateTimeString } from '../../../../shared/date-util.ts'
+} from "../../../../server/mail/templates.ts"
+import { adminGetPrediction } from "../../../../server/prediction.ts"
+import { formatDateString, formatDateTimeString } from "../../../../shared/date-util.ts"
 import {
   type AdminAccount,
   type Creater,
@@ -22,12 +22,12 @@ import {
   type Prediction,
   type PredictionAdmin,
   type Role,
-} from '../../../../shared/index.ts'
-import DeletePrediction from './delete-prediction.tsx'
+} from "../../../../shared/index.ts"
+import DeletePrediction from "./delete-prediction.tsx"
 
-import styles from './page.module.css'
+import styles from "./page.module.css"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 interface AdminPredictionPageProps {
   params: Promise<{ hash: string }>
@@ -75,8 +75,8 @@ function PredictionDetail({ detail }: { detail: PredictionAdmin }) {
         </Field>
         <Field label="created">{formatDateTimeString(prediction.created)}</Field>
         <Field label="finish date">{formatDateString(prediction.finish_date)}</Field>
-        <Field label="public">{prediction.public ? 'yes' : 'no'}</Field>
-        <Field label="creator_validated">{prediction.creator_validated ? 'yes' : 'no'}</Field>
+        <Field label="public">{prediction.public ? "yes" : "no"}</Field>
+        <Field label="creator_validated">{prediction.creator_validated ? "yes" : "no"}</Field>
         <Field label="public page">
           <Link href={`/prediction/${prediction.hash}`}>/prediction/{prediction.hash}</Link>
         </Field>
@@ -175,7 +175,7 @@ function PersonCard({ predictionHash, role, person, account }: PersonCardProps) 
           ) : (
             <>
               <Bool value={account.validated} yes="validated" no="not validated" />
-              {', '}
+              {", "}
               <Bool value={account.blocked} yes="blocked" no="not blocked" invert />
             </>
           )}
@@ -265,7 +265,7 @@ interface BoolProps {
   invert?: boolean
 }
 
-function Bool({ value, yes, no, unknown = 'unknown', invert }: BoolProps) {
+function Bool({ value, yes, no, unknown = "unknown", invert }: BoolProps) {
   if (value === undefined) {
     return <span className={styles.note}>{unknown}</span>
   }
@@ -274,7 +274,7 @@ function Bool({ value, yes, no, unknown = 'unknown', invert }: BoolProps) {
 }
 
 function Sent({ value }: { value: boolean }) {
-  return <span className={value ? styles.good : styles.note}>{value ? 'sent' : 'not sent'}</span>
+  return <span className={value ? styles.good : styles.note}>{value ? "sent" : "not sent"}</span>
 }
 
 /** The shape the mailer wants, built from the rows the admin query already read. */

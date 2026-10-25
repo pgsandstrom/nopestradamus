@@ -1,22 +1,22 @@
-'use client'
+"use client"
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition } from "react"
 
-import { Button } from '../../../components/ui/button.tsx'
-import { TextAreaField, TextField } from '../../../components/ui/text-field.tsx'
-import { toDateInputValue } from '../../../shared/date-util.ts'
+import { Button } from "../../../components/ui/button.tsx"
+import { TextAreaField, TextField } from "../../../components/ui/text-field.tsx"
+import { toDateInputValue } from "../../../shared/date-util.ts"
 import {
   DESCRIPTION_MAX_LENGTH,
   listPredictionErrors,
   MAX_PARTICIPANTS,
   TITLE_MAX_LENGTH,
   validatePrediction,
-} from '../../../shared/validate-prediction.ts'
-import { createPredictionAction } from '../../actions.ts'
+} from "../../../shared/validate-prediction.ts"
+import { createPredictionAction } from "../../actions.ts"
 
-import styles from './create-form.module.css'
+import styles from "./create-form.module.css"
 
-type Status = 'editing' | 'posted'
+type Status = "editing" | "posted"
 
 interface CreateFormProps {
   /** The logged-in visitor's address, when there is one, so they do not type it again. */
@@ -26,15 +26,15 @@ interface CreateFormProps {
 export default function CreateForm({ initialCreaterMail }: CreateFormProps) {
   const [today] = useState(() => toDateInputValue(new Date()))
 
-  const [title, setTitle] = useState('')
-  const [body, setBody] = useState('')
+  const [title, setTitle] = useState("")
+  const [body, setBody] = useState("")
   const [date, setDate] = useState(today)
-  const [createrMail, setCreaterMail] = useState(initialCreaterMail ?? '')
+  const [createrMail, setCreaterMail] = useState(initialCreaterMail ?? "")
   const [isPublic, setIsPublic] = useState(true)
   const [participantList, setParticipantList] = useState<string[]>([])
 
   const [showValidationError, setShowValidationError] = useState(false)
-  const [status, setStatus] = useState<Status>('editing')
+  const [status, setStatus] = useState<Status>("editing")
   const [error, setError] = useState<string>()
   const [isPosting, startPosting] = useTransition()
 
@@ -58,19 +58,19 @@ export default function CreateForm({ initialCreaterMail }: CreateFormProps) {
       try {
         const result = await createPredictionAction(input)
         if (result.ok) {
-          setStatus('posted')
+          setStatus("posted")
         } else {
-          setError(result.error ?? 'Could not create the prediction.')
+          setError(result.error ?? "Could not create the prediction.")
         }
       } catch (e) {
         // the action never answered: offline, or the request refused before it ran
         console.error(e)
-        setError('Could not reach the server. Please try again.')
+        setError("Could not reach the server. Please try again.")
       }
     })
   }
 
-  if (status === 'posted') {
+  if (status === "posted") {
     return (
       <div>
         <p className={styles.notice}>A mail has been sent to {createrMail}</p>
@@ -148,7 +148,7 @@ export default function CreateForm({ initialCreaterMail }: CreateFormProps) {
         ))}
         <div>
           {participantList.length < MAX_PARTICIPANTS ? (
-            <Button onClick={() => setParticipantList((list) => [...list, ''])}>
+            <Button onClick={() => setParticipantList((list) => [...list, ""])}>
               Add participant
             </Button>
           ) : (
