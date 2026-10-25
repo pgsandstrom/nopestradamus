@@ -1,4 +1,9 @@
 FROM node:24-slim AS base
+# The slim image has no CA bundle. Node carries its own, but pnpm 12 is a native binary that
+# reads the system store, and it fetches its own registry metadata whenever node_modules exists.
+RUN apt-get update \
+ && apt-get install --assume-yes --no-install-recommends ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 RUN corepack enable
 WORKDIR /app
