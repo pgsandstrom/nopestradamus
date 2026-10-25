@@ -46,7 +46,7 @@ services:
       - PGHOST=db
     restart: "no"
   db:
-    image: postgres:16
+    image: postgres:18
     restart: always
     environment:
       - POSTGRES_USER=postgres
@@ -60,7 +60,10 @@ services:
     # No /docker-entrypoint-initdb.d mount: that only ever runs on an empty data directory, so
     # it could not touch a database that already exists. The migrate service owns the schema.
     volumes:
-      - db:/var/lib/postgresql/data
+      # 18 keeps its data in /var/lib/postgresql/18/docker, so the volume mounts one level up
+      - db18:/var/lib/postgresql
 volumes:
+  # The Postgres 16 data, no longer mounted. Kept as the rollback until 18 has proven itself.
   db:
+  db18:
   mail-queue:

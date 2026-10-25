@@ -149,7 +149,8 @@ whatever version prod is on. If your checkout has migrations prod has not seen y
 `pnpm migrate` afterwards; if prod is _ahead_ of your checkout, `pnpm migrate` will say so
 rather than guess.
 
-The compose file pins `postgres:16`. Bumping that major needs a dump/restore of the `db` volume.
+The compose file pins `postgres:18`, on the `db18` volume. Bumping that major needs a dump/restore
+into a new volume.
 
 ## Mail setup
 
