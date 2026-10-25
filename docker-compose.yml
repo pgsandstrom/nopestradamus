@@ -2,6 +2,9 @@ services:
   frontend:
     build:
       dockerfile: ./Dockerfile.frontend
+    # sh runs as PID 1 and neither handles SIGTERM nor passes it on to node, so without an init
+    # every restart waits 10s for the kill
+    init: true
     ports:
       - "8300:3000"
     depends_on:
@@ -13,6 +16,8 @@ services:
   cron:
     build:
       dockerfile: ./Dockerfile.cron
+    # same as frontend: sh as PID 1 swallows SIGTERM
+    init: true
     depends_on:
       migrate:
         condition: service_completed_successfully
