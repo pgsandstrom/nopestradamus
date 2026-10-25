@@ -26,8 +26,8 @@ COPY db ./db
 COPY util ./util
 COPY scripts/migrate.ts ./scripts/migrate.ts
 
-# No config.json or privkey.pem here: this image talks to the database and nothing else, and it
-# has no postfix, so it cannot mail even if something later tried to.
+# No config.json or privkey.pem here: this image talks to the database and nothing else, and
+# without the key it cannot sign a mail even if something later tried to send one.
 
 # node runs the TypeScript directly via type stripping, so there is no build step
 CMD ["node", "scripts/migrate.ts"]

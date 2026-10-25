@@ -31,13 +31,6 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-RUN echo "postfix postfix/mailname string nopestradamus.com" | debconf-set-selections \
- && echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections \
- && apt-get update \
- && apt-get install --assume-yes --no-install-recommends postfix \
- && rm -rf /var/lib/apt/lists/* \
- && postconf -e 'myhostname = nopestradamus.com'
-
 # 'output: standalone' emits a self-contained server plus only the node_modules it needs
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
@@ -49,5 +42,4 @@ COPY privkey.pem config.json ./
 
 EXPOSE 3000
 
-# exec replaces the shell with node, so docker's SIGTERM reaches next's own shutdown handler
-CMD service postfix start && exec node server.js
+CMD ["node", "server.js"]

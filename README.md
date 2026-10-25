@@ -225,7 +225,7 @@ Loopia's editor can fix it.
 DigitalOcean derives the PTR from the droplet's _name_, so the fix was renaming the droplet to
 `nopestradamus.com`. The apex A record already points back at that droplet, so forward and reverse
 agree, which is what receivers check. postfix already uses `myhostname = nopestradamus.com` (see
-the docker files), so the HELO matches as well — no redeploy was needed.
+`Dockerfile.mail`), so the HELO matches as well — no redeploy was needed.
 
 Check it with:
 
@@ -248,7 +248,14 @@ Every run needs a fresh test address, so grab a new one instead of reloading an 
 
 ### Program to send the mails
 
-You need to install postfix. Check out the docker files for that stuff.
+The `mail` service in `docker-compose.yml` runs postfix (`Dockerfile.mail`), and both `frontend`
+and `cron` hand their mail to it over SMTP. The app signs DKIM itself before handing over, so the
+key never leaves the app images and postfix only relays.
+
+A mail is marked sent in the database once postfix has queued it, not once it is delivered. A
+receiver that greylists or is briefly down keeps it in the queue for minutes or days, which is why
+the queue (`/var/spool/postfix`) is the `mail-queue` volume: a release replaces the container but
+not the mail still waiting in it.
 
 ### Monthly health mail
 
@@ -276,5 +283,6 @@ proves the queries and the body without posting anything.
 
 ### Mail troubleshooting
 
-`postqueue -j` is a nice command to check if the mails are not being sent.
+`docker compose exec mail postqueue -p` lists what is still waiting and why, and
+`docker compose logs mail` shows every delivery attempt.
 When running locally you will most likely get `connection refused` errors. I believe this is ISPs blocking outgoing mails.

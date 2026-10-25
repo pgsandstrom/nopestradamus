@@ -48,7 +48,8 @@ export const sendMail = async (
   }
 
   const transporter = nodemailer.createTransport({
-    host: "localhost",
+    // the postfix container, see the mail service in docker-compose.yml
+    host: "mail",
     port: 25,
     name: "nopestradamus.com",
     secure: false,

@@ -2,27 +2,35 @@ services:
   frontend:
     build:
       dockerfile: ./Dockerfile.frontend
-    # sh runs as PID 1 and neither handles SIGTERM nor passes it on to node, so without an init
-    # every restart waits 10s for the kill
-    init: true
     ports:
       - "8300:3000"
     depends_on:
       migrate:
         condition: service_completed_successfully
+      mail:
+        condition: service_started
     environment:
       - PGHOST=db
     restart: always
   cron:
     build:
       dockerfile: ./Dockerfile.cron
-    # same as frontend: sh as PID 1 swallows SIGTERM
-    init: true
     depends_on:
       migrate:
         condition: service_completed_successfully
+      mail:
+        condition: service_started
     environment:
       - PGHOST=db
+    restart: always
+  # The postfix both of the above hand their mail to. A mail counts as sent once it is queued here,
+  # so the queue is a volume: a release replaces the container, not the mail still waiting in it.
+  # No ports on purpose: only containers on this compose network can reach it.
+  mail:
+    build:
+      dockerfile: ./Dockerfile.mail
+    volumes:
+      - mail-queue:/var/spool/postfix
     restart: always
   # Runs the pending migrations and exits, before frontend and cron are allowed to start, so a
   # release that cannot migrate fails instead of putting app code on a schema it does not know.
@@ -55,3 +63,4 @@ services:
       - db:/var/lib/postgresql/data
 volumes:
   db:
+  mail-queue:

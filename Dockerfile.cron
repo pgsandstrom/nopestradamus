@@ -17,13 +17,6 @@ RUN pnpm install --frozen-lockfile --no-optional
 FROM base AS runner
 ENV NODE_ENV=production
 
-RUN echo "postfix postfix/mailname string nopestradamus.com" | debconf-set-selections \
- && echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections \
- && apt-get update \
- && apt-get install --assume-yes --no-install-recommends postfix \
- && rm -rf /var/lib/apt/lists/* \
- && postconf -e 'myhostname = nopestradamus.com'
-
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json ./
 COPY server-cron.ts ./
@@ -39,6 +32,5 @@ COPY privkey.pem config.json ./
 # same reason as in Dockerfile.frontend: fail the release, not the monthly health mail
 RUN pnpm check-config
 
-# node runs the TypeScript directly via type stripping, so there is no build step.
-# exec replaces the shell with node, so docker's SIGTERM reaches node and its handler.
-CMD service postfix start && exec node server-cron.ts
+# node runs the TypeScript directly via type stripping, so there is no build step
+CMD ["node", "server-cron.ts"]

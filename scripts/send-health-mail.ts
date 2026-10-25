@@ -3,8 +3,8 @@
  * the first of the month.
  *
  * Locally sendMail only logs, so this proves the queries and the body but posts nothing. To send
- * a real mail, run it in the production cron container, which has postfix, privkey.pem and the
- * database on its network:
+ * a real mail, run it in the production cron container, which has privkey.pem and both the
+ * database and the mail service on its network:
  *
  *   docker compose exec cron node scripts/send-health-mail.ts
  */

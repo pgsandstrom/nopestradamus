@@ -1,0 +1,34 @@
+# The one postfix that frontend and cron both hand their mail to. The app marks a mail sent as soon
+# as postfix has queued it, so the queue lives on a volume (see docker-compose.yml): mail that is
+# accepted but not yet delivered, e.g. greylisted, has to survive a release.
+# Same Debian as node:24-slim, so the base layer is shared with the app images.
+FROM debian:bookworm-slim
+
+RUN echo "postfix postfix/mailname string nopestradamus.com" | debconf-set-selections \
+ && echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections \
+ && apt-get update \
+ && apt-get install --assume-yes --no-install-recommends postfix \
+ && rm -rf /var/lib/apt/lists/*
+
+# myhostname is the HELO, which receivers check against the droplet's reverse DNS (see README).
+# Nothing is delivered locally: mail to @nopestradamus.com, bounces included, goes to Loopia.
+# The explicit mynetworks from the Debian install is dropped so the subnet style applies: only
+# containers on this compose network may relay, and port 25 is not published.
+# The droplet has no IPv6 PTR, see README.
+# Logs go to stdout so `docker compose logs mail` shows every delivery attempt.
+# No chroot: Debian's init script is what copies resolv.conf and friends into the chroot, and it
+# does not run here.
+RUN postconf -X mynetworks \
+ && postconf -e \
+      'myhostname = nopestradamus.com' \
+      'myorigin = nopestradamus.com' \
+      'mydestination =' \
+      'mynetworks_style = subnet' \
+      'inet_interfaces = all' \
+      'inet_protocols = ipv4' \
+      'maillog_file = /dev/stdout' \
+ && postconf -F '*/*/chroot = n'
+
+EXPOSE 25
+
+CMD ["postfix", "start-fg"]
