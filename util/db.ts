@@ -1,7 +1,5 @@
 import { Pool, type QueryConfig, type QueryResult, type QueryResultRow, types } from "pg"
 
-import { objectKeys } from "../shared/object-util.ts"
-
 // Force count-function in database to return number instead of string
 // https://github.com/brianc/node-pg-types#use
 types.setTypeParser(types.builtins.INT8, (val: string) => parseInt(val, 10))
@@ -33,7 +31,8 @@ function nullToUndefined(item: unknown): unknown {
   if (typeof item === "object" && !(item instanceof Date)) {
     const source = item as Record<string, unknown>
     const result: Record<string, unknown> = {}
-    for (const key of objectKeys(source)) {
+    // oxlint-disable-next-line local/no-raw-object-keys-entries -- the migrate image has no shared/
+    for (const key of Object.keys(source)) {
       result[key] = nullToUndefined(source[key])
     }
     return result
